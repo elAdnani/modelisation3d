@@ -1,5 +1,5 @@
 # Membres de l'équipe
-
+# Hugo Sene; Leo Ben Hatat; Virgil Hazebroucq; Adnan Kouakoua
 # Livrable 1
 
 ## Fonctionnalités implémentées
