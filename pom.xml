@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.ulille.dut.s3</groupId>
 	<!-- Modifier le nom de votre projet ci-dessous -->
-	<artifactId>projetmode0</artifactId>
+	<artifactId>projetmodeh3</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 
@@ -37,7 +37,7 @@
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>0.0.6</version>
 				<configuration>
-					<mainClass>main.FxmlDemo</mainClass>
+					<mainClass>demo.FxmlDemo</mainClass>
 				</configuration>
 			</plugin>
 			<!-- Make this jar executable -->
@@ -51,7 +51,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>main.FxmlDemo</mainClass>
+							<mainClass>demo.FxmlDemo</mainClass>
 							<classpathPrefix>dependency-jars/</classpathPrefix>
 						</manifest>
 					</archive>
