@@ -9,31 +9,33 @@ import java.util.List;
 
 public class RecuperationPly {
 	
-	public static void main(String[] args) {
-		String fichier = "vache.ply";
-		List<Point> res =recuperationCoordonnee(fichier);
-		List<Trace> ensembleDePoint = recuperationTracerDesPoint(fichier, res);
-		System.out.println("DEBUT");
-		
-		for(Trace p : ensembleDePoint) {
-			System.out.println(p);
-			try
-			{
-				Thread.sleep(100);
-			} catch (InterruptedException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-	}
+//	public static void main(String[] args) {
+//		String fichier = "vache.ply";
+//		List<Point> res =recuperationCoordonnee(fichier);
+//		List<Trace> ensembleDePoint = recuperationTracerDesPoint(fichier, res);
+//		System.out.println("DEBUT");
+//		
+//		for(Trace p : ensembleDePoint) {
+//			System.out.println(p);
+//			try
+//			{
+//				Thread.sleep(100);
+//			} catch (InterruptedException e)
+//			{
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//		
+//	}
 	public static List<Point> recuperationCoordonnee(String fichier){
 		List<Point> res = new ArrayList<Point>();
 		
 		String myPath = System.getProperty("user.dir")
 				+ File.separator + "src"
-				+ File.separator + "test"
+					+ File.separator + "main"
+						+ File.separator + "java"
+				+ File.separator + "App"
 				+ File.separator;
 		 
 			File FichierPly = null ;
@@ -80,7 +82,9 @@ public class RecuperationPly {
 		
 		String myPath = System.getProperty("user.dir")
 				+ File.separator + "src"
-				+ File.separator + "test"
+		+ File.separator + "main"
+						+ File.separator + "java"
+							+ File.separator + "App"
 				+ File.separator;
 		 
 			File FichierPly = null ;
@@ -103,7 +107,7 @@ public class RecuperationPly {
 					if(ligne!=null && nombreOccurence(ligne,' ')==4) {
 						tab = ligne.split(" ");
 						Trace ensembleDePoint = new Trace();
-						for(int i=0; i< tab.length; i++) {
+						for(int i=1; i< tab.length; i++) {
 							ensembleDePoint.add(points.get(Integer.valueOf(tab[i])));
 						}
 						res.add(ensembleDePoint);

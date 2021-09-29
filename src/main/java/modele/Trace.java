@@ -19,7 +19,9 @@ public class Trace {
 		this.lien.add(p);
 	}
 
-
+	public List<Point>  getPoints() {
+		return lien;
+	}
 	
 	public String toString() {
 		StringBuilder sb = new StringBuilder("[TRACE");
