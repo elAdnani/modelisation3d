@@ -56,9 +56,10 @@ public class Affichage extends Application {
 		
 		vBox.getChildren().addAll(canvas, root);
 		
+		affichagePly("vache.ply");
 		
 		/* AFFICHAGE DE LA FIGURE 3D */
-		gc=canvas.getGraphicsContext2D();
+		/*gc=canvas.getGraphicsContext2D();
 		ArrayList<Point> points = (ArrayList<Point>) RecuperationPly.recuperationCoordonnee("/vache.ply");
 		ArrayList<Trace> trace = (ArrayList<Trace>) RecuperationPly.recuperationTracerDesPoint("/vache.ply", points);
 		double oldX =0 ,oldY =0;
@@ -77,11 +78,34 @@ public class Affichage extends Application {
 				 cpt++;
 			 }
 			
-		 }
+		 }*/
         
 		
 		/* AFFICHAGE */
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+    
+    private void affichagePly(String s) {
+    	gc=canvas.getGraphicsContext2D();
+		ArrayList<Point> points = (ArrayList<Point>) RecuperationPly.recuperationCoordonnee(s);
+		ArrayList<Trace> trace = (ArrayList<Trace>) RecuperationPly.recuperationTracerDesPoint(s, points);
+		double oldX =0 ,oldY =0;
+		for (Trace t: trace) {
+			 Iterator<Point> it = t.getPoints().iterator();
+			 int cpt=0;
+			 while(it.hasNext()) {
+				 Point pt = it.next();
+				 if(cpt==0) {
+					oldX = pt.getX()*120+500;
+					oldY = pt.getY()*120+500;
+				 }
+				 gc.strokeLine(oldX, oldY, pt.getX()*120+500,pt.getY()*120+500);
+				 oldX = pt.getX()*120+500;
+				 oldY = pt.getY()*120+500;
+				 cpt++;
+			 }
+			
+		 }
     }
 }
