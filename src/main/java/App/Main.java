@@ -8,8 +8,7 @@ public class Main extends Application{
 
 	@Override
 	public void start(Stage arg0) throws Exception {
-		new Affichage();
-		
+		new Affichage().start(arg0);
 	}
 
 }
