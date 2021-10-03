@@ -6,7 +6,6 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class RecuperationPly {
 
 	private static String myPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main"
@@ -14,7 +13,6 @@ public class RecuperationPly {
 	private static int nbVertex;
 	private static int nbFace;
 
-	
 //	public static void main(String[] args) {
 //		file = "vache.ply";
 //
@@ -51,8 +49,8 @@ public class RecuperationPly {
 //		}
 //
 //	}
-	
-	public static List<Point> recuperationCoordonnee(String fichier) throws Exception{
+
+	public static List<Point> recuperationCoordonnee(String fichier) throws Exception {
 		checkFormat(fichier);
 
 		List<Point> res = new ArrayList<Point>();
@@ -83,7 +81,7 @@ public class RecuperationPly {
 
 		return res;
 	}
-	
+
 	public static List<Trace> recuperationTracerDesPoint(String fichier, List<Point> points) throws Exception {
 		checkFormat(fichier);
 
@@ -99,24 +97,22 @@ public class RecuperationPly {
 
 			RandomAccessFile raf = new RandomAccessFile(FichierPly, "r");
 			placerApresLaTeteDuFichier(raf);
-			String tab[] = new String[0];
 
-			// TODO A modifier pour utiliser nbFace au lieu d'un while
-			while (ligne != null) {
+			String[] tab;
 
+			for (int i = 1; i < nbVertex; i++)
+				raf.readLine();
+
+			System.out.println(nbFace);
+			for (int j = 0; j < nbFace; j++) {
 				ligne = raf.readLine();
-
-				if (ligne != null && nombreOccurence(ligne, ' ') == 4) {
-					tab = ligne.split(" ");
-					Trace ensembleDePoint = new Trace();
-					for (int i = 1; i < tab.length; i++) {
-						ensembleDePoint.add(points.get(Integer.valueOf(tab[i])));
-					}
-					res.add(ensembleDePoint);
+				tab = ligne.split(" ");
+				Trace ensembleDePoint = new Trace();
+				for (int i = 1; i < tab.length; i++) {
+					ensembleDePoint.add(points.get(Integer.valueOf(tab[i])));
 				}
-
+				res.add(ensembleDePoint);
 			}
-
 			raf.close();
 		} catch (IOException o) {
 
@@ -125,21 +121,19 @@ public class RecuperationPly {
 
 		return res;
 	}
-	
-	
+
 	public static int nombreOccurence(String mes, char c) {
-		int cpt=0;
-		for(int i =0; i<mes.length();i++) {
-			if(mes.charAt(i)==c) {
+		int cpt = 0;
+		for (int i = 0; i < mes.length(); i++) {
+			if (mes.charAt(i) == c) {
 				cpt++;
 			}
 		}
 		return cpt;
 	}
-	
+
 	public static void placerApresLaTeteDuFichier(RandomAccessFile raf) {
-		try
-		{
+		try {
 			raf.seek(0);
 			String ligne;
 			ligne = raf.readLine();
@@ -160,15 +154,14 @@ public class RecuperationPly {
 				ligne = raf.readLine();
 
 			}
-		} catch (IOException e)
-		{
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		// on se replace tout au début du fichier
-		
+
 	}
-	
+
 	public static void checkFormat(String file) throws Exception {
 		if (!file.endsWith(".ply")) {
 			throw new Exception(file + " (Fichier invalide. Le fichier n'est pas au format ply.)");

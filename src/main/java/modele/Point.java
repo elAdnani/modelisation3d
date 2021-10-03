@@ -12,7 +12,7 @@ public class Point {
 	private double z;
 
 	public Point() {
-		this(0,0,0);
+		this(0.0,0.0,0.0);
 	}
 
 	public Point(double x, double y, double z) {
