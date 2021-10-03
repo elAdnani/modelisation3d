@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -11,9 +12,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import modele.Plan;
 import modele.Point;
 import modele.RecuperationPly;
 import modele.Trace;
@@ -23,12 +26,14 @@ public class Affichage extends Application {
 	@FXML
 	Canvas canvas;
 	GraphicsContext gc;
-
+	Plan plan = new Plan();
+	String file;
+	
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Modélisateur 3D");
 
-        
+        file="vache.ply";
         /* CREATION DU MENU */
         MenuBar menuBar = new MenuBar();
 
@@ -51,12 +56,31 @@ public class Affichage extends Application {
         VBox vBox = new VBox(menuBar);
         Scene scene = new Scene(vBox, 1300, 790);
         		
-		canvas = new Canvas(1300,790);
+		canvas = new Canvas(1300,1300);
 		BorderPane root = new BorderPane(canvas);
 		
 		vBox.getChildren().addAll(canvas, root);
 		
-		affichagePly("vache.ply");
+		affichagePly();
+		
+		canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
+		      public void handle(MouseEvent event) {
+		    	  System.out.println(event.getEventType());
+		    
+		    		   String msg =
+		   		            "(x: "       + event.getX()      + ", y: "       + event.getY()       + ") -- " ;
+		   		          System.out.println(msg);
+		   		           
+		   		          setZ((event.getX()-plan.getX())+event.getSceneY()-plan.getY());
+		   		          setX(event.getX());
+		   		         
+		   		          affichagePly();
+		       
+		        
+		          
+		        }
+			
+		});
 		
 		/* AFFICHAGE DE LA FIGURE 3D */
 		/*gc=canvas.getGraphicsContext2D();
@@ -85,27 +109,55 @@ public class Affichage extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-    
-    private void affichagePly(String s) {
+
+
+	protected void affichagePly() {
+	
     	gc=canvas.getGraphicsContext2D();
-		ArrayList<Point> points = (ArrayList<Point>) RecuperationPly.recuperationCoordonnee(s);
-		ArrayList<Trace> trace = (ArrayList<Trace>) RecuperationPly.recuperationTracerDesPoint(s, points);
+    	gc.clearRect(0, 0,1300, 1300);
+		ArrayList<Point> points = (ArrayList<Point>) RecuperationPly.recuperationCoordonnee(file);
+		ArrayList<Trace> trace = (ArrayList<Trace>) RecuperationPly.recuperationTracerDesPoint(file, points);
 		double oldX =0 ,oldY =0;
+		double X=0;
+		double Y=0;
+		double Z= 0;
 		for (Trace t: trace) {
 			 Iterator<Point> it = t.getPoints().iterator();
 			 int cpt=0;
 			 while(it.hasNext()) {
 				 Point pt = it.next();
+				 Z= (pt.getZ()+plan.getZ());
+				
 				 if(cpt==0) {
-					oldX = pt.getX()*120+500;
-					oldY = pt.getY()*120+500;
+					oldX = pt.getX()*120+550+plan.getX()*Z;
+					oldY = pt.getY()*120+550+plan.getY();
+					
 				 }
-				 gc.strokeLine(oldX, oldY, pt.getX()*120+500,pt.getY()*120+500);
-				 oldX = pt.getX()*120+500;
-				 oldY = pt.getY()*120+500;
+			
+				 X = pt.getX()*120+550+plan.getX()*Z;
+				 Y =(pt.getY()*120+550+plan.getY());
+				 
+				 gc.strokeLine(oldX, oldY,X ,Y);
+				
+				 oldX =X;
+				 oldY = Y;
 				 cpt++;
 			 }
 			
 		 }
+
     }
+    
+    // Controller du plan
+    protected void setX(double value ) {
+    	this.plan.setX(value);
+    }
+    public void setY(double value ) {
+    	this.plan.setX(value);
+    }
+    public void setZ(double value ) {
+    	this.plan.setX(value);
+    }
+    
+    
 }
