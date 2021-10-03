@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -71,8 +72,13 @@ public class Affichage extends Application {
 
 			};
 		});
-		
-		
+
+		exitItem.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event) {
+				Platform.exit();
+			};
+		});
+
 		/* CREATION DE LA FENETRE */
 		VBox vBox = new VBox(menuBar);
 		Scene scene = new Scene(vBox, 1300, 790);
