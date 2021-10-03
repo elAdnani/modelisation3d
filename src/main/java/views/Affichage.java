@@ -1,9 +1,11 @@
 package views;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -15,6 +17,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import modele.Plan;
 import modele.Point;
@@ -51,6 +55,24 @@ public class Affichage extends Application {
 		menuBar.getMenus().add(fileMenu);
 		menuBar.getMenus().add(helpMenu);
 
+		/* INTERACTION AVEC LE MENU */
+		openFileItem.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event) {
+				FileChooser fileChooser = new FileChooser();
+				fileChooser.setTitle("Open File");
+				fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Ply File", "*.ply"),
+						new ExtensionFilter("All Files", "*.*"));
+				File file = fileChooser.showOpenDialog(null);
+
+				if (file != null) {
+					Affichage.this.file = file.getName();
+					affichagePly();
+				}
+
+			};
+		});
+		
+		
 		/* CREATION DE LA FENETRE */
 		VBox vBox = new VBox(menuBar);
 		Scene scene = new Scene(vBox, 1300, 790);
