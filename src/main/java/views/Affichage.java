@@ -38,7 +38,8 @@ public class Affichage extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Modélisateur 3D");
 
-		file = "cube.ply";
+		file = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator
+				+ "resources" + File.separator + "cube.ply";
 		/* CREATION DU MENU */
 		MenuBar menuBar = new MenuBar();
 
@@ -66,7 +67,7 @@ public class Affichage extends Application {
 				File file = fileChooser.showOpenDialog(null);
 
 				if (file != null) {
-					Affichage.this.file = file.getName();
+					Affichage.this.file = file.getAbsolutePath();
 					affichagePly();
 				}
 
@@ -126,16 +127,18 @@ public class Affichage extends Application {
 		primaryStage.show();
 	}
 
+	/**
+	 * Efface le canvas, lis le fichier et trace la figure
+	 */
 	protected void affichagePly() {
 
 		gc = canvas.getGraphicsContext2D();
-		gc.clearRect(0, 0, 1300, 1300);
+		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		ArrayList<Point> points = null;
 		ArrayList<Trace> trace = null;
 		try {
 			points = (ArrayList<Point>) RecuperationPly.recuperationCoordonnee(file);
 			trace = (ArrayList<Trace>) RecuperationPly.recuperationTracerDesPoint(file, points);
-			System.out.println(trace);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

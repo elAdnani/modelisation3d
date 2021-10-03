@@ -50,6 +50,13 @@ public class RecuperationPly {
 //
 //	}
 
+	/**
+	 * Recupere la liste des points dans un fichier PLY donné en parametre
+	 * 
+	 * @param fichier - Chemin vers le fichier
+	 * @return {@link List} de {@link Point}
+	 * @throws Exception
+	 */
 	public static List<Point> recuperationCoordonnee(String fichier) throws Exception {
 		checkFormat(fichier);
 
@@ -59,7 +66,7 @@ public class RecuperationPly {
 
 		try {
 
-			FichierPly = new File(myPath + fichier);
+			FichierPly = new File(fichier);
 
 			String ligne = " ";
 
@@ -82,6 +89,14 @@ public class RecuperationPly {
 		return res;
 	}
 
+	/**
+	 * Recupere la liste des traces dans un fichier PLY donné en paramètre
+	 * 
+	 * @param fichier - Chemin vers le fichier
+	 * @param points - {@link List} de {@link Point}
+	 * @return {@link List} de {@link Trace}
+	 * @throws Exception
+	 */
 	public static List<Trace> recuperationTracerDesPoint(String fichier, List<Point> points) throws Exception {
 		checkFormat(fichier);
 
@@ -91,7 +106,7 @@ public class RecuperationPly {
 
 		try {
 
-			FichierPly = new File(myPath + fichier);
+			FichierPly = new File(fichier);
 
 			String ligne = " ";
 
@@ -122,6 +137,13 @@ public class RecuperationPly {
 		return res;
 	}
 
+	/**
+	 * Recherche le nombre d'occurence d'un caractere dans un String donné
+	 * 
+	 * @param mes - le {@link String} a parcourir
+	 * @param c - le caractere à chercher
+	 * @return Le nombre d'occurence du caractere dans le String
+	 */
 	public static int nombreOccurence(String mes, char c) {
 		int cpt = 0;
 		for (int i = 0; i < mes.length(); i++) {
@@ -132,6 +154,11 @@ public class RecuperationPly {
 		return cpt;
 	}
 
+	/**
+	 * Lis le nombre de vertex et le nombre de face, puis se place à la fin du header
+	 * 
+	 * @param raf - RandomAccessFile
+	 */
 	public static void placerApresLaTeteDuFichier(RandomAccessFile raf) {
 		try {
 			raf.seek(0);
@@ -162,6 +189,12 @@ public class RecuperationPly {
 
 	}
 
+	/**
+	 * Verifie si le fichier passé en paramètre est un fichier ply
+	 *
+	 * @param file - Chemin du fichier
+	 * @throws Exception
+	 */
 	public static void checkFormat(String file) throws Exception {
 		if (!file.endsWith(".ply")) {
 			throw new Exception(file + " (Fichier invalide. Le fichier n'est pas au format ply.)");
