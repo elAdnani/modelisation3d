@@ -6,35 +6,36 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class RecuperationPly {
 
 	private static String myPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main"
 			+ File.separator + "resources" + File.separator;
-	private static String file;
 	private static int nbVertex;
 	private static int nbFace;
 
-	public static void main(String[] args) {
-		file = "vache.ply";
-
-		List<Point> res = null;
-		List<Trace> ensembleDePoint = null;
-
-		try {
-			long startTime = System.nanoTime();
-			for (int i = 0; i < 100; i++) {
-				res = recuperationCoordonnee();
-				ensembleDePoint = recuperationTracerDesPoint(res);
-			}
-			long endTime = System.nanoTime();
-			System.out
-					.println("Temps de chargement moyen : " + (float) (endTime - startTime) / 100 / 1000 / 1000 + "ms");
-			System.out.println("Nb points : " + res.size());
-			System.out.println("Nb faces : " + ensembleDePoint.size());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+	
+//	public static void main(String[] args) {
+//		file = "vache.ply";
+//
+//		List<Point> res = null;
+//		List<Trace> ensembleDePoint = null;
+//
+//		try {
+//			long startTime = System.nanoTime();
+//			for (int i = 0; i < 100; i++) {
+//				res = recuperationCoordonnee();
+//				ensembleDePoint = recuperationTracerDesPoint(res);
+//			}
+//			long endTime = System.nanoTime();
+//			System.out
+//					.println("Temps de chargement moyen : " + (float) (endTime - startTime) / 100 / 1000 / 1000 + "ms");
+//			System.out.println("Nb points : " + res.size());
+//			System.out.println("Nb faces : " + ensembleDePoint.size());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//
 //		System.out.println("DEBUT");
 //		
 //		for(Trace p : ensembleDePoint) {
@@ -48,11 +49,11 @@ public class RecuperationPly {
 //				e.printStackTrace();
 //			}
 //		}
-
-	}
-
-	public static List<Point> recuperationCoordonnee() throws Exception {
-		checkFormat(file);
+//
+//	}
+	
+	public static List<Point> recuperationCoordonnee(String fichier) throws Exception{
+		checkFormat(fichier);
 
 		List<Point> res = new ArrayList<Point>();
 
@@ -60,7 +61,7 @@ public class RecuperationPly {
 
 		try {
 
-			FichierPly = new File(myPath + file);
+			FichierPly = new File(myPath + fichier);
 
 			String ligne = " ";
 
@@ -82,9 +83,9 @@ public class RecuperationPly {
 
 		return res;
 	}
-
-	public static List<Trace> recuperationTracerDesPoint(List<Point> points) throws Exception {
-		checkFormat(file);
+	
+	public static List<Trace> recuperationTracerDesPoint(String fichier, List<Point> points) throws Exception {
+		checkFormat(fichier);
 
 		List<Trace> res = new ArrayList<Trace>();
 
@@ -92,7 +93,7 @@ public class RecuperationPly {
 
 		try {
 
-			FichierPly = new File(myPath + file);
+			FichierPly = new File(myPath + fichier);
 
 			String ligne = " ";
 
@@ -124,20 +125,21 @@ public class RecuperationPly {
 
 		return res;
 	}
-
+	
+	
 	public static int nombreOccurence(String mes, char c) {
-		int cpt = 0;
-		for (int i = 0; i < mes.length(); i++) {
-			if (mes.charAt(i) == c) {
+		int cpt=0;
+		for(int i =0; i<mes.length();i++) {
+			if(mes.charAt(i)==c) {
 				cpt++;
 			}
 		}
 		return cpt;
 	}
-
+	
 	public static void placerApresLaTeteDuFichier(RandomAccessFile raf) {
-		try {
-
+		try
+		{
 			raf.seek(0);
 			String ligne;
 			ligne = raf.readLine();
@@ -158,20 +160,18 @@ public class RecuperationPly {
 				ligne = raf.readLine();
 
 			}
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		// on se replace tout au début du fichier
+		
 	}
-
+	
 	public static void checkFormat(String file) throws Exception {
 		if (!file.endsWith(".ply")) {
 			throw new Exception(file + " (Fichier invalide. Le fichier n'est pas au format ply.)");
 		}
-	}
-
-	private static void getVertexNb() {
-
 	}
 }
