@@ -20,6 +20,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import modele.Plan;
 import modele.Point;
@@ -68,6 +69,7 @@ public class Affichage extends Application {
 
 				if (file != null) {
 					Affichage.this.file = file.getAbsolutePath();
+					chargeFichier();
 					affichagePly();
 				}
 
@@ -82,13 +84,14 @@ public class Affichage extends Application {
 
 		/* CREATION DE LA FENETRE */
 		VBox vBox = new VBox(menuBar);
-		Scene scene = new Scene(vBox, 1300, 790);
+		Scene scene = new Scene(vBox, Screen.getPrimary().getBounds().getWidth(), Screen.getPrimary().getBounds().getHeight());
 
-		canvas = new Canvas(1300, 1300);
+		canvas = new Canvas(Screen.getPrimary().getBounds().getWidth(), Screen.getPrimary().getBounds().getHeight());
 		BorderPane root = new BorderPane(canvas);
 
 		vBox.getChildren().addAll(canvas, root);
 
+		chargeFichier();
 		affichagePly();
 
 		canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
@@ -127,21 +130,26 @@ public class Affichage extends Application {
 		primaryStage.show();
 	}
 
-	/**
-	 * Efface le canvas, lis le fichier et trace la figure
-	 */
-	protected void affichagePly() {
-
-		gc = canvas.getGraphicsContext2D();
-		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		ArrayList<Point> points = null;
-		ArrayList<Trace> trace = null;
+	ArrayList<Point> points = null;
+	ArrayList<Trace> trace = null;
+	
+	private void chargeFichier() {
 		try {
 			points = (ArrayList<Point>) RecuperationPly.recuperationCoordonnee(file);
 			trace = (ArrayList<Trace>) RecuperationPly.recuperationTracerDesPoint(file, points);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Efface le canvas, lis le fichier et trace la figure
+	 */
+	private void affichagePly() {
+
+		gc = canvas.getGraphicsContext2D();
+		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+		
 		double oldX = 0, oldY = 0;
 		double X = 0;
 		double Y = 0;

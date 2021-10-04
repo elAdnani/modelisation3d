@@ -120,7 +120,7 @@ public class RecuperationPly {
 
 			for (int j = 0; j < nbFace; j++) {
 				ligne = raf.readLine();
-				System.out.println(ligne);
+//				System.out.println(ligne);
 				tab = ligne.split(" ");
 				Trace ensembleDePoint = new Trace();
 				for (int i = 1; i < tab.length; i++) {
