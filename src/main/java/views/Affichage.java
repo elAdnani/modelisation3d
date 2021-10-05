@@ -29,18 +29,23 @@ import modele.Trace;
 
 public class Affichage extends Application {
 
+	private static final int DEGREE_DE_ZOOM = 140;
 	@FXML
 	Canvas canvas;
 	GraphicsContext gc;
 	Plan plan = new Plan();
 	String file;
+	ArrayList<Point> points = null;
+	ArrayList<Trace> trace = null;
+	double oldMouseX =0;
+	double oldMouseY = 0;
 
 	@Override
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Modélisateur 3D");
 
 		file = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator
-				+ "resources" + File.separator + "cube.ply";
+				+ "resources" + File.separator + "vache.ply";
 		/* CREATION DU MENU */
 		MenuBar menuBar = new MenuBar();
 
@@ -92,17 +97,26 @@ public class Affichage extends Application {
 		vBox.getChildren().addAll(canvas, root);
 
 		chargeFichier();
+		
+		rotate3DY(180);
 		affichagePly();
-
+		
+		
 		canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {
-				System.out.println(event.getEventType());
+				
 
-				String msg = "(x: " + event.getX() + ", y: " + event.getY() + ") -- ";
-				System.out.println(msg);
-
-				setZ((event.getX() - plan.getX()) + event.getSceneY() - plan.getY());
-				setX(event.getX());
+			
+				
+				double mouseX = event.getSceneX();
+				double mouseY = event.getSceneY();			
+				rotate3DX( mouseY-oldMouseY);
+				rotate3DY(mouseX-oldMouseX );
+				System.out.println(mouseY-oldMouseY);
+				oldMouseX = mouseX;
+				oldMouseY = mouseY;
+				
+				
 
 				affichagePly();
 
@@ -128,10 +142,11 @@ public class Affichage extends Application {
 		/* AFFICHAGE */
 		primaryStage.setScene(scene);
 		primaryStage.show();
+		
+		
 	}
 
-	ArrayList<Point> points = null;
-	ArrayList<Trace> trace = null;
+	
 	
 	private void chargeFichier() {
 		try {
@@ -144,12 +159,16 @@ public class Affichage extends Application {
 	
 	/**
 	 * Efface le canvas, lis le fichier et trace la figure
+	 * 
 	 */
+	
+	
 	private void affichagePly() {
 
 		gc = canvas.getGraphicsContext2D();
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		
+		double middle_screen_x = canvas.getWidth()/2;
+		double middle_screen_y =canvas.getHeight()/2;
 		double oldX = 0, oldY = 0;
 		double X = 0;
 		double Y = 0;
@@ -159,16 +178,16 @@ public class Affichage extends Application {
 			int cpt = 0;
 			while (it.hasNext()) {
 				Point pt = it.next();
-				Z = (pt.getZ() + plan.getZ());
+	
 
 				if (cpt == 0) {
-					oldX = pt.getX() * 120 + 550 + plan.getX() * Z;
-					oldY = pt.getY() * 120 + 550 + plan.getY();
+					oldX = pt.getX() * DEGREE_DE_ZOOM + middle_screen_x ;
+					oldY = pt.getY() * DEGREE_DE_ZOOM + middle_screen_y ;
 
 				}
 
-				X = pt.getX() * 120 + 550 + plan.getX() * Z;
-				Y = (pt.getY() * 120 + 550 + plan.getY());
+				X = pt.getX() * DEGREE_DE_ZOOM + middle_screen_x;
+				Y = pt.getY() * DEGREE_DE_ZOOM + middle_screen_y;
 
 				gc.strokeLine(oldX, oldY, X, Y);
 
@@ -179,6 +198,33 @@ public class Affichage extends Application {
 
 		}
 
+	}
+	private void rotate3DX(double tetha) {
+		double sinTheta = Math.sin(tetha);
+		double cosTheta = Math.cos(tetha);
+		for(Point p : points) {
+			double newY = p.getY() * cosTheta - p.getZ() * sinTheta;
+			double newZ = p.getZ() * cosTheta + p.getY() * sinTheta;
+			System.out.println(p.getY());
+			System.out.println(p.getZ());
+			System.out.println(newY);
+			System.out.println(newZ);
+			p.setY(newY);
+			p.setZ(newZ);
+		}
+		
+	}
+	private void rotate3DY(double tetha) {
+		double sinTheta = Math.sin(tetha);
+		double cosTheta = Math.cos(tetha);
+		for(Point p : points) {
+			p.setX(p.getX() * cosTheta + p.getZ() * sinTheta);
+			p.setZ(p.getZ() * cosTheta - p.getX() * sinTheta);
+		}
+		
+	}
+	private void rotate3DZ(double ztetha) {
+		
 	}
 
 	// Controller du plan
