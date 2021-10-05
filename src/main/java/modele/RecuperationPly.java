@@ -73,11 +73,14 @@ public class RecuperationPly {
 			RandomAccessFile raf = new RandomAccessFile(FichierPly, "r");
 			placerApresLaTeteDuFichier(raf);
 			String tab[] = new String[0];
-
 			for (int i = 0; i < nbVertex; i++) {
 				ligne = raf.readLine();
-				tab = ligne.split(" ");
-				res.add(new Point(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
+				if(!ligne.isEmpty()) {					
+					tab = ligne.split(" ");
+					System.out.println("" + (i+1) + "/" + (nbVertex));
+					res.add(new Point(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
+					System.out.println(res.get(i));
+				} else i--;
 			}
 
 			raf.close();
@@ -115,8 +118,10 @@ public class RecuperationPly {
 
 			String[] tab;
 
-			for (int i = 1; i <= nbVertex; i++)
-				raf.readLine();
+			for (int i = 1; i <= nbVertex; i++) {
+				ligne = raf.readLine();
+				if(ligne.isEmpty()) i--;
+			}
 
 			for (int j = 0; j < nbFace; j++) {
 				ligne = raf.readLine();

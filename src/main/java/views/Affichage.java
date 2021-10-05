@@ -15,9 +15,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Screen;
@@ -29,7 +31,7 @@ import modele.Trace;
 
 public class Affichage extends Application {
 
-	private static final int DEGREE_DE_ZOOM = 140;
+	private static final int DEGREE_DE_ZOOM = 3;
 	@FXML
 	Canvas canvas;
 	GraphicsContext gc;
@@ -37,8 +39,9 @@ public class Affichage extends Application {
 	String file;
 	ArrayList<Point> points = null;
 	ArrayList<Trace> trace = null;
-	double oldMouseX =0;
+	double oldMouseX = 0;
 	double oldMouseY = 0;
+	double theta = 0.1;
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -89,7 +92,8 @@ public class Affichage extends Application {
 
 		/* CREATION DE LA FENETRE */
 		VBox vBox = new VBox(menuBar);
-		Scene scene = new Scene(vBox, Screen.getPrimary().getBounds().getWidth(), Screen.getPrimary().getBounds().getHeight());
+		Scene scene = new Scene(vBox, Screen.getPrimary().getBounds().getWidth(),
+				Screen.getPrimary().getBounds().getHeight());
 
 		canvas = new Canvas(Screen.getPrimary().getBounds().getWidth(), Screen.getPrimary().getBounds().getHeight());
 		BorderPane root = new BorderPane(canvas);
@@ -97,26 +101,19 @@ public class Affichage extends Application {
 		vBox.getChildren().addAll(canvas, root);
 
 		chargeFichier();
-		
-		rotate3DY(180);
+
 		affichagePly();
-		
-		
+
 		canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {
-				
 
-			
-				
 				double mouseX = event.getSceneX();
-				double mouseY = event.getSceneY();			
-				rotate3DX( mouseY-oldMouseY);
-				rotate3DY(mouseX-oldMouseX );
-				System.out.println(mouseY-oldMouseY);
+				double mouseY = event.getSceneY();
+				rotate3DX(mouseY - oldMouseY);
+				rotate3DY(mouseX - oldMouseX);
+				System.out.println(mouseY - oldMouseY);
 				oldMouseX = mouseX;
 				oldMouseY = mouseY;
-				
-				
 
 				affichagePly();
 
@@ -140,14 +137,32 @@ public class Affichage extends Application {
 		 */
 
 		/* AFFICHAGE */
+		scene.setOnKeyPressed(e -> {
+			System.out.println(e.getCode().toString());
+			System.out.println(theta);
+			if (e.getCode() == KeyCode.RIGHT) {
+				rotate3DY(theta);
+				affichagePly();
+			}
+			else if (e.getCode() == KeyCode.LEFT) {
+				rotate3DY(-theta);
+				affichagePly();
+			
+			}else if (e.getCode() == KeyCode.UP) {
+				rotate3DX(theta);
+				affichagePly();
+			}
+			else if (e.getCode() == KeyCode.DOWN) {
+				rotate3DX(-theta);
+				affichagePly();
+			
+			}
+		});
 		primaryStage.setScene(scene);
 		primaryStage.show();
-		
-		
+
 	}
 
-	
-	
 	private void chargeFichier() {
 		try {
 			points = (ArrayList<Point>) RecuperationPly.recuperationCoordonnee(file);
@@ -156,33 +171,38 @@ public class Affichage extends Application {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Efface le canvas, lis le fichier et trace la figure
 	 * 
 	 */
-	
-	
+
 	private void affichagePly() {
 
 		gc = canvas.getGraphicsContext2D();
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		double middle_screen_x = canvas.getWidth()/2;
-		double middle_screen_y =canvas.getHeight()/2;
+		double middle_screen_x = canvas.getWidth() / 2;
+		double middle_screen_y = canvas.getHeight() / 2;
 		double oldX = 0, oldY = 0;
 		double X = 0;
 		double Y = 0;
 		double Z = 0;
+
+		gc.setStroke(Color.RED);
+		gc.strokeLine(middle_screen_x, 0, middle_screen_x, canvas.getHeight());
+		gc.setStroke(Color.GREEN);
+		gc.strokeLine(0, middle_screen_y, canvas.getWidth(), middle_screen_y);
+		gc.setStroke(Color.BLACK);
+		
 		for (Trace t : trace) {
 			Iterator<Point> it = t.getPoints().iterator();
 			int cpt = 0;
 			while (it.hasNext()) {
 				Point pt = it.next();
-	
 
 				if (cpt == 0) {
-					oldX = pt.getX() * DEGREE_DE_ZOOM + middle_screen_x ;
-					oldY = pt.getY() * DEGREE_DE_ZOOM + middle_screen_y ;
+					oldX = pt.getX() * DEGREE_DE_ZOOM + middle_screen_x;
+					oldY = pt.getY() * DEGREE_DE_ZOOM + middle_screen_y;
 
 				}
 
@@ -199,45 +219,33 @@ public class Affichage extends Application {
 		}
 
 	}
+
 	private void rotate3DX(double tetha) {
 		double sinTheta = Math.sin(tetha);
 		double cosTheta = Math.cos(tetha);
-		for(Point p : points) {
-			double newY = p.getY() * cosTheta - p.getZ() * sinTheta;
-			double newZ = p.getZ() * cosTheta + p.getY() * sinTheta;
-			System.out.println(p.getY());
-			System.out.println(p.getZ());
-			System.out.println(newY);
-			System.out.println(newZ);
+		for (Point p : points) {
+			double newY = (p.getY() * cosTheta) - (p.getZ() * sinTheta);
+			double newZ = (p.getY() * sinTheta) + (p.getZ() * cosTheta);
 			p.setY(newY);
 			p.setZ(newZ);
 		}
-		
+
 	}
+
 	private void rotate3DY(double tetha) {
 		double sinTheta = Math.sin(tetha);
 		double cosTheta = Math.cos(tetha);
-		for(Point p : points) {
-			p.setX(p.getX() * cosTheta + p.getZ() * sinTheta);
-			p.setZ(p.getZ() * cosTheta - p.getX() * sinTheta);
+		for (Point p : points) {
+			double newX = (p.getX() * cosTheta) + (p.getZ() * sinTheta);
+			double newZ = (p.getZ() * cosTheta) - (p.getX()*sinTheta);
+			p.setX(newX);
+			p.setZ(newZ);
 		}
-		
+
 	}
+
 	private void rotate3DZ(double ztetha) {
-		
-	}
 
-	// Controller du plan
-	protected void setX(double value) {
-		this.plan.setX(value);
-	}
-
-	public void setY(double value) {
-		this.plan.setX(value);
-	}
-
-	public void setZ(double value) {
-		this.plan.setX(value);
 	}
 
 }
