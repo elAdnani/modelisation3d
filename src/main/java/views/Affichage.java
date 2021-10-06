@@ -39,7 +39,7 @@ public class Affichage extends Application {
 	ArrayList<Trace> trace = null;
 	double oldMouseX =0;
 	double oldMouseY = 0;
-
+	Color color = Color.GRAY;
 	@Override
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Modélisateur 3D");
@@ -173,6 +173,10 @@ public class Affichage extends Application {
 		double X = 0;
 		double Y = 0;
 		double Z = 0;
+		double [] Xcoord= new double[4];
+		double [] Ycoord= new double[4];
+		gc.setFill(this.color);
+
 		for (Trace t : trace) {
 			Iterator<Point> it = t.getPoints().iterator();
 			int cpt = 0;
@@ -189,12 +193,16 @@ public class Affichage extends Application {
 				X = pt.getX() * DEGREE_DE_ZOOM + middle_screen_x;
 				Y = pt.getY() * DEGREE_DE_ZOOM + middle_screen_y;
 
-				gc.strokeLine(oldX, oldY, X, Y);
+			
+				Xcoord[cpt]= X;
+				Ycoord[cpt]=Y;
 
 				oldX = X;
 				oldY = Y;
 				cpt++;
 			}
+			gc.strokePolygon(Xcoord, Ycoord,3 );
+			gc.fillPolygon(Xcoord,Ycoord,3);
 
 		}
 
