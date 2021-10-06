@@ -31,7 +31,7 @@ import modele.Trace;
 
 public class Affichage extends Application {
 
-	private static final int DEGREE_DE_ZOOM = 3;
+	private static final int DEGREE_DE_ZOOM = 100;
 	@FXML
 	Canvas canvas;
 	GraphicsContext gc;
@@ -41,7 +41,7 @@ public class Affichage extends Application {
 	ArrayList<Trace> trace = null;
 	double oldMouseX = 0;
 	double oldMouseY = 0;
-	double theta = 0.1;
+	double theta = toRadian(1);
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -109,9 +109,8 @@ public class Affichage extends Application {
 
 				double mouseX = event.getSceneX();
 				double mouseY = event.getSceneY();
-				rotate3DX(mouseY - oldMouseY);
-				rotate3DY(mouseX - oldMouseX);
-				System.out.println(mouseY - oldMouseY);
+				rotate3DX(toRadian(mouseY - oldMouseY));
+				rotate3DY(toRadian(mouseX - oldMouseX));
 				oldMouseX = mouseX;
 				oldMouseY = mouseY;
 
@@ -144,15 +143,16 @@ public class Affichage extends Application {
 				rotate3DY(theta);
 				affichagePly();
 			}
-			else if (e.getCode() == KeyCode.LEFT) {
+			if (e.getCode() == KeyCode.LEFT) {
 				rotate3DY(-theta);
 				affichagePly();
 			
-			}else if (e.getCode() == KeyCode.UP) {
+			}
+			if (e.getCode() == KeyCode.UP) {
 				rotate3DX(theta);
 				affichagePly();
 			}
-			else if (e.getCode() == KeyCode.DOWN) {
+			if (e.getCode() == KeyCode.DOWN) {
 				rotate3DX(-theta);
 				affichagePly();
 			
@@ -246,6 +246,10 @@ public class Affichage extends Application {
 
 	private void rotate3DZ(double ztetha) {
 
+	}
+	
+	private double toRadian(double degree) {
+		return degree * Math.PI/180;
 	}
 
 }
