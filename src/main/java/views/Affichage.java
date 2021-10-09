@@ -108,9 +108,9 @@ public class Affichage extends Application {
 
 		/* CREATION DES OUTILS */
 		VBox outils = new VBox();
-		outils.addEventFilter(KeyEvent.KEY_PRESSED, e ->{ 
-			if(e.getCode() == KeyCode.UP || e.getCode() == KeyCode.DOWN || e.getCode() == KeyCode.RIGHT || e.getCode() == KeyCode.LEFT)
-				e.consume();					
+		outils.addEventFilter(KeyEvent.KEY_PRESSED, ek ->{ 
+			if(ek.getCode() == KeyCode.UP || ek.getCode() == KeyCode.DOWN || ek.getCode() == KeyCode.RIGHT || ek.getCode() == KeyCode.LEFT)
+				ek.consume();					
 		});
 		Label nom = new Label("Menu");
 		Label nomZoom = new Label ("Zoom");
@@ -382,4 +382,5 @@ public class Affichage extends Application {
 	private double toRadian(double degree) {
 		return degree * Math.PI/180;
 	}
+	
 }
