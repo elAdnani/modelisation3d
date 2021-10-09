@@ -83,7 +83,7 @@ public class Affichage extends Application {
 		
 		
 		/* INTERACTION AVEC LE MENU */
-		openFileItem.setOnAction(new EventHandler<ActionEvent>() {
+		openFileItem.setOnAction( new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				FileChooser fileChooser = new FileChooser();
 				fileChooser.setTitle("Open File");
