@@ -4,20 +4,32 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -49,6 +61,8 @@ public class Affichage extends Application {
 
 		file = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator
 				+ "resources" + File.separator + "vache.ply";
+		
+		
 		/* CREATION DU MENU */
 		MenuBar menuBar = new MenuBar();
 
@@ -66,6 +80,8 @@ public class Affichage extends Application {
 		menuBar.getMenus().add(fileMenu);
 		menuBar.getMenus().add(helpMenu);
 
+		
+		
 		/* INTERACTION AVEC LE MENU */
 		openFileItem.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
@@ -90,20 +106,111 @@ public class Affichage extends Application {
 			};
 		});
 
+		/* CREATION DES OUTILS */
+		VBox outils = new VBox();
+		outils.addEventFilter(KeyEvent.KEY_PRESSED, e ->{ 
+			if(e.getCode() == KeyCode.UP || e.getCode() == KeyCode.DOWN || e.getCode() == KeyCode.RIGHT || e.getCode() == KeyCode.LEFT)
+				e.consume();					
+		});
+		Label nom = new Label("Menu");
+		Label nomZoom = new Label ("Zoom");
+		Button face = new Button("Vue de face");
+		Button droite = new Button("Vue de droite");
+		Button dessus = new Button("Vue de haut");
+		Button up = new Button("↑");
+		Button down = new Button("↓");
+		Button right = new Button("→");
+		Button left = new Button("←");
+		Button plus = new Button("+");
+		Button moins = new Button("-");
+		Slider zoomSlider = new Slider();
+
+		zoomSlider.setMin(0);
+		zoomSlider.setMax(1000);
+		zoomSlider.setShowTickLabels(true);
+		
+		VBox position = new VBox(4);
+		position.getChildren().addAll(face, droite, dessus);
+		VBox.setMargin(dessus, new Insets(0,0,90,0));
+		
+		HBox hbUp = new HBox();
+		hbUp.getChildren().add(up);
+		HBox.setMargin(up, new Insets(0,0,5,106));
+
+		HBox leftRight = new HBox(60);
+		leftRight.getChildren().addAll(left, right);
+		HBox.setMargin(left, new Insets(0,0,0,45));
+		
+		HBox hbDown = new HBox();
+		hbDown.getChildren().add(down);
+		HBox.setMargin(down, new Insets(5,0,90,106));
+
+		HBox zoom = new HBox(5);
+		zoom.getChildren().addAll(plus, zoomSlider, moins);
+		HBox.setMargin(plus, new Insets(0,0,0,40));
+				
+		outils.getChildren().addAll(nom, position, hbUp, leftRight, hbDown, nomZoom, zoom);
+		
+		nom.setPadding(new Insets(10,10,30,115));
+		nomZoom.setPadding(new Insets(10,10,30,115));
+
+		face.setPadding(new Insets(20,100,20,100));
+		droite.setPadding(new Insets(20,90,20,100));
+		dessus.setPadding(new Insets(20,98,20,100));
+		
+		up.setPadding(new Insets(20,27,20,27));
+		down.setPadding(new Insets(20,27,20,27));
+		right.setPadding(new Insets(20,25,20,25));
+		left.setPadding(new Insets(20,25,20,25));
+		
+		plus.setPadding(new Insets(3,5,3,5));
+		moins.setPadding(new Insets(3,5,3,5));
+
+		right.setOnAction(e ->{
+			rotate3DY(theta*4);
+			affichagePly();
+		});
+		
+		left.setOnAction (e ->{
+			rotate3DY(-theta*4);
+			affichagePly();
+		});
+		
+		up.setOnAction (e ->{
+			rotate3DX(theta*4);
+			affichagePly();
+		});
+		
+		down.setOnAction (e ->{
+			rotate3DX(-theta*4);
+			affichagePly();
+		});
+		
+		face.setOnAction(e ->{
+			chargeFichier();
+			affichagePly();
+		});
+		
 		/* CREATION DE LA FENETRE */
 		VBox vBox = new VBox(menuBar);
-		Scene scene = new Scene(vBox, Screen.getPrimary().getBounds().getWidth(),
-				Screen.getPrimary().getBounds().getHeight());
-
-		canvas = new Canvas(Screen.getPrimary().getBounds().getWidth(), Screen.getPrimary().getBounds().getHeight());
-		BorderPane root = new BorderPane(canvas);
-
-		vBox.getChildren().addAll(canvas, root);
+		Scene scene = new Scene(vBox, 1500, 790);
+				//new Scene(vBox, Screen.getPrimary().getBounds().getWidth(),
+				//Screen.getPrimary().getBounds().getHeight());
+		canvas = new Canvas(1200,790);
+				//new Canvas(Screen.getPrimary().getBounds().getWidth(), Screen.getPrimary().getBounds().getHeight());		
+		
+		/* INITIALISATION DU BORDERPANE */
+		BorderPane root = new BorderPane();
+		BorderPane.setMargin(outils, new Insets(0,10,10,0));
+		root.setLeft(canvas);
+		root.setRight(outils);
+		vBox.getChildren().addAll(root);
 
 		chargeFichier();
-
 		affichagePly();
-
+		
+		
+		/* DEPLACEMENT SOURIS */
 		canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {
 
@@ -135,8 +242,9 @@ public class Affichage extends Application {
 		 * }
 		 */
 
+		
 		/* AFFICHAGE */
-		scene.setOnKeyPressed(e -> {
+		/*scene.setOnKeyPressed(e -> {
 			System.out.println(e.getCode().toString());
 			System.out.println(theta);
 			if (e.getCode() == KeyCode.RIGHT) {
@@ -157,6 +265,29 @@ public class Affichage extends Application {
 				affichagePly();
 			
 			}
+		});*/
+		
+		scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+		    public void handle(KeyEvent e) {
+		    	if (e.getCode() == KeyCode.RIGHT) {
+					rotate3DY(theta);
+					affichagePly();
+				}
+				if (e.getCode() == KeyCode.LEFT) {
+					rotate3DY(-theta);
+					affichagePly();
+				
+				}
+				if (e.getCode() == KeyCode.UP) {
+					rotate3DX(theta);
+					affichagePly();
+				}
+				if (e.getCode() == KeyCode.DOWN) {
+					rotate3DX(-theta);
+					affichagePly();
+				
+				}
+		    }
 		});
 		primaryStage.setScene(scene);
 		primaryStage.show();
