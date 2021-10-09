@@ -382,5 +382,4 @@ public class Affichage extends Application {
 	private double toRadian(double degree) {
 		return degree * Math.PI/180;
 	}
-
 }
