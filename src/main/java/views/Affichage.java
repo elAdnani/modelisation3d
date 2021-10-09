@@ -58,7 +58,6 @@ public class Affichage extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Modélisateur 3D");
-
 		file = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator
 				+ "resources" + File.separator + "vache.ply";
 		
