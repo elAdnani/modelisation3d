@@ -5,17 +5,17 @@ package modele;
  *	y pour l'axe des ordonnées <br>
  *	z pour l'axe des côtés <br>
  */
-public class Point {
+public class Point3D {
 
 	private double x;
 	private double y;
 	private double z;
 
-	public Point() {
+	public Point3D() {
 		this(0.0,0.0,0.0);
 	}
 
-	public Point(double x, double y, double z) {
+	public Point3D(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;

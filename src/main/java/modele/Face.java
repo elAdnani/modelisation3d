@@ -3,29 +3,29 @@ package modele;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Trace {
+public class Face {
 
-	private List<Point> lien;
+	private List<Point3D> lien;
 
-	public Trace() {
-		this(new ArrayList<Point>());
+	public Face() {
+		this(new ArrayList<Point3D>());
 	}
 
-	public Trace(List<Point> lien) {
+	public Face(List<Point3D> lien) {
 		this.lien = lien;
 	}
 
-	public void add(Point p) {
+	public void add(Point3D p) {
 		this.lien.add(p);
 	}
 
-	public List<Point> getPoints() {
+	public List<Point3D> getPoints() {
 		return lien;
 	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder("[TRACE");
-		for (Point p : lien) {
+		for (Point3D p : lien) {
 			sb.append(p + "---");
 		}
 		sb.append("]");
