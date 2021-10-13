@@ -54,13 +54,13 @@ public class RecuperationPly {
 	 * Recupere la liste des Point3Ds dans un fichier PLY donné en parametre
 	 * 
 	 * @param fichier - Chemin vers le fichier
-	 * @return {@link List} de {@link Point3D}
+	 * @return {@link List} de {@link Point}
 	 * @throws Exception
 	 */
-	public static List<Point3D> recuperationCoordonnee(String fichier) throws Exception {
+	public static List<Point> recuperationPoints(String fichier) throws Exception {
 		checkFormat(fichier);
 
-		List<Point3D> res = new ArrayList<Point3D>();
+		List<Point> res = new ArrayList<Point>();
 
 		File FichierPly = null;
 
@@ -76,8 +76,12 @@ public class RecuperationPly {
 
 			for (int i = 0; i < nbVertex; i++) {
 				ligne = raf.readLine();
-				tab = ligne.split(" ");
-				res.add(new Point3D(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
+				if(!ligne.isEmpty()) {					
+					tab = ligne.split(" ");
+					System.out.println("" + (i+1) + "/" + (nbVertex));
+					res.add(new Point(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
+					System.out.println(res.get(i));
+				} else i--;
 			}
 
 			raf.close();
@@ -93,11 +97,11 @@ public class RecuperationPly {
 	 * Recupere la liste des Plans dans un fichier PLY donné en paramètre
 	 * 
 	 * @param fichier - Chemin vers le fichier
-	 * @param Point3Ds - {@link List} de {@link Point3D}
-	 * @return {@link List} de {@link Plan}
+	 * @param Point3Ds - {@link List} de {@link Point}
+	 * @return {@link List} de {@link Face}
 	 * @throws Exception
 	 */
-	public static List<Face> recuperationPlanDesPoints(String fichier, List<Point3D> Point3Ds) throws Exception {
+	public static List<Face> recuperationFaces(String fichier, List<Point> Point3Ds) throws Exception {
 		checkFormat(fichier);
 
 		List<Face> res = new ArrayList<Face>();
@@ -115,8 +119,10 @@ public class RecuperationPly {
 
 			String[] tab;
 
-			for (int i = 1; i <= nbVertex; i++)
-				raf.readLine();
+			for (int i = 1; i <= nbVertex; i++) {
+				ligne = raf.readLine();
+				if(ligne.isEmpty()) i--;
+			}
 
 			for (int j = 0; j < nbFace; j++) {
 				ligne = raf.readLine();
