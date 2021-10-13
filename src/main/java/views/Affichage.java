@@ -43,7 +43,7 @@ import modele.Trace;
 
 public class Affichage extends Application {
 
-	private static final int DEGREE_DE_ZOOM = 100;
+	private static int DEGREE_DE_ZOOM = 100;
 	@FXML
 	Canvas canvas;
 	GraphicsContext gc;
@@ -193,12 +193,16 @@ public class Affichage extends Application {
 		
 		plus.setOnAction(e -> {
 			zoomSlider.setValue(zoomSlider.getValue()+10);
+			DEGREE_DE_ZOOM += 10;
+			affichagePly();
 		});
 		
 		moins.setOnAction(e -> {
 			zoomSlider.setValue(zoomSlider.getValue()-10);
+			DEGREE_DE_ZOOM -= 10;
+			affichagePly();
 		});
-		
+				
 		/* CREATION DE LA FENETRE */
 		VBox vBox = new VBox(menuBar);
 		Scene scene = new Scene(vBox, 1500, 790);
