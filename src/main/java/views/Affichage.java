@@ -146,13 +146,13 @@ public class Affichage extends Application {
 		HBox.setMargin(down, new Insets(5,0,90,106));
 
 		HBox zoom = new HBox(5);
-		zoom.getChildren().addAll(plus, zoomSlider, moins);
-		HBox.setMargin(plus, new Insets(0,0,0,40));
+		zoom.getChildren().addAll(moins, zoomSlider, plus);
+		HBox.setMargin(moins, new Insets(0,0,0,50));
 				
 		outils.getChildren().addAll(nom, position, hbUp, leftRight, hbDown, nomZoom, zoom);
 		
 		nom.setPadding(new Insets(10,10,30,115));
-		nomZoom.setPadding(new Insets(10,10,30,115));
+		nomZoom.setPadding(new Insets(10,10,30,120));
 
 		face.setPadding(new Insets(20,100,20,100));
 		droite.setPadding(new Insets(20,90,20,100));
@@ -164,7 +164,7 @@ public class Affichage extends Application {
 		left.setPadding(new Insets(20,25,20,25));
 		
 		plus.setPadding(new Insets(3,5,3,5));
-		moins.setPadding(new Insets(3,5,3,5));
+		moins.setPadding(new Insets(3,8,3,8));
 
 		right.setOnAction(e ->{
 			rotate3DY(theta*4);
