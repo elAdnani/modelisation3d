@@ -191,6 +191,14 @@ public class Affichage extends Application {
 			affichagePly();
 		});
 		
+		plus.setOnAction(e -> {
+			zoomSlider.setValue(zoomSlider.getValue()+10);
+		});
+		
+		moins.setOnAction(e -> {
+			zoomSlider.setValue(zoomSlider.getValue()-10);
+		});
+		
 		/* CREATION DE LA FENETRE */
 		VBox vBox = new VBox(menuBar);
 		Scene scene = new Scene(vBox, 1500, 790);
