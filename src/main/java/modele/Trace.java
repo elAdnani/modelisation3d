@@ -1,9 +1,9 @@
 package modele;
 
-public class Plan {
+public class Trace {
 	double x, y, z;
 
-	public Plan() {
+	public Trace() {
 		double x = 1;
 		double y = 1;
 		double z = 0;
@@ -36,8 +36,9 @@ public class Plan {
 
 	}
 
-	public Plan getPlan() {
+	public Trace getPlan() {
 		return this;
 	}
+
 
 }

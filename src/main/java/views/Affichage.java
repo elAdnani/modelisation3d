@@ -22,17 +22,16 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import modele.Plan;
-import modele.Point;
+import modele.Face;
+import modele.Point3D;
 import modele.RecuperationPly;
-import modele.Trace;
 
 public class Affichage extends Application {
 
 	@FXML
 	Canvas canvas;
 	GraphicsContext gc;
-	Plan plan = new Plan();
+	Point3D plan = new Point3D();
 	String file;
 
 	@Override
@@ -112,12 +111,12 @@ public class Affichage extends Application {
 
 		/* AFFICHAGE DE LA FIGURE 3D */
 		/*
-		 * gc=canvas.getGraphicsContext2D(); ArrayList<Point> points =
-		 * (ArrayList<Point>) RecuperationPly.recuperationCoordonnee("/vache.ply");
+		 * gc=canvas.getGraphicsContext2D(); ArrayList<Point3D> Point3Ds =
+		 * (ArrayList<Point3D>) RecuperationPly.recuperationCoordonnee("/vache.ply");
 		 * ArrayList<Trace> trace = (ArrayList<Trace>)
-		 * RecuperationPly.recuperationTracerDesPoint("/vache.ply", points); double oldX
-		 * =0 ,oldY =0; for (Trace t: trace) { Iterator<Point> it =
-		 * t.getPoints().iterator(); int cpt=0; while(it.hasNext()) { Point pt =
+		 * RecuperationPly.recuperationTracerDesPoint3D("/vache.ply", Point3Ds); double oldX
+		 * =0 ,oldY =0; for (Trace t: trace) { Iterator<Point3D> it =
+		 * t.getPoint3Ds().iterator(); int cpt=0; while(it.hasNext()) { Point3D pt =
 		 * it.next(); if(cpt==0) { oldX = pt.getX()*120+500; oldY = pt.getY()*120+500; }
 		 * gc.strokeLine(oldX, oldY, pt.getX()*120+500,pt.getY()*120+500); oldX =
 		 * pt.getX()*120+500; oldY = pt.getY()*120+500; cpt++; }
@@ -130,13 +129,13 @@ public class Affichage extends Application {
 		primaryStage.show();
 	}
 
-	ArrayList<Point> points = null;
-	ArrayList<Trace> trace = null;
+	ArrayList<Point3D> Point3Ds = null;
+	ArrayList<Face> trace = null;
 	
 	private void chargeFichier() {
 		try {
-			points = (ArrayList<Point>) RecuperationPly.recuperationCoordonnee(file);
-			trace = (ArrayList<Trace>) RecuperationPly.recuperationTracerDesPoint(file, points);
+			Point3Ds = (ArrayList<Point3D>) RecuperationPly.recuperationCoordonnee(file);
+			trace = (ArrayList<Face>) RecuperationPly.recuperationPlanDesPoints(file, Point3Ds);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -154,11 +153,11 @@ public class Affichage extends Application {
 		double X = 0;
 		double Y = 0;
 		double Z = 0;
-		for (Trace t : trace) {
-			Iterator<Point> it = t.getPoints().iterator();
+		for (Face t : trace) {
+			Iterator<Point3D> it = t.getPoints().iterator();
 			int cpt = 0;
 			while (it.hasNext()) {
-				Point pt = it.next();
+				Point3D pt = it.next();
 				Z = (pt.getZ() + plan.getZ());
 
 				if (cpt == 0) {

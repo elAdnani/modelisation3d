@@ -16,27 +16,27 @@ public class RecuperationPly {
 //	public static void main(String[] args) {
 //		file = "vache.ply";
 //
-//		List<Point> res = null;
-//		List<Trace> ensembleDePoint = null;
+//		List<Point3D> res = null;
+//		List<Plan> ensembleDePoint3D = null;
 //
 //		try {
 //			long startTime = System.nanoTime();
 //			for (int i = 0; i < 100; i++) {
 //				res = recuperationCoordonnee();
-//				ensembleDePoint = recuperationTracerDesPoint(res);
+//				ensembleDePoint3D = recuperationPlanrDesPoint3D(res);
 //			}
 //			long endTime = System.nanoTime();
 //			System.out
 //					.println("Temps de chargement moyen : " + (float) (endTime - startTime) / 100 / 1000 / 1000 + "ms");
-//			System.out.println("Nb points : " + res.size());
-//			System.out.println("Nb faces : " + ensembleDePoint.size());
+//			System.out.println("Nb Point3Ds : " + res.size());
+//			System.out.println("Nb faces : " + ensembleDePoint3D.size());
 //		} catch (Exception e) {
-//			e.printStackTrace();
+//			e.printStackPlan();
 //		}
 //
 //		System.out.println("DEBUT");
 //		
-//		for(Trace p : ensembleDePoint) {
+//		for(Plan p : ensembleDePoint3D) {
 //			System.out.println(p);
 //			try
 //			{
@@ -44,23 +44,23 @@ public class RecuperationPly {
 //			} catch (InterruptedException e)
 //			{
 //				// TODO Auto-generated catch block
-//				e.printStackTrace();
+//				e.printStackPlan();
 //			}
 //		}
 //
 //	}
 
 	/**
-	 * Recupere la liste des points dans un fichier PLY donné en parametre
+	 * Recupere la liste des Point3Ds dans un fichier PLY donné en parametre
 	 * 
 	 * @param fichier - Chemin vers le fichier
-	 * @return {@link List} de {@link Point}
+	 * @return {@link List} de {@link Point3D}
 	 * @throws Exception
 	 */
-	public static List<Point> recuperationCoordonnee(String fichier) throws Exception {
+	public static List<Point3D> recuperationCoordonnee(String fichier) throws Exception {
 		checkFormat(fichier);
 
-		List<Point> res = new ArrayList<Point>();
+		List<Point3D> res = new ArrayList<Point3D>();
 
 		File FichierPly = null;
 
@@ -77,7 +77,7 @@ public class RecuperationPly {
 			for (int i = 0; i < nbVertex; i++) {
 				ligne = raf.readLine();
 				tab = ligne.split(" ");
-				res.add(new Point(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
+				res.add(new Point3D(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
 			}
 
 			raf.close();
@@ -90,17 +90,17 @@ public class RecuperationPly {
 	}
 
 	/**
-	 * Recupere la liste des traces dans un fichier PLY donné en paramètre
+	 * Recupere la liste des Plans dans un fichier PLY donné en paramètre
 	 * 
 	 * @param fichier - Chemin vers le fichier
-	 * @param points - {@link List} de {@link Point}
-	 * @return {@link List} de {@link Trace}
+	 * @param Point3Ds - {@link List} de {@link Point3D}
+	 * @return {@link List} de {@link Plan}
 	 * @throws Exception
 	 */
-	public static List<Trace> recuperationTracerDesPoint(String fichier, List<Point> points) throws Exception {
+	public static List<Face> recuperationPlanDesPoints(String fichier, List<Point3D> Point3Ds) throws Exception {
 		checkFormat(fichier);
 
-		List<Trace> res = new ArrayList<Trace>();
+		List<Face> res = new ArrayList<Face>();
 
 		File FichierPly = null;
 
@@ -122,11 +122,11 @@ public class RecuperationPly {
 				ligne = raf.readLine();
 //				System.out.println(ligne);
 				tab = ligne.split(" ");
-				Trace ensembleDePoint = new Trace();
+				Face ensembleDePoint3D = new Face();
 				for (int i = 1; i < tab.length; i++) {
-					ensembleDePoint.add(points.get(Integer.valueOf(tab[i])));
+					ensembleDePoint3D.add(Point3Ds.get(Integer.valueOf(tab[i])));
 				}
-				res.add(ensembleDePoint);
+				res.add(ensembleDePoint3D);
 			}
 			raf.close();
 		} catch (IOException o) {
