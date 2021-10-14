@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -32,14 +33,21 @@ import modele.Trace;
 
 public class Affichage extends Application {
 
-	private static double DEGREE_DE_ZOOM = 500;
+	private static double DEGREE_DE_ZOOM = 100;
 	private double theta = toRadian(1); // Angle de rotation en radian
-	
+
 	private ArrayList<Point> points = null; // Liste des points
 	private ArrayList<Trace> trace = null; // Liste des faces
 
 	private double offSetY; // Décalage sur l'axe Y
 	private double offSetX; // Décalage sur l'axe X
+
+	/*
+	 * TESTS
+	 */
+	private final long[] frameTimes = new long[100];
+	private int frameTimeIndex = 0;
+	private boolean arrayFilled = false;
 
 	Canvas canvas;
 	GraphicsContext gc;
@@ -49,6 +57,7 @@ public class Affichage extends Application {
 	double amplitude = 1;
 	double amplitudeX = 1;
 	double amplitudeY = 1;
+	double amplitudeZ = 1;
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -144,6 +153,33 @@ public class Affichage extends Application {
 
 		});
 
+		/**
+		 * TEST FRAME RATE
+		 */
+
+		AnimationTimer frameRateMeter = new AnimationTimer() {
+
+			@Override
+			public void handle(long now) {
+				long oldFrameTime = frameTimes[frameTimeIndex];
+				frameTimes[frameTimeIndex] = now;
+				frameTimeIndex = (frameTimeIndex + 1) % frameTimes.length;
+				if (frameTimeIndex == 0) {
+					arrayFilled = true;
+				}
+				if (arrayFilled) {
+					long elapsedNanos = now - oldFrameTime;
+					long elapsedNanosPerFrame = elapsedNanos / frameTimes.length;
+					double frameRate = 1_000_000_000.0 / elapsedNanosPerFrame;
+					canvas.getGraphicsContext2D().clearRect(canvas.getWidth() - 150, 0, 150, 10);
+					canvas.getGraphicsContext2D().fillText(String.format("Current frame rate: %.3f", frameRate),
+							canvas.getWidth() - 150, 10);
+				}
+			}
+		};
+
+		frameRateMeter.start();
+
 		/* AFFICHAGE DE LA FIGURE 3D */
 		/*
 		 * gc=canvas.getGraphicsContext2D(); ArrayList<Point> points =
@@ -195,18 +231,33 @@ public class Affichage extends Application {
 
 	}
 
+	// Permet de centrer un object
+	private void test() {
+		double length = Math.pow(centerCoord[0] * 2, 2);
+		double height = Math.pow(centerCoord[1] * 2, 2);
+		double breadth = Math.pow(centerCoord[2] * 2, 2);
+		double diagonal = Math.sqrt(length + height + breadth);
+		for (Point p : points) {
+			p.setX((p.getX() - centerCoord[0]) / (amplitude));
+			p.setY((p.getY() - centerCoord[1]) / (amplitude));
+			p.setZ((p.getZ() - centerCoord[2]) / (amplitude));
+		}
+	}
+
 	private void chargeFichier() {
 		try {
 			points = (ArrayList<Point>) RecuperationPly.recuperationCoordonnee(file);
 			trace = (ArrayList<Trace>) RecuperationPly.recuperationTracerDesPoint(file, points);
 			centerCoord = getCenter();
+			test();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		sortByZ();
+		calculateAutoScale();
+		affichagePly();
 	}
 
-	// TODO A supprimer si ne marche pas
 	double[] centerCoord;
 
 	/**
@@ -227,10 +278,12 @@ public class Affichage extends Application {
 		double[] Xcoord = new double[4];
 		double[] Ycoord = new double[4];
 		long start = System.nanoTime();
-		
+
+//		centerCoord = getCenter();
+
 		offSetX = middle_screen_x;
 		offSetY = middle_screen_y;
-		
+
 		gc = canvas.getGraphicsContext2D();
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
@@ -238,7 +291,7 @@ public class Affichage extends Application {
 		gc.strokeLine(middle_screen_x, 0, middle_screen_x, canvas.getHeight());
 		gc.setStroke(Color.GREEN);
 		gc.strokeLine(0, middle_screen_y, canvas.getWidth(), middle_screen_y);
-		
+
 		gc.setStroke(Color.BLACK);
 		gc.setFill(Color.GRAY);
 		System.out.println("Drawing started...");
@@ -248,24 +301,27 @@ public class Affichage extends Application {
 			while (it.hasNext()) {
 				Point pt = it.next();
 
-				if (cpt == 0) {
-					oldX = ((pt.getX() - centerCoord[0]) / amplitude) * DEGREE_DE_ZOOM + offSetX;
-					oldY = ((pt.getY() - centerCoord[1]) / amplitude) * DEGREE_DE_ZOOM + offSetY;
+//				if (cpt == 0) {
+//					oldX = ((pt.getX() - centerCoord[0]) / amplitude) * DEGREE_DE_ZOOM + offSetX;
+//					oldY = ((pt.getY() - centerCoord[1]) / amplitude) * DEGREE_DE_ZOOM + offSetY;
 //					oldX = (pt.getX()) * DEGREE_DE_ZOOM + offSetX;
 //					oldY = (pt.getY()) * DEGREE_DE_ZOOM + offSetY;
 //					gc.setStroke(Color.BLUE);
 //					gc.strokeOval((pt.getX() * DEGREE_DE_ZOOM + offSetX),(pt.getY() * DEGREE_DE_ZOOM + offSetY), 1, 1);
 //					gc.setStroke(Color.BLACK);
-				}
+//				}
 
-				X = ((pt.getX() - centerCoord[0]) / amplitude) * DEGREE_DE_ZOOM + offSetX;
-				Y = ((pt.getY() - centerCoord[1]) / amplitude) * DEGREE_DE_ZOOM + offSetY;
+				X = (pt.getX() * DEGREE_DE_ZOOM) + offSetX;
+				Y = (pt.getY() * DEGREE_DE_ZOOM) + offSetY;
 
+//				gc.setFill(Color.BLACK);
+//				gc.fillText("(" + pt.getX() + "," + pt.getY() + "," + pt.getZ() + ")", X, Y);
+//				gc.setFill(Color.GRAY);
 //				X = (pt.getX()) * DEGREE_DE_ZOOM + offSetX;
 //				Y = (pt.getY()) * DEGREE_DE_ZOOM + offSetY;
 
-				Xcoord[cpt]= X;
-				Ycoord[cpt]=Y;
+				Xcoord[cpt] = X;
+				Ycoord[cpt] = Y;
 
 //				gc.strokeLine(oldX, oldY, X, Y);
 
@@ -275,10 +331,10 @@ public class Affichage extends Application {
 			}
 			gc.strokePolygon(Xcoord, Ycoord, t.getPoints().size());
 			gc.fillPolygon(Xcoord, Ycoord, t.getPoints().size());
-
 		}
 		long end = System.nanoTime();
-		System.out.println("Drawing done in " + (end-start) + " nanosecondes ("+ (end-start)/1_000_000.0 +" ms)");
+		System.out
+				.println("Drawing done in " + (end - start) + " nanosecondes (" + (end - start) / 1_000_000.0 + " ms)");
 	}
 
 	private void rotate3DX(double tetha) {
@@ -342,14 +398,13 @@ public class Affichage extends Application {
 		Double ampX = xMax - xMin;
 		Double ampY = yMax - yMin;
 		Double ampZ = zMax - zMin;
-		if (ampX > ampY)
-			amplitude = ampX;
-		else
-			amplitude = ampY;
+
+		amplitude = Math.max(ampX, Math.max(ampY, ampZ));
 
 		amplitudeX = ampX;
 		amplitudeY = ampY;
-		System.out.println("ampX : " + ampX + "; ampY : " + ampY + "; amplitude : " + amplitude);
+		amplitudeZ = ampZ;
+		System.out.println("ampX : " + ampX + "; ampY : " + ampY + "; ampZ : " + ampZ + " amplitude : " + amplitude);
 
 		centerCoord[0] = (xMax + xMin) / 2;
 		centerCoord[1] = (yMax + yMin) / 2;
@@ -374,23 +429,68 @@ public class Affichage extends Application {
 			}
 		});
 		long end = System.nanoTime();
-		System.out.println("Sorting done in " + (end-start) + " nanoseconds (" + (end-start)/1_000_000.0 +" ms)");
+		System.out
+				.println("Sorting done in " + (end - start) + " nanoseconds (" + (end - start) / 1_000_000.0 + " ms)");
 	}
-	
+
 	private static double getAverageZ(Trace t) {
 		double sum = 0;
-		for ( Point p : t.getPoints())
-		{
+		for (Point p : t.getPoints()) {
 			sum += p.getZ();
 		}
 
 		return sum / t.getPoints().size();
 	}
-	
-	private String numberWithSpaces(Double x) {
-	    String[] parts = x.toString().split(".");
-parts[0] = parts[0].replace("/\\B(?=(\\d{3})+(?!\\d))/g", " ");
-	    return String.join(".", parts);
+
+	private void calculateAutoScale() {
+		Double xMin = null;
+		Double xMax = null;
+		Double yMin = null;
+		Double yMax = null;
+		Double zMin = null;
+		Double zMax = null;
+
+		for (Iterator<Point> iterator = points.iterator(); iterator.hasNext();) {
+			Point point = iterator.next();
+			double currX = point.getX();
+			double currY = point.getY();
+			double currZ = point.getZ();
+			if (xMin == null || currX < xMin)
+				xMin = currX;
+			if (xMax == null || currX > xMax)
+				xMax = currX;
+			if (yMin == null || currY < yMin)
+				yMin = currY;
+			if (yMax == null || currY > yMax)
+				yMax = currY;
+			if (zMin == null || currZ < zMin)
+				zMin = currZ;
+			if (zMax == null || currZ > zMax)
+				zMax = currZ;
+		}
+
+		Double xLength = Math.abs(xMax - xMin);
+		Double yLength = Math.abs(yMax - yMin);
+		Double zLength = Math.abs(zMax - zMin);
+		
+		Double canvasWidth = canvas.getWidth();
+		Double canvasHeight = canvas.getHeight();
+		
+		Double smallestSize = Math.min(canvasWidth, canvasHeight);
+
+		System.out.println("xMax " + xMax + " - xMin " + xMin + " = xLength " + xLength);
+		System.out.println("yMax " + yMax + " - yMin " + yMin + " = yLength " + yLength);
+		System.out.println("zMax " + zMax + " - zMin " + zMin + " = zLength " + zLength);
+
+		Double xZoom = (smallestSize - 100) / xLength;
+		Double yZoom = (smallestSize - 100) / yLength;
+		Double zZoom = (smallestSize - 100) / zLength;
+//		System.out.println("CanvasWidth " + (canvas.getWidth() - 100) + "/ xLength " + xLength + " = xZoom "
+//				+ xZoom);
+//		System.out.println("CanvasHeight " + (canvas.getHeight() - 100) + "/ yLength " + yLength + " = yZoom "
+//				+ yZoom);
+		
+		DEGREE_DE_ZOOM = Math.min(xZoom, Math.min(yZoom, zZoom));
 	}
-	
+
 }
