@@ -93,6 +93,9 @@ public class RecuperationPly {
 		return res;
 	}
 
+	
+	
+	
 	/**
 	 * Recupere la liste des Plans dans un fichier PLY donné en paramètre
 	 * 
