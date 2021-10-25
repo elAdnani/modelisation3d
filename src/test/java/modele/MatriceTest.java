@@ -11,21 +11,13 @@ import org.junit.jupiter.api.AfterAll;
 
 public class MatriceTest {
 
-	double[][] donnéesMatriceA = new double[][] {
-		{1,2},
-		{1,1},
-		{0,3}
-	};
-	double[][] donnéesMatriceB = new double[][] {
-		{-1,1,0,1},
-		{2,1,0,0}
-	};
-	Matrice A = new Matrice(donnéesMatriceA);
-	Matrice B = new Matrice(donnéesMatriceB);
+	
+	Matrice A ;
+	Matrice B ;
 	
 		@BeforeAll
 		public static void beforeAllTests() {
-			System.out.println("Début des tests pour la classe Paire\n");
+			System.out.println("Début des tests pour la classe Matrice\n");
 
 		}
 		
@@ -33,7 +25,7 @@ public class MatriceTest {
 		
 		@AfterAll
 		public static void afterAllTests() {
-			System.out.println("Fin des tests de GrapheType");
+			System.out.println("Fin des tests de Matrice");
 
 		}
 		
@@ -41,7 +33,20 @@ public class MatriceTest {
 		
 		@BeforeEach
 		public void setUp() {
-		
+			
+			double[][] donneesMatriceA= new double[][] {
+				{1,2},
+				{1,1},
+				{0,3}
+			};
+			double[][] donneesMatriceB=new double[][] {
+				{-1,1,0,1},
+				{2,1,0,0}
+			};
+			
+			
+			A = new Matrice(donneesMatriceA);
+			B = new Matrice(donneesMatriceB);
 		}
 		
 		@AfterEach
@@ -163,8 +168,9 @@ public class MatriceTest {
 			
 			
 			assertTrue(	AB.equals(A.multiplication(B))  );
-			System.out.println(BA.equals(B.multiplication(A)));
+			
 			assertTrue(	BA.equals(B.multiplication(A))	);
+			System.out.println(B.multiplication(A));
 			
 		}
 		

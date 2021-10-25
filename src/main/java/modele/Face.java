@@ -6,6 +6,10 @@ import java.util.List;
 public class Face {
 
 	private List<Point> lien;
+	
+	
+	// List<Integer> reference; // indice de la matrice des listes de point
+	// Matrice  METTRE EN PARAMETRE
 
 	public Face() {
 		this(new ArrayList<Point>());

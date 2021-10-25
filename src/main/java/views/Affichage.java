@@ -8,11 +8,16 @@ import java.util.Iterator;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -20,6 +25,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -53,12 +60,21 @@ public class Affichage extends Application {
 	double amplitudeX = 1;
 	double amplitudeY = 1;
 
+	
+	static String path= System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator
+			+ "resources";
+	
 	@Override
 	public void start(Stage primaryStage) {
+		ListView<String> listPly = new ListView<String>();
+		
+		
 		primaryStage.setTitle("Modélisateur 3D");
+		
+		listDirectory(path, listPly);
 
-		file = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator
-				+ "resources" + File.separator + "cube.ply";
+		file  = path+ File.separator + "cube.ply";
+		
 		/* CREATION DU MENU */
 		MenuBar menuBar = new MenuBar();
 
@@ -72,10 +88,11 @@ public class Affichage extends Application {
 
 		fileMenu.getItems().add(openFileItem);
 		fileMenu.getItems().add(exitItem);
-
+		
+		
 		menuBar.getMenus().add(fileMenu);
 		menuBar.getMenus().add(helpMenu);
-
+		
 		/* INTERACTION AVEC LE MENU */
 		openFileItem.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
@@ -123,10 +140,24 @@ public class Affichage extends Application {
 			}
 
 		});
+		
+		listPly.setMinSize(canvas.getWidth()/20, 50);
+		listPly.setOnMouseClicked(e->{
+			if(!this.file.equals(path + File.separator+listPly.getSelectionModel().getSelectedItem())) {
+				System.out.println(this.file);
+				Affichage.this.file = path + File.separator +listPly.getSelectionModel().getSelectedItem();
+				System.out.println(this.file);
+				chargeFichier();
+				affichagePly();
+			}
+
+		});
+		
 		BorderPane root = new BorderPane(canvas);
 
-		vBox.getChildren().addAll(canvas, root);
-
+		HBox rv = new HBox(listPly,root);
+		vBox.getChildren().addAll(rv);
+		
 		chargeFichier();
 
 		affichagePly();
@@ -211,13 +242,34 @@ public class Affichage extends Application {
 
 	// TODO A supprimer si ne marche pas
 	double[] centerCoord;
+	
+	private void listDirectory(String dir, ListView<String> plyListe) {
+        if(plyListe==null) {
+        	plyListe = new ListView<String>();
+        }
+ 
+		File file = new File(dir);
+        
+        File[] liste = file.listFiles();
+        for(File item : liste){
+          if(item.isFile() && item.getName().endsWith(".ply"))
+          { 
+        	 System.out.println(item.getName());
+        	  plyListe.getItems().add(item.getName());
+          } 
 
+        }
+        
+    }
+
+	
 	/**
 	 * Efface le canvas, lis le fichier et trace la figure
 	 * 
 	 */
 
 	private void affichagePly() {
+		
 //		MergeSort sort = new MergeSort(points);
 //		sort.sortGivenArray();
 //		this.points = sort.getSortedArray();
@@ -277,7 +329,7 @@ public class Affichage extends Application {
 				cpt++;
 			}
 			gc.strokePolygon(Xcoord, Ycoord, t.getPoints().size());
-			gc.fillPolygon(Xcoord, Ycoord, t.getPoints().size());
+//			gc.fillPolygon(Xcoord, Ycoord, t.getPoints().size());
 
 		}
 		long end = System.nanoTime();

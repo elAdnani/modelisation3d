@@ -201,6 +201,8 @@ public class Matrice {
 		 */
 		public boolean ecrire(int ligne, int colonne, double valeur) {
 			if (this.peutLire(ligne, colonne)) {
+
+		//  		System.out.println(ligne+ " "+colonne +"="+valeur);
 				this.matrice[ligne][colonne] = valeur;
 				return true;
 			} else 
@@ -271,7 +273,8 @@ public class Matrice {
 		}
 		
 		/**
-		 * Multiplication de deux matrices.
+		 * Multiplication de deux matrices. 
+		 * Une multiplication de la matrice courante avec celle en paramètre
 		 * 
 		 * @param facteur La matrice servant à la multiplication.
 		 * 
@@ -328,7 +331,7 @@ public class Matrice {
 		/**
 		 * Donne la matrice de cadrage par rapport à une matrice m
 		 */
-		public static Matrice getCadrage(int k1, int k2, int k3, Matrice m) {
+		public Matrice getCadrage(double k1, double k2, double k3) {
 			Matrice cadrageDeCoefficientKi = new Matrice(new double[][] {
 				{k1,0,0,0},
 				{0,k2,0,0},
@@ -336,13 +339,27 @@ public class Matrice {
 				{0,0,0,1},
 			});
 			
-			return m.multiplication(cadrageDeCoefficientKi);
+			return this.multiplication(cadrageDeCoefficientKi);
+		}
+		
+		/**
+		 * Donne la matrice de cadrage par rapport à une matrice m
+		 */
+		public static Matrice getRotation(double x) {
+			Matrice rotationAngleX = new Matrice(new double[][] {
+				{1,0,0,0},
+				{0,Math.cos(x),-Math.sin(x),0},
+				{0,Math.sin(x),Math.cos(x),0},
+				{0,0,0,1},
+			});
+			
+			return rotationAngleX;
 		}
 		
 		/**
 		 * Donne la matrice de translation par rapport à une matrice m
 		 */
-		public static Matrice getTranslation(int tx1, int tx2, int tx3, Matrice m) {
+		public static Matrice getTranslation(double tx1, double tx2, double tx3) {
 			Matrice translationDeVecteur = new Matrice(new double[][] {
 				{1,0,0,tx1},
 				{0,1,0,tx2},
@@ -350,7 +367,7 @@ public class Matrice {
 				{0,0,0,1},
 			});
 			
-			return m.multiplication(translationDeVecteur);
+			return translationDeVecteur;
 		}
 		
 		
