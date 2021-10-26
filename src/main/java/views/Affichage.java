@@ -8,6 +8,8 @@ import java.util.Iterator;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -133,6 +135,7 @@ public class Affichage extends Application {
 		zoomSlider.setMin(0);
 		zoomSlider.setMax(1000);
 		zoomSlider.setShowTickLabels(true);
+		zoomSlider.setValue(DEGREE_DE_ZOOM);
 
 		VBox position = new VBox(4);
 		position.getChildren().addAll(face, droite, dessus);
@@ -208,6 +211,13 @@ public class Affichage extends Application {
 			affichagePly();
 		});
 
+		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				DEGREE_DE_ZOOM = (int) zoomSlider.getValue();
+				affichagePly();
+			}
+		});
 		/* CREATION DE LA FENETRE */
 		VBox vBox = new VBox(menuBar);
 		Scene scene = new Scene(vBox, 1500, 790);
@@ -560,5 +570,5 @@ public class Affichage extends Application {
 
 		DEGREE_DE_ZOOM = Math.min(xZoom, Math.min(yZoom, zZoom));
 	}
-	
+
 }
