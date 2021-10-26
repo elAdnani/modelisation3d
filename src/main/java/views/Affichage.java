@@ -112,10 +112,10 @@ public class Affichage extends Application {
 				System.out.println("deltaY = " + deltaY);
 				System.out.println("DEGREE_DE_ZOOM = " + DEGREE_DE_ZOOM);
 				if (deltaY < 0 && DEGREE_DE_ZOOM > 0) {
-					DEGREE_DE_ZOOM -= 15;
+					DEGREE_DE_ZOOM -= 50;
 					
 				} else {
-					DEGREE_DE_ZOOM += 15;
+					DEGREE_DE_ZOOM += 50;
 					
 				}
 				affichagePly();
