@@ -238,9 +238,17 @@ public class Affichage extends Application {
 		affichagePly();
 
 		/* DEPLACEMENT SOURIS */
+		canvas.setOnMousePressed(new EventHandler<MouseEvent>() {
+			public void handle(MouseEvent event) {
+				double mouseX = event.getSceneX();
+				double mouseY = event.getSceneY();
+				oldMouseX = mouseX;
+				oldMouseY = mouseY;
+			}
+		});
+
 		canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {
-
 				double mouseX = event.getSceneX();
 				double mouseY = event.getSceneY();
 				rotate3DX(toRadian(mouseY - oldMouseY));
