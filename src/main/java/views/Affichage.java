@@ -56,7 +56,7 @@ public class Affichage extends Application {
 		primaryStage.setTitle("Modélisateur 3D");
 
 		file = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator
-				+ "resources" + File.separator + "cube.ply";
+				+ "resources" + File.separator + "vache.ply";
 		/* CREATION DU MENU */
 		MenuBar menuBar = new MenuBar();
 
@@ -184,11 +184,11 @@ public class Affichage extends Application {
 
 			}
 			if (e.getCode() == KeyCode.ADD) {
-				DEGREE_DE_ZOOM += 0.1;
+				DEGREE_DE_ZOOM += 15;
 				affichagePly();
 			}
 			if (e.getCode() == KeyCode.SUBTRACT) {
-				DEGREE_DE_ZOOM -= 0.1;
+				DEGREE_DE_ZOOM -= 15;
 				affichagePly();
 			}
 		});
