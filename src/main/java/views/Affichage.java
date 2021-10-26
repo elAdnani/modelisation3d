@@ -130,6 +130,9 @@ public class Affichage extends Application {
 
 		affichagePly();
 
+
+		
+
 		canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {
 
@@ -394,5 +397,53 @@ public class Affichage extends Application {
 parts[0] = parts[0].replace("/\\B(?=(\\d{3})+(?!\\d))/g", " ");
 	    return String.join(".", parts);
 	}
+	
+	/*
+		plus.setOnAction(e -> {
+ 			zoomSlider.setValue(zoomSlider.getValue() + 10);
+			DEGREE_DE_ZOOM += 10;
+			DEGREE_DE_ZOOM += 50;
+ 			affichagePly();
+ 		});
+
+		 moins.setOnAction(e -> {
+ 			zoomSlider.setValue(zoomSlider.getValue() - 10);
+		DEGREE_DE_ZOOM -= 10;
+		DEGREE_DE_ZOOM -= 	0;
+ 			affichagePly();
+ 		});
+
+		 dessus.setOnAction(e ->{
+			resetModele();
+			rotate3DY(90);
+			affichagePly();
+		});
+
+		droite.setOnAction(e ->{
+			resetModele();
+			rotate3DX(0);
+			affichagePly();
+		});
+		face.setOnAction(e ->{
+			resetModele();
+			rotate3DX(90);
+			affichagePly();
+		});
+			@Override
+		public void changed(ObservableValue<? extends Number> observable, //
+			Number oldValue, Number newValue) {
+ 
+				DEGREE_DE_ZOOM = (double) newValue;
+				affichagePly();
+
+			}
+		});
+		// reinitialise la position du modele 
+	private void resetModele() {
+		
+	}*/
+		
+
+
 	
 }
