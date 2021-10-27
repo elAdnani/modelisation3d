@@ -31,11 +31,13 @@ public class Matrice {
 		 */
 		public Matrice(double[][] matrice) {
 			// Instantiation de la nouvelle matrice
-			this(matrice.length, matrice[0].length);
 			
-			// ajout de la matrice à l'objet créé
-			for (int ligne = 0; ligne < this.getNbLignes(); ligne++)
-					this.matrice[ligne] = Arrays.copyOf(matrice[ligne], this.getNbColonnes());
+			this.matrice= matrice;
+			if(! this.estCarre()) {
+				this.matrice= new double[matrice.length][matrice.length];;
+			}
+			this.colonne=matrice[0].length;
+			this.ligne=matrice.length;
 		}
 		
 		/**
@@ -328,10 +330,24 @@ public class Matrice {
 		}
 		
 		
+		public Matrice getColonne(int indice) {
+			Matrice res = null;
+			if(indice>0 &&  indice<this.colonne ) {
+				int colonneUnique=1;
+				res = new Matrice(this.ligne, colonneUnique);
+				
+				for(int ligne =0 ; ligne< this.ligne; ligne++) {
+					res.ecrire(ligne, colonneUnique-1, this.lire(ligne,indice));
+				}
+			}
+			return res;
+		}
+		
+		
 		/**
 		 * Donne la matrice de cadrage par rapport à une matrice m
 		 */
-		public Matrice getCadrage(double k1, double k2, double k3) {
+		public static Matrice getCadrage(double k1, double k2, double k3) {
 			Matrice cadrageDeCoefficientKi = new Matrice(new double[][] {
 				{k1,0,0,0},
 				{0,k2,0,0},
@@ -339,7 +355,7 @@ public class Matrice {
 				{0,0,0,1},
 			});
 			
-			return this.multiplication(cadrageDeCoefficientKi);
+			return cadrageDeCoefficientKi;
 		}
 		
 		/**
