@@ -373,6 +373,20 @@ public class Matrice {
 		}
 		
 		/**
+		 * Donne la matrice homothetie par rapport à une matrice m
+		 */
+		public static Matrice getHomothetie(double x) {
+			Matrice homothesieRapportX = new Matrice(new double[][] {
+				{x,0,0,0},
+				{0,x,0,0},
+				{0,0,x,0},
+				{0,0,0,1},
+			});
+			
+			return homothesieRapportX;
+		}
+		
+		/**
 		 * Donne la matrice de translation par rapport à une matrice m
 		 */
 		public static Matrice getTranslation(double tx1, double tx2, double tx3) {
