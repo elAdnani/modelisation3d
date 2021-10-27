@@ -75,11 +75,11 @@ public class RecuperationPly {
 			String tab[] = new String[0];
 			for (int i = 0; i < nbVertex; i++) {
 				ligne = raf.readLine();
-				if(!ligne.isEmpty()) {					
+				if(ligne != null && !ligne.isEmpty()) {					
 					tab = ligne.split(" ");
-					System.out.println("" + (i+1) + "/" + (nbVertex));
+//					System.out.println("" + (i+1) + "/" + (nbVertex));
 					res.add(new Point(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
-					System.out.println(res.get(i));
+//					System.out.println(res.get(i));
 				} else i--;
 			}
 

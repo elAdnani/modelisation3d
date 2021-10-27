@@ -18,6 +18,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -56,7 +57,8 @@ public class Affichage extends Application {
 
 	Canvas canvas;
 	GraphicsContext gc;
-	String file;
+	Slider zoomSlider;
+
 	double oldMouseX = 0;
 	double oldMouseY = 0;
 	double amplitude = 1;
@@ -64,13 +66,19 @@ public class Affichage extends Application {
 	double amplitudeY = 1;
 	double amplitudeZ = 1;
 
+	private String file;
+	private static String path = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main"
+			+ File.separator + "resources" + File.separator + "models" + File.separator;
+
 	@Override
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Modélisateur 3D");
 
-		file = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator
-				+ "resources" + File.separator + "vache.ply";
+		ListView<String> listPly = new ListView<String>();
 
+		file = path + "vache.ply";
+
+		listDirectory(path, listPly);
 		/* CREATION DU MENU */
 		MenuBar menuBar = new MenuBar();
 
@@ -130,7 +138,7 @@ public class Affichage extends Application {
 		Button left = new Button("←");
 		Button plus = new Button("+");
 		Button moins = new Button("-");
-		Slider zoomSlider = new Slider();
+		zoomSlider = new Slider();
 
 		zoomSlider.setMin(0);
 		zoomSlider.setMax(1000);
@@ -214,7 +222,7 @@ public class Affichage extends Application {
 		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				DEGREE_DE_ZOOM = (int) zoomSlider.getValue();
+				DEGREE_DE_ZOOM = zoomSlider.getValue();
 				affichagePly();
 			}
 		});
@@ -232,7 +240,22 @@ public class Affichage extends Application {
 		BorderPane.setMargin(outils, new Insets(0, 10, 10, 0));
 		root.setLeft(canvas);
 		root.setRight(outils);
-		vBox.getChildren().addAll(root);
+
+		listPly.setMinSize(canvas.getWidth() / 20, 50);
+		listPly.setOnMouseClicked(e -> {
+			if (!this.file.equals(path + File.separator + listPly.getSelectionModel().getSelectedItem())) {
+				System.out.println(this.file);
+				Affichage.this.file = path + File.separator + listPly.getSelectionModel().getSelectedItem();
+				System.out.println(this.file);
+				chargeFichier();
+				affichagePly();
+			}
+
+		});
+
+		HBox rv = new HBox(listPly, root);
+
+		vBox.getChildren().addAll(rv);
 
 		chargeFichier();
 		affichagePly();
@@ -314,6 +337,24 @@ public class Affichage extends Application {
 		});
 		primaryStage.setScene(scene);
 		primaryStage.show();
+
+	}
+
+	private void listDirectory(String dir, ListView<String> plyListe) {
+		if (plyListe == null) {
+			plyListe = new ListView<String>();
+		}
+
+		File file = new File(dir);
+
+		File[] liste = file.listFiles();
+		for (File item : liste) {
+			if (item.isFile() && item.getName().endsWith(".ply")) {
+				System.out.println(item.getName());
+				plyListe.getItems().add(item.getName());
+			}
+
+		}
 
 	}
 
@@ -507,11 +548,39 @@ public class Affichage extends Application {
 
 	private void sortByZ() {
 		long start = System.nanoTime();
-		System.out.println("Sorting started...");
+		System.out.println("Sorting by Z started...");
 		Collections.sort(trace, new Comparator<Trace>() {
 			@Override
 			public int compare(Trace o1, Trace o2) {
 				return getAverageZ(o1) - getAverageZ(o2) < 0 ? 1 : -1;
+			}
+		});
+		long end = System.nanoTime();
+		System.out
+				.println("Sorting done in " + (end - start) + " nanoseconds (" + (end - start) / 1_000_000.0 + " ms)");
+	}
+
+	private void sortByY() {
+		long start = System.nanoTime();
+		System.out.println("Sorting by Y started...");
+		Collections.sort(trace, new Comparator<Trace>() {
+			@Override
+			public int compare(Trace o1, Trace o2) {
+				return getAverageY(o1) - getAverageY(o2) < 0 ? 1 : -1;
+			}
+		});
+		long end = System.nanoTime();
+		System.out
+				.println("Sorting done in " + (end - start) + " nanoseconds (" + (end - start) / 1_000_000.0 + " ms)");
+	}
+
+	private void sortByX() {
+		long start = System.nanoTime();
+		System.out.println("Sorting by X started...");
+		Collections.sort(trace, new Comparator<Trace>() {
+			@Override
+			public int compare(Trace o1, Trace o2) {
+				return getAverageX(o1) - getAverageX(o2) < 0 ? 1 : -1;
 			}
 		});
 		long end = System.nanoTime();
@@ -528,55 +597,87 @@ public class Affichage extends Application {
 		return sum / t.getPoints().size();
 	}
 
-	private void calculateAutoScale() {
-		Double xMin = null;
-		Double xMax = null;
-		Double yMin = null;
-		Double yMax = null;
-		Double zMin = null;
-		Double zMax = null;
-
-		for (Iterator<Point> iterator = points.iterator(); iterator.hasNext();) {
-			Point point = iterator.next();
-			double currX = point.getX();
-			double currY = point.getY();
-			double currZ = point.getZ();
-			if (xMin == null || currX < xMin)
-				xMin = currX;
-			if (xMax == null || currX > xMax)
-				xMax = currX;
-			if (yMin == null || currY < yMin)
-				yMin = currY;
-			if (yMax == null || currY > yMax)
-				yMax = currY;
-			if (zMin == null || currZ < zMin)
-				zMin = currZ;
-			if (zMax == null || currZ > zMax)
-				zMax = currZ;
+	private static double getAverageY(Trace t) {
+		double sum = 0;
+		for (Point p : t.getPoints()) {
+			sum += p.getY();
 		}
 
-		Double xLength = Math.abs(xMax - xMin);
-		Double yLength = Math.abs(yMax - yMin);
-		Double zLength = Math.abs(zMax - zMin);
+		return sum / t.getPoints().size();
+	}
+
+	private static double getAverageX(Trace t) {
+		double sum = 0;
+		for (Point p : t.getPoints()) {
+			sum += p.getX();
+		}
+
+		return sum / t.getPoints().size();
+	}
+
+	private void calculateAutoScale() {
+		System.out.println("Autoscale started...");
+		long start = System.nanoTime();
+//		Double xMin = null;
+//		Double xMax = null;
+//		Double yMin = null;
+//		Double yMax = null;
+//		Double zMin = null;
+//		Double zMax = null;
+//
+//		for (Iterator<Point> iterator = points.iterator(); iterator.hasNext();) {
+//			Point point = iterator.next();
+//			double currX = point.getX();
+//			double currY = point.getY();
+//			double currZ = point.getZ();
+//			if (xMin == null || currX < xMin)
+//				xMin = currX;
+//			if (xMax == null || currX > xMax)
+//				xMax = currX;
+//			if (yMin == null || currY < yMin)
+//				yMin = currY;
+//			if (yMax == null || currY > yMax)
+//				yMax = currY;
+//			if (zMin == null || currZ < zMin)
+//				zMin = currZ;
+//			if (zMax == null || currZ > zMax)
+//				zMax = currZ;
+//		}
+//		
+		double length = Math.pow(centerCoord[0] * 2, 2);
+		double height = Math.pow(centerCoord[1] * 2, 2);
+		double breadth = Math.pow(centerCoord[2] * 2, 2);
+		double diagonal = Math.sqrt(length + height + breadth);
+
+//		Double xLength = Math.abs(xMax - xMin);
+//		Double yLength = Math.abs(yMax - yMin);
+//		Double zLength = Math.abs(zMax - zMin);
 
 		Double canvasWidth = canvas.getWidth();
 		Double canvasHeight = canvas.getHeight();
 
 		Double smallestSize = Math.min(canvasWidth, canvasHeight);
 
-		System.out.println("xMax " + xMax + " - xMin " + xMin + " = xLength " + xLength);
-		System.out.println("yMax " + yMax + " - yMin " + yMin + " = yLength " + yLength);
-		System.out.println("zMax " + zMax + " - zMin " + zMin + " = zLength " + zLength);
+//		System.out.println("xMax " + xMax + " - xMin " + xMin + " = xLength " + xLength);
+//		System.out.println("yMax " + yMax + " - yMin " + yMin + " = yLength " + yLength);
+//		System.out.println("zMax " + zMax + " - zMin " + zMin + " = zLength " + zLength);
 
-		Double xZoom = (smallestSize - 100) / xLength;
-		Double yZoom = (smallestSize - 100) / yLength;
-		Double zZoom = (smallestSize - 100) / zLength;
+//		Double xZoom = (smallestSize - 100) / xLength;
+//		Double yZoom = (smallestSize - 100) / yLength;
+//		Double zZoom = (smallestSize - 100) / zLength;
+
 //		System.out.println("CanvasWidth " + (canvas.getWidth() - 100) + "/ xLength " + xLength + " = xZoom "
 //				+ xZoom);
 //		System.out.println("CanvasHeight " + (canvas.getHeight() - 100) + "/ yLength " + yLength + " = yZoom "
 //				+ yZoom);
 
-		DEGREE_DE_ZOOM = Math.min(xZoom, Math.min(yZoom, zZoom));
+		DEGREE_DE_ZOOM = smallestSize / (diagonal + 1);
+		System.out.println("Diagonal : " + diagonal);
+		long end = System.nanoTime();
+		System.out.println(
+				"Autoscale done in " + (end - start) + " nanoseconds (" + ((end - start) / 1_000_000.0) + " ms)");
+		System.out.println("Resulted zoom from autoscale is " + DEGREE_DE_ZOOM);
+		zoomSlider.setValue(DEGREE_DE_ZOOM);
 	}
 
 }
