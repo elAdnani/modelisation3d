@@ -3,15 +3,18 @@ package modele;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Trace {
+public class Face {
 
 	private List<Point> lien;
 
-	public Trace() {
+	// List<Integer> reference; // indice de la matrice des listes de point
+	// Matrice METTRE EN PARAMETRE
+
+	public Face() {
 		this(new ArrayList<Point>());
 	}
 
-	public Trace(List<Point> lien) {
+	public Face(List<Point> lien) {
 		this.lien = lien;
 	}
 
@@ -24,7 +27,7 @@ public class Trace {
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder("[TRACE");
+		StringBuilder sb = new StringBuilder("[Face");
 		for (Point p : lien) {
 			sb.append(p + "---");
 		}

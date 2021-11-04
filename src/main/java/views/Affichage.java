@@ -33,9 +33,9 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import modele.Face;
 import modele.Point;
 import modele.RecuperationPly;
-import modele.Trace;
 
 public class Affichage extends Application {
 
@@ -43,7 +43,7 @@ public class Affichage extends Application {
 	private double theta = toRadian(1); // Angle de rotation en radian
 
 	private ArrayList<Point> points = null; // Liste des points
-	private ArrayList<Trace> trace = null; // Liste des faces
+	private ArrayList<Face> faces = null; // Liste des faces
 
 	private double offSetY; // Décalage sur l'axe Y
 	private double offSetX; // Décalage sur l'axe X
@@ -289,9 +289,9 @@ public class Affichage extends Application {
 		/*
 		 * gc=canvas.getGraphicsContext2D(); ArrayList<Point> points =
 		 * (ArrayList<Point>) RecuperationPly.recuperationCoordonnee("/vache.ply");
-		 * ArrayList<Trace> trace = (ArrayList<Trace>)
+		 * ArrayList<Face> faces = (ArrayList<Face>)
 		 * RecuperationPly.recuperationTracerDesPoint("/vache.ply", points); double oldX
-		 * =0 ,oldY =0; for (Trace t: trace) { Iterator<Point> it =
+		 * =0 ,oldY =0; for (Face t: faces) { Iterator<Point> it =
 		 * t.getPoints().iterator(); int cpt=0; while(it.hasNext()) { Point pt =
 		 * it.next(); if(cpt==0) { oldX = pt.getX()*120+500; oldY = pt.getY()*120+500; }
 		 * gc.strokeLine(oldX, oldY, pt.getX()*120+500,pt.getY()*120+500); oldX =
@@ -373,8 +373,8 @@ public class Affichage extends Application {
 
 	private void chargeFichier() {
 		try {
-			points = (ArrayList<Point>) RecuperationPly.recuperationCoordonnee(file);
-			trace = (ArrayList<Trace>) RecuperationPly.recuperationTracerDesPoint(file, points);
+			points = (ArrayList<Point>) RecuperationPly.recuperationPoints(file);
+			faces = (ArrayList<Face>) RecuperationPly.recuperationFaces(file, points);
 			centerCoord = getCenter();
 			test();
 		} catch (Exception e) {
@@ -422,7 +422,7 @@ public class Affichage extends Application {
 		gc.setStroke(Color.BLACK);
 		gc.setFill(Color.GRAY);
 		System.out.println("Drawing started...");
-		for (Trace t : trace) {
+		for (Face t : faces) {
 			Iterator<Point> it = t.getPoints().iterator();
 			int cpt = 0;
 			while (it.hasNext()) {
@@ -549,9 +549,9 @@ public class Affichage extends Application {
 	private void sortByZ() {
 		long start = System.nanoTime();
 		System.out.println("Sorting by Z started...");
-		Collections.sort(trace, new Comparator<Trace>() {
+		Collections.sort(faces, new Comparator<Face>() {
 			@Override
-			public int compare(Trace o1, Trace o2) {
+			public int compare(Face o1, Face o2) {
 				return getAverageZ(o1) - getAverageZ(o2) < 0 ? 1 : -1;
 			}
 		});
@@ -563,9 +563,9 @@ public class Affichage extends Application {
 	private void sortByY() {
 		long start = System.nanoTime();
 		System.out.println("Sorting by Y started...");
-		Collections.sort(trace, new Comparator<Trace>() {
+		Collections.sort(faces, new Comparator<Face>() {
 			@Override
-			public int compare(Trace o1, Trace o2) {
+			public int compare(Face o1, Face o2) {
 				return getAverageY(o1) - getAverageY(o2) < 0 ? 1 : -1;
 			}
 		});
@@ -577,9 +577,9 @@ public class Affichage extends Application {
 	private void sortByX() {
 		long start = System.nanoTime();
 		System.out.println("Sorting by X started...");
-		Collections.sort(trace, new Comparator<Trace>() {
+		Collections.sort(faces, new Comparator<Face>() {
 			@Override
-			public int compare(Trace o1, Trace o2) {
+			public int compare(Face o1, Face o2) {
 				return getAverageX(o1) - getAverageX(o2) < 0 ? 1 : -1;
 			}
 		});
@@ -588,7 +588,7 @@ public class Affichage extends Application {
 				.println("Sorting done in " + (end - start) + " nanoseconds (" + (end - start) / 1_000_000.0 + " ms)");
 	}
 
-	private static double getAverageZ(Trace t) {
+	private static double getAverageZ(Face t) {
 		double sum = 0;
 		for (Point p : t.getPoints()) {
 			sum += p.getZ();
@@ -597,7 +597,7 @@ public class Affichage extends Application {
 		return sum / t.getPoints().size();
 	}
 
-	private static double getAverageY(Trace t) {
+	private static double getAverageY(Face t) {
 		double sum = 0;
 		for (Point p : t.getPoints()) {
 			sum += p.getY();
@@ -606,7 +606,7 @@ public class Affichage extends Application {
 		return sum / t.getPoints().size();
 	}
 
-	private static double getAverageX(Trace t) {
+	private static double getAverageX(Face t) {
 		double sum = 0;
 		for (Point p : t.getPoints()) {
 			sum += p.getX();
