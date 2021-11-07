@@ -88,14 +88,19 @@ public class RecuperationPly {
 			for (int i = 0; i < nbVertex; i++)
 			{
 				ligne = raf.readLine();
-				if (!ligne.isEmpty())
-				{
+
+				if(ligne != null && !ligne.isEmpty()) {					
+
 					tab = ligne.split(" ");
+
 					// System.out.println("" + (i+1) + "/" + (nbVertex));
+
 					res.add(new Point(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
+
 					// System.out.println(res.get(i));
 				} else
 					i--;
+
 			}
 
 			raf.close();
@@ -216,7 +221,7 @@ public class RecuperationPly {
 		return res;
 	}
 
-	public static List<FaceMatrice> recuperationFacesMatrice(String fichier, List<Point> Point3Ds) throws Exception {
+	public static List<FaceMatrice> recuperationFacesMatrice(String fichier) throws Exception {
 		checkFormat(fichier);
 
 		List<FaceMatrice> res = new ArrayList<FaceMatrice>();

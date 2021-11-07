@@ -1,6 +1,10 @@
 package modele;
 
 import java.util.Arrays;
+import java.util.Iterator;
+
+import utils.ConnectableProperty;
+import views.IteratorMatrice;
 
 /**
  * <p>Gestion d'une matrice contenant des nombres.</p>
@@ -8,8 +12,9 @@ import java.util.Arrays;
  * <p>Les opérations basiques telles que l'addition, la soustraction et la multiplication sont possibles.</p>
  * 
  */
-public class Matrice {
+public class Matrice extends ConnectableProperty implements Iterable<Matrice> {
 	
+
 	/* ATTRIBUTS ______________________________ */
 
 	private int ligne;
@@ -180,7 +185,7 @@ public class Matrice {
 		}
 		
 		/**
-		 * Lis le contenu d'une case aux coordonnées données
+		 * Lis le contenu d'une case aux coordonnées données à partir des indices
 		 * 
 		 * @param ligne Ligne de la case à lire
 		 * @param colonne Colonne de la case à lire
@@ -514,6 +519,10 @@ public class Matrice {
 			return true;
 		}
 		
+		
+		public Iterator<Matrice> iterator() {
+	        return new IteratorMatrice(this);
+	    }
 		
 		
 }
