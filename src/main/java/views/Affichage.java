@@ -16,6 +16,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -23,6 +24,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -45,8 +47,8 @@ public class Affichage extends Application {
 	private ArrayList<Point> points = null; // Liste des points
 	private ArrayList<Face> faces = null; // Liste des faces
 
-	private double offSetY; // Décalage sur l'axe Y
-	private double offSetX; // Décalage sur l'axe X
+	private double offSetY; // DÃ©calage sur l'axe Y
+	private double offSetX; // DÃ©calage sur l'axe X
 
 	/*
 	 * TESTS
@@ -72,7 +74,7 @@ public class Affichage extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-		primaryStage.setTitle("Modélisateur 3D");
+		primaryStage.setTitle("ModÃ©lisateur 3D");
 
 		ListView<String> listPly = new ListView<String>();
 
@@ -104,21 +106,34 @@ public class Affichage extends Application {
 				fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Ply File", "*.ply"),
 						new ExtensionFilter("All Files", "*.*"));
 				File file = fileChooser.showOpenDialog(null);
-
+					
 				if (file != null) {
+					boolean readable = checkFormat(file.getName());
+					if(readable) {
 					Affichage.this.file = file.getAbsolutePath();
 					chargeFichier();
 					affichagePly();
+					}else {
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setTitle("Erreur");
+						alert.setHeaderText("Format Incompatible");
+						alert.setContentText("Le fichier ne peut pas être lu");
+
+						alert.showAndWait();
+					}
 				}
 
 			};
 		});
-
+		
+	
 		exitItem.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				Platform.exit();
 			};
 		});
+		
+	
 
 		/* CREATION DES OUTILS */
 		VBox outils = new VBox();
@@ -132,10 +147,10 @@ public class Affichage extends Application {
 		Button face = new Button("Vue de face");
 		Button droite = new Button("Vue de droite");
 		Button dessus = new Button("Vue de haut");
-		Button up = new Button("↑");
-		Button down = new Button("↓");
-		Button right = new Button("→");
-		Button left = new Button("←");
+		Button up = new Button("â†‘");
+		Button down = new Button("â†“");
+		Button right = new Button("â†’");
+		Button left = new Button("â†�");
 		Button plus = new Button("+");
 		Button moins = new Button("-");
 		zoomSlider = new Slider();
@@ -615,6 +630,10 @@ public class Affichage extends Application {
 		return sum / t.getPoints().size();
 	}
 
+	boolean checkFormat (String file) {
+		return file.endsWith(".ply");
+	
+	}
 	private void calculateAutoScale() {
 		System.out.println("Autoscale started...");
 		long start = System.nanoTime();

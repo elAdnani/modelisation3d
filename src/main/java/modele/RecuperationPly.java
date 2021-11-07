@@ -6,6 +6,9 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+
 public class RecuperationPly {
 
 	private static String myPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main"
@@ -64,7 +67,7 @@ public class RecuperationPly {
 	 * @throws Exception
 	 */
 	public static List<Point> recuperationPoints(String fichier) throws Exception {
-		checkFormat(fichier);
+	
 
 		List<Point> res = new ArrayList<Point>();
 
@@ -93,6 +96,12 @@ public class RecuperationPly {
 
 			raf.close();
 		} catch (IOException o) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error Dialog");
+			alert.setHeaderText("Look, an Error Dialog");
+			alert.setContentText("Ooops, there was an error!");
+
+			alert.showAndWait();
 
 			o.printStackTrace();
 		}
@@ -103,7 +112,7 @@ public class RecuperationPly {
 	final static public int NBLIGNEPOINT3D = 3;
 
 	public static Matrice recuperationMatrice(String fichier) throws Exception {
-		checkFormat(fichier);
+
 
 //		Matrice res = null;
 		double[][] res2 = null;
@@ -156,8 +165,7 @@ public class RecuperationPly {
 	 * @throws Exception
 	 */
 	public static List<Face> recuperationFaces(String fichier, List<Point> Point3Ds) throws Exception {
-		checkFormat(fichier);
-
+	
 		List<Face> res = new ArrayList<Face>();
 
 		File FichierPly = null;
@@ -199,8 +207,7 @@ public class RecuperationPly {
 	}
 
 	public static List<FaceMatrice> recuperationFacesMatrice(String fichier, List<Point> Point3Ds) throws Exception {
-		checkFormat(fichier);
-
+		
 		List<FaceMatrice> res = new ArrayList<FaceMatrice>();
 
 		File FichierPly = null;
@@ -294,16 +301,6 @@ public class RecuperationPly {
 
 	}
 
-	/**
-	 * Verifie si le fichier passé en paramètre est un fichier ply
-	 *
-	 * @param file - Chemin du fichier
-	 * @throws Exception
-	 */
-	public static void checkFormat(String file) throws Exception {
-		if (!file.endsWith(".ply")) {
-			throw new Exception(file + " (Fichier invalide. Le fichier n'est pas au format ply.)");
-		}
-	}
+
 
 }
