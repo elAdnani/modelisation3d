@@ -1,14 +1,14 @@
-package App;
+package app;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import views.Affichage;
+import views.View;
 
-public class Main extends Application{
+public class Main extends Application {
 
 	@Override
 	public void start(Stage arg0) throws Exception {
-		new Affichage().start(arg0);	
+		new View();
 	}
 
 }

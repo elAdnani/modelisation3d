@@ -13,48 +13,48 @@ public class RecuperationPly {
 	private static int nbVertex;
 	private static int nbFace;
 
-	public static void main(String[] args) {
-		String file = "vache.ply";
-
-		Matrice res = null;
-		List<Point> res2 = null;
-		// List<Face> ensembleDePoint3D = null;
-
-		try {
-			long startTime = System.nanoTime();
-			for (int i = 0; i < 100; i++) {
-				res = recuperationMatrice(myPath + file);
-
-			}
-			long endTime = System.nanoTime();
-			System.out
-					.println("Temps de chargement moyen : " + (float) (endTime - startTime) / 100 / 1000 / 1000 + "ms");
-			System.out.println("Nb Point3Ds : " + res.getNbColonnes());
-			// System.out.println("Nb faces : " + ensembleDePoint3D.size());
-
-			startTime = System.nanoTime();
-			for (int i = 0; i < 100; i++) {
-				res2 = recuperationPoints(myPath + file);
-
-			}
-			endTime = System.nanoTime();
-			System.out
-					.println("Temps de chargement moyen : " + (float) (endTime - startTime) / 100 / 1000 / 1000 + "ms");
-			System.out.println("Nb Point3Ds : " + res2.size());
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		System.out.println("DEBUT");
-		/*
-		 * for(Face p : ensembleDePoint3D) { System.out.println(p); try {
-		 * Thread.sleep(10); } catch (InterruptedException e) { // TODO Auto-generated
-		 * catch block e.printStackTrace(); }
-		 */
-		// }
-
-	}
+//	public static void main(String[] args) {
+//		String file = "vache.ply";
+//
+//		Matrice res = null;
+//		List<Point> res2 = null;
+//		// List<Face> ensembleDePoint3D = null;
+//
+//		try {
+//			long startTime = System.nanoTime();
+//			for (int i = 0; i < 100; i++) {
+//				res = recuperationMatrice(myPath + file);
+//
+//			}
+//			long endTime = System.nanoTime();
+//			System.out
+//					.println("Temps de chargement moyen : " + (float) (endTime - startTime) / 100 / 1000 / 1000 + "ms");
+//			System.out.println("Nb Point3Ds : " + res.getNbColonnes());
+//			// System.out.println("Nb faces : " + ensembleDePoint3D.size());
+//
+//			startTime = System.nanoTime();
+//			for (int i = 0; i < 100; i++) {
+//				res2 = recuperationPoints(myPath + file);
+//
+//			}
+//			endTime = System.nanoTime();
+//			System.out
+//					.println("Temps de chargement moyen : " + (float) (endTime - startTime) / 100 / 1000 / 1000 + "ms");
+//			System.out.println("Nb Point3Ds : " + res2.size());
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//		System.out.println("DEBUT");
+//		/*
+//		 * for(Face p : ensembleDePoint3D) { System.out.println(p); try {
+//		 * Thread.sleep(10); } catch (InterruptedException e) { // TODO Auto-generated
+//		 * catch block e.printStackTrace(); }
+//		 */
+//		// }
+//
+//	}
 
 	/**
 	 * Recupere la liste des Point3Ds dans un fichier PLY donné en parametre
@@ -64,29 +64,31 @@ public class RecuperationPly {
 	 * @throws Exception
 	 */
 	public static List<Point> recuperationPoints(String fichier) throws Exception {
+
+		System.out.println("Récupération de points en cours...");
+		long startTime = System.nanoTime();
+
 		checkFormat(fichier);
 
 		List<Point> res = new ArrayList<Point>();
 
-		File FichierPly = null;
+		File fichierPly = null;
 
 		try {
 
-			FichierPly = new File(fichier);
+			fichierPly = new File(fichier);
 
-			String ligne = " ";
-
-			RandomAccessFile raf = new RandomAccessFile(FichierPly, "r");
+			RandomAccessFile raf = new RandomAccessFile(fichierPly, "r");
 			placerApresLaTeteDuFichier(raf);
-			String tab[] = new String[0];
+
+			String ligne = null;
+			String[] tab = null;
 
 			for (int i = 0; i < nbVertex; i++) {
 				ligne = raf.readLine();
 				if (!ligne.isEmpty()) {
 					tab = ligne.split(" ");
-					// System.out.println("" + (i+1) + "/" + (nbVertex));
 					res.add(new Point(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
-					// System.out.println(res.get(i));
 				} else
 					i--;
 			}
@@ -96,7 +98,9 @@ public class RecuperationPly {
 
 			o.printStackTrace();
 		}
-
+		long endTime = System.nanoTime();
+		System.out.println(
+				"Temps de récupération de points moyen : " + (double) (endTime - startTime) / 100 / 1000 / 1000 + "ms");
 		return res;
 	}
 
@@ -156,6 +160,10 @@ public class RecuperationPly {
 	 * @throws Exception
 	 */
 	public static List<Face> recuperationFaces(String fichier, List<Point> Point3Ds) throws Exception {
+
+		System.out.println("Récupération de faces en cours...");
+		long startTime = System.nanoTime();
+
 		checkFormat(fichier);
 
 		List<Face> res = new ArrayList<Face>();
@@ -194,6 +202,9 @@ public class RecuperationPly {
 
 			o.printStackTrace();
 		}
+		long endTime = System.nanoTime();
+		System.out.println(
+				"Temps de chargement de faces moyen : " + (double) (endTime - startTime) / 100 / 1000 / 1000 + "ms");
 
 		return res;
 	}
