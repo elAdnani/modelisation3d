@@ -30,6 +30,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -192,27 +193,20 @@ public class View extends Stage {
 		Button face = new Button("Vue de face");
 		Button droite = new Button("Vue de droite");
 		Button dessus = new Button("Vue de haut");
+
 		Button up = new Button("↑");
 		Button down = new Button("↓");
 		Button right = new Button("→");
 		Button left = new Button("←");
-		Button dummy = new Button("");
+
 		Button plus = new Button("+");
 		Button moins = new Button("-");
 
-		BorderPane deplacementsButtons = new BorderPane();
-		deplacementsButtons.setTop(up);
-		BorderPane.setAlignment(up, Pos.CENTER);
-		deplacementsButtons.setRight(right);
-		BorderPane.setAlignment(left, Pos.CENTER_LEFT);
-		deplacementsButtons.setBottom(down);
-		BorderPane.setAlignment(down, Pos.CENTER);
-		deplacementsButtons.setLeft(left);
-		BorderPane.setAlignment(right, Pos.CENTER_RIGHT);
-		deplacementsButtons.setCenter(dummy);
-//		dummy.setVisible(false);
-//		deplacementsButtons.setStyle("-fx-border-color: black");
-//		deplacementsButtons.setPrefWidth(150);
+		GridPane deplacementsButtons = new GridPane();
+		deplacementsButtons.add(left, 0, 1);
+		deplacementsButtons.add(up, 1, 0);
+		deplacementsButtons.add(down, 1, 2);
+		deplacementsButtons.add(right, 2, 1);
 
 		VBox position = new VBox(4);
 		position.getChildren().addAll(face, droite, dessus);
@@ -220,25 +214,28 @@ public class View extends Stage {
 
 		HBox zoom = new HBox(5);
 		zoom.getChildren().addAll(moins, zoomSlider, plus);
-		HBox.setMargin(moins, new Insets(0, 0, 0, 50));
-
+		zoom.setAlignment(Pos.CENTER);
+		outils.setAlignment(Pos.TOP_CENTER);
+		deplacementsButtons.setAlignment(Pos.TOP_CENTER);
+		
 		outils.getChildren().addAll(nom, position, deplacementsButtons, nomZoom, zoom);
 
-		nom.setPadding(new Insets(10, 10, 30, 115));
-		nomZoom.setPadding(new Insets(10, 10, 30, 120));
+		nom.setPadding(new Insets(10, 0, 30, 0));
+		nomZoom.setPadding(new Insets(80, 0, 30, 0));
 
-		face.setPadding(new Insets(20, 100, 20, 100));
-		droite.setPadding(new Insets(20, 90, 20, 100));
-		dessus.setPadding(new Insets(20, 98, 20, 100));
+		face.setPrefSize(300, 60);
+		droite.setPrefSize(300, 60);
+		dessus.setPrefSize(300, 60);
 
-		up.setPrefSize(50, 50);
-		down.setPrefSize(50, 50);
-		right.setPrefSize(50, 50);
-		left.setPrefSize(50, 50);
-		dummy.setPrefSize(50, 50);
+		up.setPrefSize(60, 60);
+		down.setPrefSize(60, 60);
+		right.setPrefSize(60, 60);
+		left.setPrefSize(60, 60);
 
-		plus.setPadding(new Insets(3, 5, 3, 5));
-		moins.setPadding(new Insets(3, 8, 3, 8));
+		plus.setPrefSize(30, 30);
+		moins.setPrefSize(30, 30);
+		//plus.setPadding(new Insets(3, 5, 3, 5));
+		//moins.setPadding(new Insets(3, 8, 3, 8));
 
 		right.setOnAction(e -> {
 			affichage.rotateModel(Axis.YAXIS, 4);
@@ -265,15 +262,25 @@ public class View extends Stage {
 		});
 
 		plus.setOnAction(e -> {
-			zoomSlider.setValue(zoomSlider.getValue() + 10);
-			affichage.setZoom(affichage.getZoom() + 10);
-			drawModel();
+			if(affichage.zoom < 1000) {
+				zoomSlider.setValue(zoomSlider.getValue() + 10);
+				affichage.setZoom(affichage.getZoom() + 10);
+				drawModel();
+			} else {
+				zoomSlider.setValue(1000);
+				affichage.setZoom(1000);
+			}
 		});
 
 		moins.setOnAction(e -> {
-			zoomSlider.setValue(zoomSlider.getValue() - 10);
-			affichage.setZoom(affichage.getZoom() - 10);
-			drawModel();
+			if(affichage.zoom-10 > 0) {
+				zoomSlider.setValue(zoomSlider.getValue() - 10);
+				affichage.setZoom(affichage.getZoom() - 10);
+				drawModel();
+			} else {
+				zoomSlider.setValue(0);
+				affichage.setZoom(0);
+			}
 		});
 
 		return outils;
@@ -400,30 +407,30 @@ public class View extends Stage {
 			return; // TODO Remplacer le return par une erreur
 		affichage.loadFile(file);
 	}
-	
+
 	public static String getSize(long size) {
-        String s = "";
-        long kilo = 1024;
-        long mega = kilo * kilo;
-        long giga = mega * kilo;
-        long tera = giga * kilo;
-        
-        double kb = (double)size / kilo;
-        double mb = kb / kilo;
-        double gb = mb / kilo;
-        double tb = gb / kilo;
-        if(size < kilo) {
-            s = size + " Bytes";
-        } else if(size >= kilo && size < mega) {
-            s =  String.format("%.2f", kb) + " KB";
-        } else if(size >= mega && size < giga) {
-            s = String.format("%.2f", mb) + " MB";
-        } else if(size >= giga && size < tera) {
-            s = String.format("%.2f", gb) + " GB";
-        } else if(size >= tera) {
-            s = String.format("%.2f", tb) + " TB";
-        }
-        return s;
-    }
+		String s = "";
+		long kilo = 1024;
+		long mega = kilo * kilo;
+		long giga = mega * kilo;
+		long tera = giga * kilo;
+
+		double kb = (double) size / kilo;
+		double mb = kb / kilo;
+		double gb = mb / kilo;
+		double tb = gb / kilo;
+		if (size < kilo) {
+			s = size + " Bytes";
+		} else if (size >= kilo && size < mega) {
+			s = String.format("%.2f", kb) + " KB";
+		} else if (size >= mega && size < giga) {
+			s = String.format("%.2f", mb) + " MB";
+		} else if (size >= giga && size < tera) {
+			s = String.format("%.2f", gb) + " GB";
+		} else if (size >= tera) {
+			s = String.format("%.2f", tb) + " TB";
+		}
+		return s;
+	}
 
 }
