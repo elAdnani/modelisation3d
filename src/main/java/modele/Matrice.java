@@ -3,7 +3,7 @@ package modele;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import utils.ConnectableProperty;
+import util.ConnectableProperty;
 import views.IteratorMatrice;
 
 /**
@@ -14,7 +14,6 @@ import views.IteratorMatrice;
  */
 public class Matrice implements Iterable<Matrice> {
 	
-
 	/* ATTRIBUTS ______________________________ */
 
 	private int ligne;
@@ -263,7 +262,7 @@ public class Matrice implements Iterable<Matrice> {
 					resultat.ecrire(ligne, colonne, (this).lire(ligne, colonne) - moins.lire(ligne, colonne));
 		
 		return resultat;
-		}
+		} 
 	
 		/**
 		 * Multiplication d'une matrice par un réel.

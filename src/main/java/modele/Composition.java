@@ -3,9 +3,8 @@ package modele;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import utils.ConnectableProperty;
-import utils.Subject;
+import util.ConnectableProperty;
+import util.Subject;
 
 
 
