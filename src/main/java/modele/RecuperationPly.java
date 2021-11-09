@@ -1,6 +1,8 @@
 package modele;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import java.util.List;
 public class RecuperationPly {
 
 	private static String myPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main"
-			+ File.separator + "resources" + File.separator;
+			+ File.separator + "resources" + File.separator + "models" + File.separator;
 	private static int    nbVertex;
 	private static int    nbFace;
 
@@ -72,22 +74,22 @@ public class RecuperationPly {
 
 		List<Point> res = new ArrayList<Point>();
 
-		File FichierPly = null;
+		FileReader FichierPly = null;
 
 		try
 		{
-
-			FichierPly = new File(fichier);
+			
+			FichierPly = new FileReader(fichier);
 
 			String ligne = " ";
 
-			RandomAccessFile raf = new RandomAccessFile(FichierPly, "r");
-			placerApresLaTeteDuFichier(raf);
+			BufferedReader reader = new BufferedReader(FichierPly);
+			placerApresLaTeteDuFichier(reader);
 			String tab[] = new String[0];
 
 			for (int i = 0; i < nbVertex; i++)
 			{
-				ligne = raf.readLine();
+				ligne = reader.readLine();
 
 				if(ligne != null && !ligne.isEmpty()) {					
 
@@ -103,7 +105,7 @@ public class RecuperationPly {
 
 			}
 
-			raf.close();
+			reader.close();
 		} catch (IOException o)
 		{
 
@@ -121,24 +123,24 @@ public class RecuperationPly {
 //		Matrice res = null;
 		double[][] res2 = null;
 
-		File FichierPly = null;
+
+		FileReader FichierPly = null;
 
 		try
 		{
+			
+			FichierPly = new FileReader(fichier);
+			String ligneLectureFichier="";
 
-			FichierPly = new File(fichier);
-
-			String ligneLectureFichier = " ";
-
-			RandomAccessFile raf = new RandomAccessFile(FichierPly, "r");
-			placerApresLaTeteDuFichier(raf);
+			BufferedReader reader = new BufferedReader(FichierPly);
+			placerApresLaTeteDuFichier(reader);
 			String tab[] = new String[0];
 //			res = new Matrice(NBLIGNEPOINT3D, nbVertex);
 			res2 = new double[3][nbVertex];
 
 			for (int colonne = 0; colonne < nbVertex; colonne++)
 			{
-				ligneLectureFichier = raf.readLine();
+				ligneLectureFichier = reader.readLine();
 				if (!ligneLectureFichier.isEmpty())
 				{
 					tab = ligneLectureFichier.split(" ");
@@ -155,7 +157,7 @@ public class RecuperationPly {
 					colonne--;
 			}
 
-			raf.close();
+			reader.close();
 		} catch (IOException o)
 		{
 
@@ -178,30 +180,30 @@ public class RecuperationPly {
 
 		List<Face> res = new ArrayList<Face>();
 
-		File FichierPly = null;
+		FileReader FichierPly = null;
 
 		try
 		{
-
-			FichierPly = new File(fichier);
+			
+			FichierPly = new FileReader(fichier);
 
 			String ligne = " ";
 
-			RandomAccessFile raf = new RandomAccessFile(FichierPly, "r");
-			placerApresLaTeteDuFichier(raf);
-
+			BufferedReader reader = new BufferedReader(FichierPly);
+			placerApresLaTeteDuFichier(reader);
+			
 			String[] tab;
 
 			for (int i = 1; i <= nbVertex; i++)
 			{
-				ligne = raf.readLine();
+				ligne = reader.readLine();
 				if (ligne.isEmpty())
 					i--;
 			}
 
 			for (int j = 0; j < nbFace; j++)
 			{
-				ligne = raf.readLine();
+				ligne = reader.readLine();
 //				System.out.println(ligne);
 				tab = ligne.split(" ");
 				Face ensembleDePoint3D = new Face();
@@ -211,7 +213,7 @@ public class RecuperationPly {
 				}
 				res.add(ensembleDePoint3D);
 			}
-			raf.close();
+			reader.close();
 		} catch (IOException o)
 		{
 
@@ -226,30 +228,30 @@ public class RecuperationPly {
 
 		List<FaceMatrice> res = new ArrayList<FaceMatrice>();
 
-		File FichierPly = null;
+		FileReader FichierPly = null;
 
 		try
 		{
-
-			FichierPly = new File(fichier);
+			
+			FichierPly = new FileReader(fichier);
 
 			String ligne = " ";
 
-			RandomAccessFile raf = new RandomAccessFile(FichierPly, "r");
-			placerApresLaTeteDuFichier(raf);
+			BufferedReader reader = new BufferedReader(FichierPly);
+			placerApresLaTeteDuFichier(reader);
 
 			String[] tab;
 
 			for (int i = 1; i <= nbVertex; i++)
 			{
-				ligne = raf.readLine();
+				ligne = reader.readLine();
 				if (ligne.isEmpty())
 					i--;
 			}
 
 			for (int j = 0; j < nbFace; j++)
 			{
-				ligne = raf.readLine();
+				ligne = reader.readLine();
 //				System.out.println(ligne);
 				tab = ligne.split(" ");
 				FaceMatrice indiceDesEnsemblesDePoint = new FaceMatrice();
@@ -259,7 +261,7 @@ public class RecuperationPly {
 				}
 				res.add(indiceDesEnsemblesDePoint);
 			}
-			raf.close();
+			reader.close();
 		} catch (IOException o)
 		{
 
@@ -294,10 +296,10 @@ public class RecuperationPly {
 	 * 
 	 * @param raf - RandomAccessFile
 	 */
-	public static void placerApresLaTeteDuFichier(RandomAccessFile raf) {
+	public static void placerApresLaTeteDuFichier(BufferedReader raf) {
 		try
 		{
-			raf.seek(0);
+			
 			String ligne;
 			ligne = raf.readLine();
 

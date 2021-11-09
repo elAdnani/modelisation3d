@@ -1,16 +1,15 @@
 # Membres de l'équipe
-# Hugo Sene; Leo Ben Hatat; Virgil Hazebroucq;
-# :D
-# Oui
+# Hugo Sene; Leo Ben Hatat; Virgil Hazebroucq;Adnan Kouakoua
+
 # Livrable 1
 
 ## Fonctionnalités implémentées
 
 - [ ] Afficher la liste détaillée des modèles
-- [ ] Il est possible de choisir le modèle à visualiser dans la liste
-- [ ] Le modèle est chargé et visualisé
+- [X] Il est possible de choisir le modèle à visualiser dans la liste
+- [X] Le modèle est chargé et visualisé
 - [ ] Message d'erreur en cas d'erreur de format dans le fichier
-- [ ] La visualisation est correcte
+- [X] La visualisation est correcte
 - [ ] On visualise simultanément trois vues du modèle (de face, de haut, de côté)
 - [ ] Rotation
 - [ ] Translation
@@ -18,16 +17,23 @@
 
 ## Autres éléments demandés
 
-- [ ] Tests pour les classes de calcul mathématique
+- [X] Tests pour les classes de calcul mathématique
 - [ ] Captures d'écran pour le rendu
 - [ ] Vidéo de présentation du rendu
 - [ ] Respect du format de rendu (cf Moodle)
 
 ## Distribution du travail (qui a fait quoi)
+### Hugo Sene :
 
+### Leo Ben Hatat :
+
+### Virgil Hazebroucq :
+
+#### Adnan Kouakoua :
 
 ## Difficultés rencontrées
-
+### Trouver un moyen optimisé pour réaliser les points (dans une matrice) et les faces~
+### Centrer l'objet de sorte qu'il soit au centre de la vue de l'utilisateur
 
 
 # Livrable 2
