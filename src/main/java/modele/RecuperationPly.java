@@ -62,6 +62,7 @@ public class RecuperationPly {
 
 	}
 
+	
 	/**
 	 * Recupere la liste des Point3Ds dans un fichier PLY donné en parametre
 	 * 
