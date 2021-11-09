@@ -178,9 +178,8 @@ public class View extends Stage {
 	}
 
 	private VBox createToolBox() {
-		// TODO Centrer les boutons de déplacement
-
 		VBox outils = new VBox();
+		
 		outils.setPrefWidth(Screen.getPrimary().getBounds().getWidth() * (1 - defaultCanvasWidthPercentile));
 		outils.addEventFilter(KeyEvent.KEY_PRESSED, ek -> {
 			if (ek.getCode() == KeyCode.UP || ek.getCode() == KeyCode.DOWN || ek.getCode() == KeyCode.RIGHT
@@ -203,6 +202,7 @@ public class View extends Stage {
 		Button moins = new Button("-");
 
 		GridPane deplacementsButtons = new GridPane();
+		
 		deplacementsButtons.add(left, 0, 1);
 		deplacementsButtons.add(up, 1, 0);
 		deplacementsButtons.add(down, 1, 2);
@@ -210,10 +210,12 @@ public class View extends Stage {
 
 		VBox position = new VBox(4);
 		position.getChildren().addAll(face, droite, dessus);
+		
 		VBox.setMargin(dessus, new Insets(0, 0, 90, 0));
 
 		HBox zoom = new HBox(5);
 		zoom.getChildren().addAll(moins, zoomSlider, plus);
+		
 		zoom.setAlignment(Pos.CENTER);
 		outils.setAlignment(Pos.TOP_CENTER);
 		deplacementsButtons.setAlignment(Pos.TOP_CENTER);
@@ -234,9 +236,7 @@ public class View extends Stage {
 
 		plus.setPrefSize(30, 30);
 		moins.setPrefSize(30, 30);
-		//plus.setPadding(new Insets(3, 5, 3, 5));
-		//moins.setPadding(new Insets(3, 8, 3, 8));
-
+		
 		right.setOnAction(e -> {
 			affichage.rotateModel(Axis.YAXIS, 4);
 			drawModel();
