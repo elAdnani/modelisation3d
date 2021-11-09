@@ -1,0 +1,74 @@
+.menu-bar {
+	-fx-background-color: #313d45;
+}
+
+.menu-bar .label {
+	-fx-text-fill: #ffffff;
+}
+
+.menu-bar .menu-button:hover, .menu-bar .menu-button:focused, .menu-bar .menu-button:showing
+	{
+	-fx-background-color: #0093ff;
+}
+
+.menu-item .label {
+	-fx-text-fill: white;
+}
+
+.menu-item .label:focused {
+	-fx-background-color: white;
+	-fx-text-fill: #141414;
+}
+
+.menu-item .label:focused {
+	-fx-text-fill: blue;
+}
+
+.context-menu {
+	-fx-background-color: #141414;
+	-fx-background-insets: 0, 1, 2;
+	-fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;
+	-fx-padding: 0.333333em 0.083333em 0.666667em 0.083333em;
+}
+
+.outils {
+	-fx-background-color: #313d45;
+}
+
+.outils>.label {
+	-fx-text-fill: #ffffff;
+	-fx-font-family: system-ui;
+	-fx-font-size: 17;
+}
+
+.button {
+	-fx-padding: 10px;
+	-fx-background-color: black;
+	-fx-border-radius: 5px;
+	-fx-font-size: 15px;
+	-fx-text-fill: #b3b8bd;
+	-fx-font-family: system-ui;
+	-fx-border-color:#b3b8bd;
+}
+
+.button:hover {
+	-fx-background-color: #586169;
+}
+
+.slider {
+	-slider-track-color: #ffffff;
+	-fx-text-fill: #b3b8bd;
+}
+
+.slider .thumb {
+	-fx-background-color: #ffffff;
+	-fx-border-radius: 100%;
+	-fx-border-color: #0093ff;
+}
+
+.slider .track {
+	-fx-background-color: #0093ff;
+	-fx-background-insets: 0 0 -1 0, 0, 1;
+	-fx-background-radius: 0.25em, 0.25em, 0.166667em; /* 3 3 2 */
+	-fx-padding: 0.25em; /* 3 */
+}

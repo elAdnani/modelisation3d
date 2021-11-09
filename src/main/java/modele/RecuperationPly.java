@@ -14,53 +14,103 @@ public class RecuperationPly {
 	private static int nbFace;
 
 //	public static void main(String[] args) {
-//		file = "vache.ply";
+//		String file = "vache.ply";
 //
-//		List<Point> res = null;
-//		List<Trace> ensembleDePoint = null;
+//		Matrice res = null;
+//		List<Point> res2 = null;
+//		// List<Face> ensembleDePoint3D = null;
 //
 //		try {
 //			long startTime = System.nanoTime();
 //			for (int i = 0; i < 100; i++) {
-//				res = recuperationCoordonnee();
-//				ensembleDePoint = recuperationTracerDesPoint(res);
+//				res = recuperationMatrice(myPath + file);
+//
 //			}
 //			long endTime = System.nanoTime();
 //			System.out
 //					.println("Temps de chargement moyen : " + (float) (endTime - startTime) / 100 / 1000 / 1000 + "ms");
-//			System.out.println("Nb points : " + res.size());
-//			System.out.println("Nb faces : " + ensembleDePoint.size());
+//			System.out.println("Nb Point3Ds : " + res.getNbColonnes());
+//			// System.out.println("Nb faces : " + ensembleDePoint3D.size());
+//
+//			startTime = System.nanoTime();
+//			for (int i = 0; i < 100; i++) {
+//				res2 = recuperationPoints(myPath + file);
+//
+//			}
+//			endTime = System.nanoTime();
+//			System.out
+//					.println("Temps de chargement moyen : " + (float) (endTime - startTime) / 100 / 1000 / 1000 + "ms");
+//			System.out.println("Nb Point3Ds : " + res2.size());
+//
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}
 //
 //		System.out.println("DEBUT");
-//		
-//		for(Trace p : ensembleDePoint) {
-//			System.out.println(p);
-//			try
-//			{
-//				Thread.sleep(10);
-//			} catch (InterruptedException e)
-//			{
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
+//		/*
+//		 * for(Face p : ensembleDePoint3D) { System.out.println(p); try {
+//		 * Thread.sleep(10); } catch (InterruptedException e) { // TODO Auto-generated
+//		 * catch block e.printStackTrace(); }
+//		 */
+//		// }
 //
 //	}
 
 	/**
-	 * Recupere la liste des points dans un fichier PLY donné en parametre
+	 * Recupere la liste des Point3Ds dans un fichier PLY donné en parametre
 	 * 
 	 * @param fichier - Chemin vers le fichier
 	 * @return {@link List} de {@link Point}
 	 * @throws Exception
 	 */
-	public static List<Point> recuperationCoordonnee(String fichier) throws Exception {
+	public static List<Point> recuperationPoints(String fichier) throws Exception {
+
+		System.out.println("Récupération de points en cours...");
+		long startTime = System.nanoTime();
+
 		checkFormat(fichier);
 
 		List<Point> res = new ArrayList<Point>();
+
+		File fichierPly = null;
+
+		try {
+
+			fichierPly = new File(fichier);
+
+			RandomAccessFile raf = new RandomAccessFile(fichierPly, "r");
+			placerApresLaTeteDuFichier(raf);
+
+			String ligne = null;
+			String[] tab = null;
+
+			for (int i = 0; i < nbVertex; i++) {
+				ligne = raf.readLine();
+				if (!ligne.isEmpty()) {
+					tab = ligne.split(" ");
+					res.add(new Point(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
+				} else
+					i--;
+			}
+
+			raf.close();
+		} catch (IOException o) {
+
+			o.printStackTrace();
+		}
+		long endTime = System.nanoTime();
+		System.out.println(
+				"Temps de récupération de points moyen : " + (double) (endTime - startTime) / 100 / 1000 / 1000 + "ms");
+		return res;
+	}
+
+	final static public int NBLIGNEPOINT3D = 3;
+
+	public static Matrice recuperationMatrice(String fichier) throws Exception {
+		checkFormat(fichier);
+
+//		Matrice res = null;
+		double[][] res2 = null;
 
 		File FichierPly = null;
 
@@ -68,16 +118,28 @@ public class RecuperationPly {
 
 			FichierPly = new File(fichier);
 
-			String ligne = " ";
+			String ligneLectureFichier = " ";
 
 			RandomAccessFile raf = new RandomAccessFile(FichierPly, "r");
 			placerApresLaTeteDuFichier(raf);
 			String tab[] = new String[0];
+//			res = new Matrice(NBLIGNEPOINT3D, nbVertex);
+			res2 = new double[3][nbVertex];
 
-			for (int i = 0; i < nbVertex; i++) {
-				ligne = raf.readLine();
-				tab = ligne.split(" ");
-				res.add(new Point(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
+			for (int colonne = 0; colonne < nbVertex; colonne++) {
+				ligneLectureFichier = raf.readLine();
+				if (!ligneLectureFichier.isEmpty()) {
+					tab = ligneLectureFichier.split(" ");
+					// System.out.println("" + (colonne+1) + "/" + (nbVertex));
+
+					for (int ligne = 0; ligne < 3; ligne++) {
+//						res.ecrire(ligne, colonne, Double.valueOf(tab[ligne]));
+						res2[ligne][colonne] = Double.valueOf(tab[ligne]);
+					}
+
+					// System.out.println(res.getColonne(colonne));
+				} else
+					colonne--;
 			}
 
 			raf.close();
@@ -86,21 +148,25 @@ public class RecuperationPly {
 			o.printStackTrace();
 		}
 
-		return res;
+		return new Matrice(res2);
 	}
 
 	/**
-	 * Recupere la liste des traces dans un fichier PLY donné en paramètre
+	 * Recupere la liste des Plans dans un fichier PLY donné en paramètre
 	 * 
-	 * @param fichier - Chemin vers le fichier
-	 * @param points - {@link List} de {@link Point}
-	 * @return {@link List} de {@link Trace}
+	 * @param fichier  - Chemin vers le fichier
+	 * @param Point3Ds - {@link List} de {@link Point}
+	 * @return {@link List} de {@link Face}
 	 * @throws Exception
 	 */
-	public static List<Trace> recuperationTracerDesPoint(String fichier, List<Point> points) throws Exception {
+	public static List<Face> recuperationFaces(String fichier, List<Point> Point3Ds) throws Exception {
+
+		System.out.println("Récupération de faces en cours...");
+		long startTime = System.nanoTime();
+
 		checkFormat(fichier);
 
-		List<Trace> res = new ArrayList<Trace>();
+		List<Face> res = new ArrayList<Face>();
 
 		File FichierPly = null;
 
@@ -115,18 +181,67 @@ public class RecuperationPly {
 
 			String[] tab;
 
-			for (int i = 1; i <= nbVertex; i++)
-				raf.readLine();
+			for (int i = 1; i <= nbVertex; i++) {
+				ligne = raf.readLine();
+				if (ligne.isEmpty())
+					i--;
+			}
 
 			for (int j = 0; j < nbFace; j++) {
 				ligne = raf.readLine();
 //				System.out.println(ligne);
 				tab = ligne.split(" ");
-				Trace ensembleDePoint = new Trace();
+				Face ensembleDePoint3D = new Face();
 				for (int i = 1; i < tab.length; i++) {
-					ensembleDePoint.add(points.get(Integer.valueOf(tab[i])));
+					ensembleDePoint3D.add(Point3Ds.get(Integer.valueOf(tab[i])));
 				}
-				res.add(ensembleDePoint);
+				res.add(ensembleDePoint3D);
+			}
+			raf.close();
+		} catch (IOException o) {
+
+			o.printStackTrace();
+		}
+		long endTime = System.nanoTime();
+		System.out.println(
+				"Temps de chargement de faces moyen : " + (double) (endTime - startTime) / 100 / 1000 / 1000 + "ms");
+
+		return res;
+	}
+
+	public static List<FaceMatrice> recuperationFacesMatrice(String fichier, List<Point> Point3Ds) throws Exception {
+		checkFormat(fichier);
+
+		List<FaceMatrice> res = new ArrayList<FaceMatrice>();
+
+		File FichierPly = null;
+
+		try {
+
+			FichierPly = new File(fichier);
+
+			String ligne = " ";
+
+			RandomAccessFile raf = new RandomAccessFile(FichierPly, "r");
+			placerApresLaTeteDuFichier(raf);
+
+			String[] tab;
+
+			for (int i = 1; i <= nbVertex; i++) {
+				ligne = raf.readLine();
+				if (ligne.isEmpty())
+					i--;
+			}
+
+			for (int j = 0; j < nbFace; j++) {
+				ligne = raf.readLine();
+//				System.out.println(ligne);
+				tab = ligne.split(" ");
+				FaceMatrice indiceDesEnsemblesDePoint = new FaceMatrice();
+				for (int i = 1; i < tab.length; i++) {
+					indiceDesEnsemblesDePoint.add(Integer.valueOf(tab[i]));
+				}
+				res.add(indiceDesEnsemblesDePoint);
 			}
 			raf.close();
 		} catch (IOException o) {
@@ -141,7 +256,7 @@ public class RecuperationPly {
 	 * Recherche le nombre d'occurence d'un caractere dans un String donné
 	 * 
 	 * @param mes - le {@link String} a parcourir
-	 * @param c - le caractere à chercher
+	 * @param c   - le caractere à chercher
 	 * @return Le nombre d'occurence du caractere dans le String
 	 */
 	public static int nombreOccurence(String mes, char c) {
@@ -155,7 +270,8 @@ public class RecuperationPly {
 	}
 
 	/**
-	 * Lis le nombre de vertex et le nombre de face, puis se place à la fin du header
+	 * Lis le nombre de vertex et le nombre de face, puis se place à la fin du
+	 * header
 	 * 
 	 * @param raf - RandomAccessFile
 	 */
@@ -200,4 +316,5 @@ public class RecuperationPly {
 			throw new Exception(file + " (Fichier invalide. Le fichier n'est pas au format ply.)");
 		}
 	}
+
 }

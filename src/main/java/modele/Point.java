@@ -1,9 +1,10 @@
 package modele;
+
 /**
  * Un point possède trois éléments :<br>
- *	x pour l'axe des abscisse <br>
- *	y pour l'axe des ordonnées <br>
- *	z pour l'axe des côtés <br>
+ * x pour l'axe des abscisse <br>
+ * y pour l'axe des ordonnées <br>
+ * z pour l'axe des côtés <br>
  */
 public class Point {
 
@@ -12,7 +13,7 @@ public class Point {
 	private double z;
 
 	public Point() {
-		this(0.0,0.0,0.0);
+		this(0.0, 0.0, 0.0);
 	}
 
 	public Point(double x, double y, double z) {
@@ -23,7 +24,8 @@ public class Point {
 
 	/**
 	 * Renvoie un tableau de coordonnée correspondant au point
-	 * @return 
+	 * 
+	 * @return
 	 */
 	public double[] getTableau() {
 		return new double[] { x, y, z };
