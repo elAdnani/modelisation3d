@@ -69,16 +69,16 @@ public class MatriceTest {
 		
 		@Test
 		public void testMatriceNulle() {
-			double[][] donnéesMatriceNulleUne = new double[][] {
+			double[][] donneesMatriceNulleUne = new double[][] {
 				{0,0},
 				{0,0},
 				{0,0}
 			}; 
-			Matrice MatriceNulleUne=new Matrice(donnéesMatriceNulleUne);
-			double[][] donnéesMatriceNulleDeux = new double[][] {
+			Matrice MatriceNulleUne=new Matrice(donneesMatriceNulleUne);
+			double[][] donneesMatriceNulleDeux = new double[][] {
 				{0}
 			}; 
-			Matrice MatriceNulleDeux=new Matrice(donnéesMatriceNulleDeux);
+			Matrice MatriceNulleDeux=new Matrice(donneesMatriceNulleDeux);
 			
 			
 			assertTrue(MatriceNulleUne.estNulle()	);
