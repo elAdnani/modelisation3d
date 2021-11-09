@@ -8,12 +8,21 @@ import org.junit.jupiter.api.AfterAll;
 	import org.junit.jupiter.api.BeforeAll;
 	import org.junit.jupiter.api.BeforeEach;
 	import org.junit.jupiter.api.Test;
-
+/**
+ * 
+ * Cette classe test
+ *
+ * @author <a href="mailto:adnan.kouakoua@univ-lille1.fr">Adnân KOUAKOUA</a>
+ * IUT-A Informatique, Universite de Lille.
+ * @date 9 nov. 2021
+ * @version XX
+ */
 public class MatriceTest {
 
 	
 	Matrice A ;
 	Matrice B ;
+	Matrice C ;
 	
 		@BeforeAll
 		public static void beforeAllTests() {
@@ -43,51 +52,71 @@ public class MatriceTest {
 				{-1,1,0,1},
 				{2,1,0,0}
 			};
-			
+			double[][] donneesMatriceC=new double[][]
+					{
+				{-5,3},
+				{7,-3},
+				{2,9},
+				{1,2}
+					};
 			
 			A = new Matrice(donneesMatriceA);
 			B = new Matrice(donneesMatriceB);
+			C = new Matrice(donneesMatriceC);
+			
 		}
 		
 		@AfterEach
 		public void afterATest() {
-			
-		}
-		
-		/*
-		@Test
-		public void testRead() {
-			
 		}
 		
 		
 		@Test
-		public void testWrite() {
-			
+		public void testLecture() {
+			double[][] donneesMatriceA= new double[][] {
+				{1,2},
+				{1,1},
+				{0,3}};
+				
+				assertEquals(A.lire(0, 0), donneesMatriceA[0][0]);
+				assertEquals(A.lire(0, 1), donneesMatriceA[0][1]);
+				assertEquals(A.lire(1, 0), donneesMatriceA[1][0]);
+				assertEquals(A.lire(1, 1), donneesMatriceA[1][1]);
+				
+				assertTrue(Double.isNaN(A.lire(100, 100)));
+				assertTrue(Double.isNaN(A.lire(-10, -10)));
+				
+				
 		}
-		*/
+		
 		
 		@Test
-		public void testMatriceNulle() {
-			double[][] donnéesMatriceNulleUne = new double[][] {
-				{0,0},
-				{0,0},
-				{0,0}
-			}; 
-			Matrice MatriceNulleUne=new Matrice(donnéesMatriceNulleUne);
-			double[][] donnéesMatriceNulleDeux = new double[][] {
-				{0}
-			}; 
-			Matrice MatriceNulleDeux=new Matrice(donnéesMatriceNulleDeux);
+		public void testEcriture() {
+			double[][] donneesMatriceD= new double[][] {
+				{1,2},
+				{1,1},
+				{0,3}};
+				Matrice D = new Matrice(donneesMatriceD);
+				final double ALTERATION = Double.MIN_NORMAL;
+				
+				assertEquals(D.lire(0, 0), donneesMatriceD[0][0]);
+				D.ecrire(0, 0, ALTERATION);
+				assertEquals(D.lire(0, 0), ALTERATION);
+				
+				assertEquals(D.lire(0, 1), donneesMatriceD[0][1]);
+				D.ecrire(0, 0, ALTERATION);
+				assertEquals(D.lire(0, 0), ALTERATION);
+				
+				assertEquals(D.lire(1, 0), donneesMatriceD[1][0]);
+				D.ecrire(1, 0, ALTERATION);
+				assertEquals(D.lire(1, 0), ALTERATION);
+
+				
+				assertTrue(Double.isNaN(A.lire(100, 100)));
+				assertTrue(Double.isNaN(A.lire(-10, -10)));
 			
-			
-			assertTrue(MatriceNulleUne.estNulle()	);
-			assertTrue(MatriceNulleDeux.estNulle()	);
-			assertFalse(A.estNulle()				);
-			assertFalse(B.estNulle()				);
 		}
-		
-		
+
 		@Test
 		public void testMatriceIdentite() {
 			
@@ -97,63 +126,44 @@ public class MatriceTest {
 		public void testAddition() {
 			Matrice neFonctionnePas = null;
 			assertEquals(neFonctionnePas, A.addition(B)); // a et b ne sont pas de même format ainsi ils ne peuvent s'additionner
-			
-			
-			Matrice MatriceC = new Matrice(new double[][] {
-				{2,6},
-				{8,-1},
-				{-5,2}
+
+			Matrice matriceD = new Matrice(	new double[][] {
+				{1,2},
+				{1,1},
+				{0,3}
+			});
+
+			Matrice APlusD = new Matrice(new double[][] {
+				{1+1,2+2},
+				{1+1,1+1},
+				{0+0,3+3}
 			});
 			
-			Matrice APlusC = new Matrice(new double[][] {
-				{3,8},
-				{9,0},
-				{-5,5}
-			});
+			assertTrue(APlusD.equals(A.addition(matriceD))	);
 			
-			
-			assertTrue(APlusC.equals(A.addition(MatriceC))	);
-			
-			
-			
-		
 		}
 		
 
 		
 		@Test
 		public void testSoustraction() {
-			Matrice C = new Matrice(new double[][] {
-				{-5,3},
-				{7,-3},
-				{2,9}
+			Matrice matriceD = new Matrice(new double[][] {
+				{2,6},
+				{8,-1},
+				{-5,2}
 			});
-			Matrice AMoinsC = new Matrice(new double[][] {
-				{(1-(-5)),(2-3)	},
-				{(1-7),(1-(-3))	},
-				{(0-2),(3-9)	}
+			Matrice AMoinsD = new Matrice(new double[][] {
+				{(1-2),(2-6)	},
+				{(1-8),(1-(-1))	},
+				{(0-(-5)),(3-2)	}
 			});
 			
-			assertEquals(null, A.soustraction(B)		); // pas le même format
-			assertEquals(null, B.soustraction(A)		);
-			assertTrue(AMoinsC.equals(A.soustraction(C)));
-			
-			
-			
+			assertEquals(null, A.soustraction(B)				); // pas le même format
+			assertEquals(null, B.soustraction(A)				);
+			assertTrue(AMoinsD.equals(A.soustraction(matriceD))	);
 			
 		}
 		
-		/*
-	double[][] donnéesMatriceA = new double[][] {
-		{1,2},
-		{1,1},
-		{0,3}
-	};
-	double[][] donnéesMatriceB = new double[][] {
-		{-1,1,0,1},
-		{2,1,0,0}
-	};
-		 */
 		@Test
 		public void testMultiplication() {
 			Matrice AB = new Matrice(new double[][] {
@@ -161,31 +171,48 @@ public class MatriceTest {
 				{1,2,0,1},
 				{6,3,0,0}
 			});
-			Matrice BA = new Matrice(new double[][] {
-				{-1,2,1},
-				{-1,-5,-3}
+			Matrice BC = new Matrice(new double[][] {
+				{13,-4},
+				{-3,3}
 			});
+			Matrice CB = new Matrice(new double[][] {
+				{11,-2,0,-5},
+				{-13,4,0,7},
+				{16,11,0,2},
+				{3,3,0,1}
+			});
+			Matrice matriceNulle = new Matrice(0);
 			
 			
 			assertTrue(	AB.equals(A.multiplication(B))  );
+			assertTrue(	BC.equals(B.multiplication(C))	);
+			assertTrue( CB.equals(C.multiplication(B))	);
 			
-			assertTrue(	BA.equals(B.multiplication(A))	);
-			System.out.println(B.multiplication(A));
+			assertFalse( BC.equals(C.multiplication(B))	);
+			assertFalse( AB.equals(null)				);
+			assertFalse( AB.equals(matriceNulle)			);
+			
 			
 		}
-		
 		
 		@Test
-		public void testPuissance() {
+		public void testMatriceNulle() {
+			double[][] donneesMatriceNulleUne = new double[][] {
+				{0,0},
+				{0,0},
+				{0,0}
+			};
+			Matrice matriceNulleUne=new Matrice(donneesMatriceNulleUne);
+			double[][] donneesMatriceNulleDeux = new double[][] {
+				{0}
+			}; 
+			Matrice matriceNulleDeux=new Matrice(donneesMatriceNulleDeux);
 			
+			assertTrue(matriceNulleUne.estNulle()	);
+			assertTrue(matriceNulleDeux.estNulle()	);
+			assertFalse(A.estNulle()				);
+			assertFalse(B.estNulle()				);
 		}
-		
-		
-		@Test
-		public void testInverse() {
-			
-		}
-		
 		
 		@Test
 		public void testEstCarre() {
@@ -198,9 +225,22 @@ public class MatriceTest {
 										{0,0}}
 							).estCarre()
 			  );
+			assertTrue( new Matrice(
+					new double[][]     { {0,0,0},
+										 {0,0,0},
+										 {0,0,0}
+										}
+							).estCarre()
+			  );
 			
 			assertFalse(A.estCarre());
 			assertFalse(B.estCarre());
+			assertFalse(C.estCarre());
+				
+		}
+		
+		@Test
+		public void testInverse() {
 			
 			
 		}
@@ -211,12 +251,6 @@ public class MatriceTest {
 			
 		}
 		
-		
-		@Test
-		public void testEstTriangulaire() {
-			
-		}
-	
 
 	
 }

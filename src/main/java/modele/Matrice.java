@@ -12,7 +12,7 @@ import views.IteratorMatrice;
  * <p>Les opérations basiques telles que l'addition, la soustraction et la multiplication sont possibles.</p>
  * 
  */
-public class Matrice extends ConnectableProperty implements Iterable<Matrice> {
+public class Matrice implements Iterable<Matrice> {
 	
 
 	/* ATTRIBUTS ______________________________ */
@@ -180,8 +180,8 @@ public class Matrice extends ConnectableProperty implements Iterable<Matrice> {
 		 *         - false sinon
 		 */
 		public boolean peutLire(int ligne, int colonne) {
-			return ligne   >= 0 || ligne   < this.getNbLignes() 
-				|| colonne >= 0 || colonne < this.getNbColonnes();
+			return ligne   >= 0 && ligne   < this.getNbLignes() 
+				&& colonne >= 0 && colonne < this.getNbColonnes();
 		}
 		
 		/**
@@ -193,7 +193,11 @@ public class Matrice extends ConnectableProperty implements Iterable<Matrice> {
 		 * @return Ce que contient la case
 		 */
 		public double lire(int ligne, int colonne) {
-			return this.matrice[ligne][colonne];
+			double res=Double.NaN;
+			if(peutLire(ligne,colonne)) {
+				res= this.matrice[ligne][colonne];
+			}
+			return res;
 		}
 		
 		/**
@@ -207,9 +211,8 @@ public class Matrice extends ConnectableProperty implements Iterable<Matrice> {
 		 *         - false s'il y a une erreur dans les coordonnées
 		 */
 		public boolean ecrire(int ligne, int colonne, double valeur) {
-			if (this.peutLire(ligne, colonne)) {
+			if (!Double.isNaN(valeur) && this.peutLire(ligne, colonne)) {
 
-		//  		System.out.println(ligne+ " "+colonne +"="+valeur);
 				this.matrice[ligne][colonne] = valeur;
 				return true;
 			} else 
@@ -349,69 +352,13 @@ public class Matrice extends ConnectableProperty implements Iterable<Matrice> {
 		}
 		
 		
-		/**
-		 * Donne la matrice de cadrage par rapport à une matrice m
-		 */
-		public static Matrice getCadrage(double k1, double k2, double k3) {
-			Matrice cadrageDeCoefficientKi = new Matrice(new double[][] {
-				{k1,0,0,0},
-				{0,k2,0,0},
-				{0,0,k3,0},
-				{0,0,0,1},
-			});
-			
-			return cadrageDeCoefficientKi;
-		}
-		
-		/**
-		 * Donne la matrice de cadrage par rapport à une matrice m
-		 */
-		public static Matrice getRotation(double x) {
-			Matrice rotationAngleX = new Matrice(new double[][] {
-				{1,0,0,0},
-				{0,Math.cos(x),-Math.sin(x),0},
-				{0,Math.sin(x),Math.cos(x),0},
-				{0,0,0,1},
-			});
-			
-			return rotationAngleX;
-		}
-		
-		/**
-		 * Donne la matrice homothetie par rapport à une matrice m
-		 */
-		public static Matrice getHomothetie(double x) {
-			Matrice homothesieRapportX = new Matrice(new double[][] {
-				{x,0,0,0},
-				{0,x,0,0},
-				{0,0,x,0},
-				{0,0,0,1},
-			});
-			
-			return homothesieRapportX;
-		}
-		
-		/**
-		 * Donne la matrice de translation par rapport à une matrice m
-		 */
-		public static Matrice getTranslation(double tx1, double tx2, double tx3) {
-			Matrice translationDeVecteur = new Matrice(new double[][] {
-				{1,0,0,tx1},
-				{0,1,0,tx2},
-				{0,0,1,tx3},
-				{0,0,0,1},
-			});
-			
-			return translationDeVecteur;
-		}
-		
 		
 		/**
 		 * Compare le format des matrices
 		 * 
 		 * @param ligne
 		 * @param colonne
-		 * @return - true  si la matrice a le même nombre de ligne et de colonne
+		 * @return - true  si la matrice a le même nombre de ligne et de colonne <br>
 		 * 		   - false sinon
 		 */
 		public boolean estDuMemeFormat(int ligne, int colonne) {
@@ -423,7 +370,7 @@ public class Matrice extends ConnectableProperty implements Iterable<Matrice> {
 		 * 
 		 * @param ligne
 		 * @param colonne
-		 * @return - true  si la matrice a le même nombre de ligne et de colonne
+		 * @return - true  si la matrice a le même nombre de ligne et de colonne <br>
 		 * 		   - false sinon
 		 */
 		public boolean estDuMemeFormat(Matrice matrice) {
@@ -431,8 +378,8 @@ public class Matrice extends ConnectableProperty implements Iterable<Matrice> {
 		}
 		
 		/**
-		 * 
-		 * @return
+		 * Retourne une matrice inverse en fonction du format de la matrice
+		 * @return une matrice inverse
 		 */
 		public Matrice getInverse() {
 			if(!this.estCarre()) {
@@ -444,7 +391,14 @@ public class Matrice extends ConnectableProperty implements Iterable<Matrice> {
 			return this.multiplication(getMatriceInverse(format));
 		}
 		
-		private static Matrice getMatriceInverse(int format) {
+		/**
+		 * Réalise une matrice inverse d'un certain format : <br>
+		 * - 1 : lorsque la ligne est la même que la colonne
+		 * - 0 : dans les autres cas.
+		 * @param format de la matrice
+		 * @return une matrice inverse de format donné
+		 */
+		public static Matrice getMatriceInverse(int format) {
 			Matrice inverse = new Matrice(format);
 			for(int colonne=0; colonne<format;colonne++) {
 				for(int ligne=0; ligne<format;ligne++) {
@@ -509,7 +463,6 @@ public class Matrice extends ConnectableProperty implements Iterable<Matrice> {
 			
 				for(int i=0; i<ligne;i++) {
 					for(int j=0; j<colonne; j++) {
-						System.out.println(matrice[i][j]+" =?="+other.matrice[i][j]);
 						if(matrice[i][j]!=other.matrice[i][j]) {
 							
 							return false;
@@ -519,7 +472,10 @@ public class Matrice extends ConnectableProperty implements Iterable<Matrice> {
 			return true;
 		}
 		
-		
+		/**
+		 * Iterator de la matrice. <br>
+		 * Permet d'itérer dans chaque colonne. Voir {@link IteratorMatrice}.
+		 */
 		public Iterator<Matrice> iterator() {
 	        return new IteratorMatrice(this);
 	    }

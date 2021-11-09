@@ -3,7 +3,15 @@ package views;
 import java.util.Iterator;
 
 import modele.Matrice;
-
+/**
+ * 
+ * Cette classe 
+ *
+ * @author <a href="mailto:adnan.kouakoua@univ-lille1.fr">Adnân KOUAKOUA</a>
+ * IUT-A Informatique, Universite de Lille.
+ * @date 9 nov. 2021
+ * @version XX
+ */
 public class IteratorMatrice implements Iterator<Matrice> {
 	
 	private Matrice matrice;
