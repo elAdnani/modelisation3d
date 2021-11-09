@@ -37,7 +37,7 @@
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>0.0.6</version>
 				<configuration>
-					<mainClass>App.Main</mainClass>
+					<mainClass>app.Main</mainClass>
 				</configuration>
 			</plugin>
 			<!-- Make this jar executable -->
