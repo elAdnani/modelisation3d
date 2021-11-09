@@ -29,7 +29,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -291,7 +290,7 @@ public class View extends Stage {
 		slider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				affichage.setZoom(zoomSlider.getValue());
+				affichage.setZoom(zoomSlider.getValue()*100);
 				drawModel();
 			}
 		});
@@ -301,8 +300,10 @@ public class View extends Stage {
 	private Slider configureSlider() {
 		Slider slider = new Slider();
 		slider.setMin(0);
-		slider.setMax(1000);
+		slider.setMax(10);
 		slider.setShowTickLabels(true);
+		slider.setShowTickMarks(true);
+		slider.setMajorTickUnit(1);
 		slider.setValue(affichage.getZoom());
 		return slider;
 	}

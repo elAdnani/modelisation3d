@@ -7,9 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecuperationPly {
-
-	private static String myPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main"
-			+ File.separator + "resources" + File.separator;
+	
 	private static int nbVertex;
 	private static int nbFace;
 
