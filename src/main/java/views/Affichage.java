@@ -41,8 +41,8 @@ public class Affichage {
 			return;
 		clearCanvas();
 		drawAxis();
-		this.model.sortPoints(axis);
-		this.model.draw(canvas, method, zoom);
+		this.model.sortPoints(this.axis);
+		this.model.draw(canvas, this.axis, zoom, method);
 	}
 
 	public void drawAxis() {

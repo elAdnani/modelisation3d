@@ -27,7 +27,7 @@ public class Model {
 	 * 
 	 * @param canvas - The canvas to draw the model
 	 */
-	public void draw(Canvas canvas, DrawingMethod method, double zoom) {
+	public void draw(Canvas canvas, Axis axis, double zoom, DrawingMethod method) {
 		// TODO Ajouter homothetie pour le zoom
 		// TODO Ajouter translation pour l'offset
 
@@ -36,16 +36,16 @@ public class Model {
 
 		switch (method) {
 		case WIREFRAME:
-			drawWireframe(canvas, zoom);
+			drawWireframe(canvas, axis, zoom);
 			break;
 		case SOLID:
-			drawSolid(canvas, zoom);
+			drawSolid(canvas, axis, zoom);
 			break;
 		case BOTH:
-			drawBoth(canvas, zoom);
+			drawBoth(canvas, axis, zoom);
 			break;
 		default:
-			drawWireframe(canvas, zoom);
+			drawWireframe(canvas, axis, zoom);
 			break;
 		}
 
@@ -55,7 +55,7 @@ public class Model {
 
 	}
 
-	private void drawWireframe(Canvas canvas, double zoom) {
+	private void drawWireframe(Canvas canvas, Axis axis, double zoom) {
 		double middlescreenx = canvas.getWidth() / 2;
 		double middlescreeny = canvas.getHeight() / 2;
 		double x = 0;
@@ -86,7 +86,7 @@ public class Model {
 		}
 	}
 
-	private void drawSolid(Canvas canvas, double zoom) {
+	private void drawSolid(Canvas canvas, Axis axis, double zoom) {
 		double middlescreenx = canvas.getWidth() / 2;
 		double middlescreeny = canvas.getHeight() / 2;
 		double x = 0;
@@ -117,7 +117,7 @@ public class Model {
 		}
 	}
 
-	private void drawBoth(Canvas canvas, double zoom) {
+	private void drawBoth(Canvas canvas, Axis axis, double zoom) {
 		double middlescreenx = canvas.getWidth() / 2;
 		double middlescreeny = canvas.getHeight() / 2;
 		double x = 0;
