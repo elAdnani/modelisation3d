@@ -11,7 +11,7 @@ public class Face {
 	// Matrice METTRE EN PARAMETRE
 
 	public Face() {
-		this(new ArrayList<Point>());
+		this(new ArrayList<>());
 	}
 
 	public Face(List<Point> points) {
