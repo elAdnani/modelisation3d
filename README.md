@@ -26,6 +26,7 @@
 ### Hugo Sene :
 
 ### Leo Ben Hatat :
+##### Création et implémentation de l'interface graphique
 
 ### Virgil Hazebroucq :
 
