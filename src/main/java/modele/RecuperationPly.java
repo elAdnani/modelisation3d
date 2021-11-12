@@ -106,7 +106,7 @@ public class RecuperationPly {
 			placerApresLaTeteDuFichier(reader);
 			String[] tab;
 
-			donnees = new double[3][nbVertex];
+			donnees = new double[4][nbVertex];
 
 			int colonne = 0;
 			while (colonne < nbVertex)
