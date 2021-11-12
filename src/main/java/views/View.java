@@ -111,7 +111,7 @@ public class View extends Stage {
 			}
 		});
 		Scene scene = new Scene(vBox);
-		URL resourcecss = getClass().getResource("darkmode.css");
+		URL resourcecss = getClass().getResource("../styles/darkmode.css");
 		System.out.println(resourcecss);
 		if(resourcecss != null) {
 			String css = resourcecss.toExternalForm();

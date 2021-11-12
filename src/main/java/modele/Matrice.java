@@ -1,19 +1,23 @@
 package modele;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * <p>Gestion d'une matrice contenant des nombres.</p>
  * <p>Cette classe permet de créer et utiliser une matrice comme le permettent les mathématiques.<br>
  * <p>Les opérations basiques telles que l'addition, la soustraction et la multiplication sont possibles.</p>
  * 
+ * @author <a href="mailto:adnan.kouakoua.etu@univ-lille.fr">Adnân KOUAKOUA</a>
+ * IUT-A Informatique, Universite de Lille.
+ * @date 11 nov. 2021
  */
-public class Matrice {
+public class Matrice implements Iterable<Matrice> {
 	
 	/* ATTRIBUTS ______________________________ */
 
-	private int ligne;
-	private int colonne;
+	private int nbLigne;
+	private int nbColonne;
 	
 		/**	
 		 * <p>La matrice.</p>
@@ -34,10 +38,10 @@ public class Matrice {
 			
 			this.matrice= matrice;
 			if(! this.estCarre()) {
-				this.matrice= new double[matrice.length][matrice.length];;
+				this.matrice= new double[matrice.length][matrice.length];
 			}
-			this.colonne=matrice[0].length;
-			this.ligne=matrice.length;
+			this.nbColonne=matrice[0].length;
+			this.nbLigne=matrice.length;
 		}
 		
 		/**
@@ -53,8 +57,8 @@ public class Matrice {
 			if (nbColonnes <= 0)
 				nbColonnes = 1;
 			
-			this.ligne  = nbLignes;
-			this.colonne = nbColonnes;
+			this.nbLigne  = nbLignes;
+			this.nbColonne = nbColonnes;
 			this.matrice = new double[nbLignes][nbColonnes];
 		}
 		
@@ -87,10 +91,10 @@ public class Matrice {
 		 * @return Un tableau à deux entrées contenant les valeurs de la matrice
 		 */
 		public double[][] getMatrice() {
-			double[][] matrice = new double[this.getNbLignes()][this.getNbColonnes()];
+			double[][] copie = new double[this.getNbLignes()][this.getNbColonnes()];
 			
 			for (int ligne = 0; ligne < this.getNbLignes(); ligne++)
-				matrice[ligne] = Arrays.copyOf(this.matrice[ligne], this.getNbColonnes());
+				copie[ligne] = Arrays.copyOf(this.matrice[ligne], this.getNbColonnes());
 			
 			return matrice;
 		}
@@ -101,7 +105,7 @@ public class Matrice {
 		 * @return Un entier contenant le nombre de lignes
 		 */
 		public int getNbLignes() {
-			return this.ligne;
+			return this.nbLigne;
 		}
 		
 		/** 
@@ -110,7 +114,7 @@ public class Matrice {
 		 * @return Un entier contenant le nombre de colonnes
 		 */
 		public int getNbColonnes() {
-			return this.colonne;
+			return this.nbColonne;
 		}
 		
 		
@@ -126,7 +130,7 @@ public class Matrice {
 		@Override
 		public String toString() {
 			// Initialisation
-			String resultat = ""; // variable à laquelle ajouter l'affichage
+			StringBuilder resultat = new StringBuilder(); // variable à laquelle ajouter l'affichage
 			int[] dimensionColonnes = new int[this.getNbColonnes()]; // dimensions nécessaires pour chaque colonne
 			
 			// pour paramétrer chaque dimension,
@@ -149,15 +153,15 @@ public class Matrice {
 					int tailleContenu = String.valueOf(this.lire(ligne, colonne)).length();
 					
 					for (int nbEspace = 0; nbEspace < dimensionColonnes[colonne] - tailleContenu; nbEspace++)
-						resultat += " ";
+						resultat.append(" ");
 					
-					resultat += this.lire(ligne, colonne) + "  ";
+					resultat.append(this.lire(ligne, colonne) + "  ");
 				}
-				resultat += "\n\n";
+				resultat.append("\n\n");
 			}
 			
 			// on retourne le résultat attendu
-			return resultat;
+			return resultat.toString();
 		}
 		
 		
@@ -175,12 +179,12 @@ public class Matrice {
 		 *         - false sinon
 		 */
 		public boolean peutLire(int ligne, int colonne) {
-			return ligne   >= 0 || ligne   < this.getNbLignes() 
-				|| colonne >= 0 || colonne < this.getNbColonnes();
+			return ligne   >= 0 && ligne   < this.getNbLignes() 
+				&& colonne >= 0 && colonne < this.getNbColonnes();
 		}
 		
 		/**
-		 * Lis le contenu d'une case aux coordonnées données
+		 * Lis le contenu d'une case aux coordonnées données à partir des indices
 		 * 
 		 * @param ligne Ligne de la case à lire
 		 * @param colonne Colonne de la case à lire
@@ -188,7 +192,11 @@ public class Matrice {
 		 * @return Ce que contient la case
 		 */
 		public double lire(int ligne, int colonne) {
-			return this.matrice[ligne][colonne];
+			double res=Double.NaN;
+			if(peutLire(ligne,colonne)) {
+				res= this.matrice[ligne][colonne];
+			}
+			return res;
 		}
 		
 		/**
@@ -202,9 +210,8 @@ public class Matrice {
 		 *         - false s'il y a une erreur dans les coordonnées
 		 */
 		public boolean ecrire(int ligne, int colonne, double valeur) {
-			if (this.peutLire(ligne, colonne)) {
+			if (!Double.isNaN(valeur) && this.peutLire(ligne, colonne)) {
 
-		//  		System.out.println(ligne+ " "+colonne +"="+valeur);
 				this.matrice[ligne][colonne] = valeur;
 				return true;
 			} else 
@@ -242,18 +249,18 @@ public class Matrice {
 		 * @return Le résultat de la soustraction.
 		 */
 		public Matrice soustraction(Matrice moins) {
+			Matrice resultat=null;
 			// additionne l'opposé du deuxième terme au premier terme, ce qui revient à soustraire au premier terme le second.
-			if(!this.estDuMemeFormat(moins)) {
-				return null;
-			}
-			
-			Matrice resultat = new Matrice(this);
+			if(this.estDuMemeFormat(moins)) {
+
+			resultat = new Matrice(this);
 
 			// alors, pour chaque case, ajouter à notre matrice la valeur de la deuxième.
 			for (int ligne = 0; ligne < this.getNbLignes(); ligne++)
 				for (int colonne = 0; colonne < this.getNbColonnes(); colonne++)
 					resultat.ecrire(ligne, colonne, (this).lire(ligne, colonne) - moins.lire(ligne, colonne));
-		
+			}
+			
 		return resultat;
 		} 
 	
@@ -282,12 +289,12 @@ public class Matrice {
 		 * 
 		 * @return Le résultat de la multiplication.
 		 */
-		public Matrice multiplication(Matrice facteur) {
-			Matrice resultat = new Matrice(this);
+		public Matrice multiplication(Matrice matriceDeMultiplication) {
+			Matrice resultat = null;
 			
 			// si la matrice passée en paramètres peut être multipliée avec notre matrice
-			if (this.getNbColonnes() == facteur.getNbLignes()) 
-				resultat = new Matrice(this.getNbLignes(), facteur.getNbColonnes());
+			if (this.getNbColonnes() == matriceDeMultiplication.getNbLignes()) {
+				resultat = new Matrice(this.getNbLignes(), matriceDeMultiplication.getNbColonnes());
 				
 				// pour chaque case de la matrice résultat
 				for (int ligneResultat = 0; ligneResultat < resultat.getNbLignes(); ligneResultat++)
@@ -295,8 +302,8 @@ public class Matrice {
 						
 						// on effectue la somme des multiplications de chaque termes "liés" que l'on stock dans le résultat
 						for (int n = 0; n < this.getNbColonnes(); n++)
-							resultat.ecrire(ligneResultat, colonneResultat, resultat.lire(ligneResultat, colonneResultat) + this.lire(ligneResultat, n) * facteur.lire(n, colonneResultat));
-			
+							resultat.ecrire(ligneResultat, colonneResultat, resultat.lire(ligneResultat, colonneResultat) + this.lire(ligneResultat, n) * matriceDeMultiplication.lire(n, colonneResultat));
+			}
 				return resultat;
 		}
 		
@@ -313,7 +320,7 @@ public class Matrice {
 			while (verifie && ++ligne < this.getNbLignes()) {
 				int colonne = 0;
 				while (verifie && ++colonne < this.getNbColonnes())
-					verifie = verifie && this.lire(ligne, colonne) == 0;
+					verifie = this.lire(ligne, colonne) == 0;
 			}
 			
 			return verifie;
@@ -330,13 +337,17 @@ public class Matrice {
 		}
 		
 		
+		/**
+		 * Permet de récupérer une colonne d'une matrice.
+		 * @param indice indice de la colonne
+		 */
 		public Matrice getColonne(int indice) {
 			Matrice res = null;
-			if(indice>0 &&  indice<this.colonne ) {
+			if(indice>0 &&  indice<this.getNbColonnes() ) {
 				int colonneUnique=1;
-				res = new Matrice(this.ligne, colonneUnique);
+				res = new Matrice(this.getNbLignes(), colonneUnique);
 				
-				for(int ligne =0 ; ligne< this.ligne; ligne++) {
+				for(int ligne =0 ; ligne< this.getNbLignes(); ligne++) {
 					res.ecrire(ligne, colonneUnique-1, this.lire(ligne,indice));
 				}
 			}
@@ -345,72 +356,15 @@ public class Matrice {
 		
 		
 		/**
-		 * Donne la matrice de cadrage par rapport à une matrice m
-		 */
-		public static Matrice getCadrage(double k1, double k2, double k3) {
-			Matrice cadrageDeCoefficientKi = new Matrice(new double[][] {
-				{k1,0,0,0},
-				{0,k2,0,0},
-				{0,0,k3,0},
-				{0,0,0,1},
-			});
-			
-			return cadrageDeCoefficientKi;
-		}
-		
-		/**
-		 * Donne la matrice de cadrage par rapport à une matrice m
-		 */
-		public static Matrice getRotation(double x) {
-			Matrice rotationAngleX = new Matrice(new double[][] {
-				{1,0,0,0},
-				{0,Math.cos(x),-Math.sin(x),0},
-				{0,Math.sin(x),Math.cos(x),0},
-				{0,0,0,1},
-			});
-			
-			return rotationAngleX;
-		}
-		
-		/**
-		 * Donne la matrice homothetie par rapport à une matrice m
-		 */
-		public static Matrice getHomothetie(double x) {
-			Matrice homothesieRapportX = new Matrice(new double[][] {
-				{x,0,0,0},
-				{0,x,0,0},
-				{0,0,x,0},
-				{0,0,0,1},
-			});
-			
-			return homothesieRapportX;
-		}
-		
-		/**
-		 * Donne la matrice de translation par rapport à une matrice m
-		 */
-		public static Matrice getTranslation(double tx1, double tx2, double tx3) {
-			Matrice translationDeVecteur = new Matrice(new double[][] {
-				{1,0,0,tx1},
-				{0,1,0,tx2},
-				{0,0,1,tx3},
-				{0,0,0,1},
-			});
-			
-			return translationDeVecteur;
-		}
-		
-		
-		/**
 		 * Compare le format des matrices
 		 * 
 		 * @param ligne
 		 * @param colonne
-		 * @return - true  si la matrice a le même nombre de ligne et de colonne
+		 * @return - true  si la matrice a le même nombre de ligne et de colonne <br>
 		 * 		   - false sinon
 		 */
 		public boolean estDuMemeFormat(int ligne, int colonne) {
-			return this.ligne==ligne && this.colonne==colonne;
+			return this.getNbLignes()==ligne && this.getNbColonnes()==colonne;
 		}
 		
 		/**
@@ -418,16 +372,16 @@ public class Matrice {
 		 * 
 		 * @param ligne
 		 * @param colonne
-		 * @return - true  si la matrice a le même nombre de ligne et de colonne
+		 * @return - true  si la matrice a le même nombre de ligne et de colonne <br>
 		 * 		   - false sinon
 		 */
 		public boolean estDuMemeFormat(Matrice matrice) {
-			return this.estDuMemeFormat(matrice.ligne, matrice.colonne);
+			return this.estDuMemeFormat(matrice.getNbLignes(), matrice.getNbColonnes());
 		}
 		
 		/**
-		 * 
-		 * @return
+		 * Retourne une matrice inverse en fonction du format de la matrice
+		 * @return une matrice inverse
 		 */
 		public Matrice getInverse() {
 			if(!this.estCarre()) {
@@ -439,7 +393,14 @@ public class Matrice {
 			return this.multiplication(getMatriceInverse(format));
 		}
 		
-		private static Matrice getMatriceInverse(int format) {
+		/**
+		 * Réalise une matrice inverse d'un certain format : <br>
+		 * - 1 : lorsque la ligne est la même que la colonne
+		 * - 0 : dans les autres cas.
+		 * @param format de la matrice
+		 * @return une matrice inverse de format donné
+		 */
+		public static Matrice getMatriceInverse(int format) {
 			Matrice inverse = new Matrice(format);
 			for(int colonne=0; colonne<format;colonne++) {
 				for(int ligne=0; ligne<format;ligne++) {
@@ -454,36 +415,13 @@ public class Matrice {
 			}
 			return inverse;
 		}
-		
-		
-		/**
-		 * Vérifie si la matrice symétrique.
-		 * 
-		 * @return - true si la matrice est symétrique<br>
-		 *         - false elle ne l'est pas
-		 */
-		public boolean estSymetrique() {
-			if (this.estCarre()) {
-				boolean verifie = true;
-				
-				int x = 0;
-				while (verifie && ++x < this.getNbLignes() - 1) {
-					int y = 1 + x;
-					while (verifie && ++y < this.getNbColonnes())
-						verifie = this.lire(x, y) == this.lire(y, x);
-				}
-					
-				return verifie;
-			} else
-				return false;
-		}
 
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + colonne;
-			result = prime * result + ligne;
+			result = prime * result + getNbColonnes();
+			result = prime * result + getNbLignes();
 			result = prime * result + Arrays.deepHashCode(matrice);
 			return result;
 		}
@@ -497,14 +435,13 @@ public class Matrice {
 			if (getClass() != obj.getClass())
 				return false;
 			Matrice other = (Matrice) obj;
-			if (colonne != other.colonne)
+			if (this.getNbColonnes() != other.getNbColonnes())
 				return false;
-			if (ligne != other.ligne)
+			if (this.getNbLignes() != other.getNbLignes())
 				return false;
 			
-				for(int i=0; i<ligne;i++) {
-					for(int j=0; j<colonne; j++) {
-						System.out.println(matrice[i][j]+" =?="+other.matrice[i][j]);
+				for(int i=0; i<this.getNbLignes();i++) {
+					for(int j=0; j<this.getNbColonnes(); j++) {
 						if(matrice[i][j]!=other.matrice[i][j]) {
 							
 							return false;
@@ -514,6 +451,14 @@ public class Matrice {
 			return true;
 		}
 		
+		/**
+		 * Iterator de la matrice. <br>
+		 * Permet d'itérer dans chaque colonne. Voir {@link IteratorMatrice}.
+		 */
+		public Iterator<Matrice> iterator() {
+	        return new IteratorMatrice(this);
+	    }
+
 		
 		
 }
