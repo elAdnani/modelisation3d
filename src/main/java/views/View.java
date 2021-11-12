@@ -3,6 +3,7 @@ package views;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -109,8 +110,14 @@ public class View extends Stage {
 				}
 			}
 		});
-
-		setScene(new Scene(vBox));
+		Scene scene = new Scene(vBox);
+		URL resourcecss = getClass().getResource("darkmode.css");
+		System.out.println(resourcecss);
+		if(resourcecss != null) {
+			String css = resourcecss.toExternalForm();
+			scene.getStylesheets().add(css);			
+		}
+		setScene(scene);
 		show();
 	}
 
@@ -178,7 +185,7 @@ public class View extends Stage {
 
 	private VBox createToolBox() {
 		VBox outils = new VBox();
-		
+
 		outils.setPrefWidth(Screen.getPrimary().getBounds().getWidth() * (1 - defaultCanvasWidthPercentile));
 		outils.addEventFilter(KeyEvent.KEY_PRESSED, ek -> {
 			if (ek.getCode() == KeyCode.UP || ek.getCode() == KeyCode.DOWN || ek.getCode() == KeyCode.RIGHT
@@ -201,7 +208,7 @@ public class View extends Stage {
 		Button moins = new Button("-");
 
 		GridPane deplacementsButtons = new GridPane();
-		
+
 		deplacementsButtons.add(left, 0, 1);
 		deplacementsButtons.add(up, 1, 0);
 		deplacementsButtons.add(down, 1, 2);
@@ -209,16 +216,16 @@ public class View extends Stage {
 
 		VBox position = new VBox(4);
 		position.getChildren().addAll(face, droite, dessus);
-		
+
 		VBox.setMargin(dessus, new Insets(0, 0, 90, 0));
 
 		HBox zoom = new HBox(5);
 		zoom.getChildren().addAll(moins, zoomSlider, plus);
-		
+
 		zoom.setAlignment(Pos.CENTER);
 		outils.setAlignment(Pos.TOP_CENTER);
 		deplacementsButtons.setAlignment(Pos.TOP_CENTER);
-		
+
 		outils.getChildren().addAll(nom, position, deplacementsButtons, nomZoom, zoom);
 
 		nom.setPadding(new Insets(10, 0, 30, 0));
@@ -235,7 +242,7 @@ public class View extends Stage {
 
 		plus.setPrefSize(30, 30);
 		moins.setPrefSize(30, 30);
-		
+
 		right.setOnAction(e -> {
 			affichage.rotateModel(Axis.YAXIS, 4);
 			drawModel();
@@ -261,7 +268,7 @@ public class View extends Stage {
 		});
 
 		plus.setOnAction(e -> {
-			if(affichage.zoom < 1000) {
+			if (affichage.zoom < 1000) {
 				zoomSlider.setValue(zoomSlider.getValue() + 10);
 				affichage.setZoom(affichage.getZoom() + 10);
 				drawModel();
@@ -272,7 +279,7 @@ public class View extends Stage {
 		});
 
 		moins.setOnAction(e -> {
-			if(affichage.zoom-10 > 0) {
+			if (affichage.zoom - 10 > 0) {
 				zoomSlider.setValue(zoomSlider.getValue() - 10);
 				affichage.setZoom(affichage.getZoom() - 10);
 				drawModel();
@@ -281,7 +288,7 @@ public class View extends Stage {
 				affichage.setZoom(0);
 			}
 		});
-
+		outils.getStyleClass().add("outils");
 		return outils;
 	}
 
@@ -303,7 +310,7 @@ public class View extends Stage {
 		slider.setMax(10);
 		slider.setShowTickLabels(true);
 		slider.setShowTickMarks(true);
-		slider.setMajorTickUnit(1);
+		slider.setMajorTickUnit(1); 
 		slider.setValue(affichage.getZoom());
 		return slider;
 	}
