@@ -5,12 +5,12 @@
 
 ## Fonctionnalités implémentées
 
-- [ ] Afficher la liste détaillée des modèles
+- [~] Afficher la liste détaillée des modèles
 - [X] Il est possible de choisir le modèle à visualiser dans la liste
 - [X] Le modèle est chargé et visualisé
 - [X] Message d'erreur en cas d'erreur de format dans le fichier
 - [X] La visualisation est correcte
-- [ ] On visualise simultanément trois vues du modèle (de face, de haut, de côté)
+- [X] On visualise simultanément trois vues du modèle (de face, de haut, de côté)
 - [X] Rotation
 - [X] Translation
 - [X] Homotétie
@@ -29,6 +29,13 @@
 ##### Création et implémentation de l'interface graphique
 
 ### Virgil Hazebroucq :
+##### Rotation des modèles
+##### Translation des modèles
+##### Implémentation du clean code
+##### Synchronisation entre les view
+##### Implémentation de l'affichage correcte des modèles sous plusieurs formes
+##### Arrangement de certains menus
+##### Implémentation de plusieurs vues (qui marche correctement j'espère)
 
 #### Adnan Kouakoua :
 ##### Récupération des fichiers PLY
