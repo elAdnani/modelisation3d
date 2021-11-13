@@ -1,4 +1,4 @@
-package util;
+package connectable;
 
 public class ConnectableProperty extends ObservableProperty implements Observer {
 
@@ -22,12 +22,14 @@ public class ConnectableProperty extends ObservableProperty implements Observer 
 		other.detach(this);
 	}
 
+	@Override
 	public Object getValue() {
 		return value;
 	}
 
+	@Override
 	public void setValue(Object val) {
-		if (! propagating) {
+		if (!propagating) {
 			propagating = true;
 			super.setValue(val);
 			propagating = false;

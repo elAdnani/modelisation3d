@@ -1,5 +1,4 @@
-package util;
-
+package connectable;
 
 public class ObservableProperty extends Subject {
 

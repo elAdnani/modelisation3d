@@ -5,7 +5,7 @@
 	<groupId>fr.ulille.dut.s3</groupId>
 	<!-- Modifier le nom de votre projet ci-dessous -->
 	<artifactId>projetmodeh3</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>livrable 1</version>
 
 
 	<properties>
@@ -51,7 +51,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>demo.FxmlDemo</mainClass>
+							<mainClass>app.Main</mainClass>
 							<classpathPrefix>dependency-jars/</classpathPrefix>
 						</manifest>
 					</archive>

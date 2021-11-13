@@ -6,6 +6,9 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import connectable.ConnectableProperty;
+import connectable.ObservableProperty;
+import connectable.Subject;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import util.Axis;
@@ -17,7 +20,12 @@ public class Model {
 	private List<Point> points;
 	private Point center;
 
+	private double offsetX = 0.0;
+	private double offsetY = 0.0;
+	private double offsetZ = 0.0;
+
 	public Model() {
+		super();
 		faces = new ArrayList<Face>();
 		points = new ArrayList<Point>();
 	}
@@ -60,29 +68,87 @@ public class Model {
 		double middlescreeny = canvas.getHeight() / 2;
 		double x = 0;
 		double y = 0;
-		double[] xCoord = new double[4];
-		double[] yCoord = new double[4];
+		double z = 0;
+		double[] xCoord = null;
+		double[] yCoord = null;
+		double[] zCoord = null;
 
-		double offSetX = middlescreenx;
-		double offSetY = middlescreeny;
+		double offSetX;
+		double offSetZ;
+		double offSetY;
 
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 
-		for (Face t : faces) {
-			Iterator<Point> it = t.getPoints().iterator();
-			int cpt = 0;
-			while (it.hasNext()) {
-				Point pt = it.next();
+		switch (axis) {
+		case XAXIS:
+			offSetZ = middlescreenx + offsetZ;
+			offSetY = middlescreeny + offsetY;
+			for (Face t : faces) {
+				Iterator<Point> it = t.getPoints().iterator();
+				int nbPoints = t.getPoints().size();
+				zCoord = new double[nbPoints];
+				yCoord = new double[nbPoints];
+				int cpt = 0;
+				while (it.hasNext()) {
+					Point pt = it.next();
 
-				x = (pt.getX() * zoom) + offSetX;
-				y = (pt.getY() * zoom) + offSetY;
+					z = (pt.getZ() * zoom) + offSetZ;
+					y = (pt.getY() * zoom) + offSetY;
 
-				xCoord[cpt] = x;
-				yCoord[cpt] = y;
+					zCoord[cpt] = z;
+					yCoord[cpt] = y;
 
-				cpt++;
+					cpt++;
+				}
+				gc.strokePolygon(zCoord, yCoord, nbPoints);
 			}
-			gc.strokePolygon(xCoord, yCoord, t.getPoints().size());
+			break;
+		case YAXIS:
+			offSetZ = middlescreeny + offsetZ;
+			offSetX = middlescreenx + offsetX;
+			for (Face t : faces) {
+				Iterator<Point> it = t.getPoints().iterator();
+				int nbPoints = t.getPoints().size();
+				zCoord = new double[nbPoints];
+				xCoord = new double[nbPoints];
+				int cpt = 0;
+				while (it.hasNext()) {
+					Point pt = it.next();
+
+					z = (pt.getZ() * zoom) + offSetZ;
+					x = (pt.getX() * zoom) + offSetX;
+
+					zCoord[cpt] = z;
+					xCoord[cpt] = x;
+
+					cpt++;
+				}
+				gc.strokePolygon(xCoord, zCoord, nbPoints);
+			}
+			break;
+		case ZAXIS:
+			offSetX = middlescreenx + offsetX;
+			offSetY = middlescreeny + offsetY;
+			for (Face t : faces) {
+				Iterator<Point> it = t.getPoints().iterator();
+				int nbPoints = t.getPoints().size();
+				xCoord = new double[nbPoints];
+				yCoord = new double[nbPoints];
+				int cpt = 0;
+				while (it.hasNext()) {
+					Point pt = it.next();
+
+					x = (pt.getX() * zoom) + offSetX;
+					y = (pt.getY() * zoom) + offSetY;
+
+					xCoord[cpt] = x;
+					yCoord[cpt] = y;
+
+					cpt++;
+				}
+				gc.strokePolygon(xCoord, yCoord, nbPoints);
+			}
+			break;
 		}
 	}
 
@@ -91,29 +157,87 @@ public class Model {
 		double middlescreeny = canvas.getHeight() / 2;
 		double x = 0;
 		double y = 0;
-		double[] xCoord = new double[4];
-		double[] yCoord = new double[4];
+		double z = 0;
+		double[] xCoord = null;
+		double[] yCoord = null;
+		double[] zCoord = null;
 
-		double offSetX = middlescreenx;
-		double offSetY = middlescreeny;
+		double offSetX;
+		double offSetZ;
+		double offSetY;
 
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 
-		for (Face t : faces) {
-			Iterator<Point> it = t.getPoints().iterator();
-			int cpt = 0;
-			while (it.hasNext()) {
-				Point pt = it.next();
+		switch (axis) {
+		case XAXIS:
+			offSetZ = middlescreenx + offsetZ;
+			offSetY = middlescreeny + offsetY;
+			for (Face t : faces) {
+				Iterator<Point> it = t.getPoints().iterator();
+				int nbPoints = t.getPoints().size();
+				zCoord = new double[nbPoints];
+				yCoord = new double[nbPoints];
+				int cpt = 0;
+				while (it.hasNext()) {
+					Point pt = it.next();
 
-				x = (pt.getX() * zoom) + offSetX;
-				y = (pt.getY() * zoom) + offSetY;
+					z = (pt.getZ() * zoom) + offSetZ;
+					y = (pt.getY() * zoom) + offSetY;
 
-				xCoord[cpt] = x;
-				yCoord[cpt] = y;
+					zCoord[cpt] = z;
+					yCoord[cpt] = y;
 
-				cpt++;
+					cpt++;
+				}
+				gc.fillPolygon(zCoord, yCoord, nbPoints);
 			}
-			gc.fillPolygon(xCoord, yCoord, t.getPoints().size());
+			break;
+		case YAXIS:
+			offSetZ = middlescreeny + offsetZ;
+			offSetX = middlescreenx + offsetX;
+			for (Face t : faces) {
+				Iterator<Point> it = t.getPoints().iterator();
+				int nbPoints = t.getPoints().size();
+				zCoord = new double[nbPoints];
+				xCoord = new double[nbPoints];
+				int cpt = 0;
+				while (it.hasNext()) {
+					Point pt = it.next();
+
+					z = (pt.getZ() * zoom) + offSetZ;
+					x = (pt.getX() * zoom) + offSetX;
+
+					zCoord[cpt] = z;
+					xCoord[cpt] = x;
+
+					cpt++;
+				}
+				gc.fillPolygon(xCoord, zCoord, nbPoints);
+			}
+			break;
+		case ZAXIS:
+			offSetX = middlescreenx + offsetX;
+			offSetY = middlescreeny + offsetY;
+			for (Face t : faces) {
+				Iterator<Point> it = t.getPoints().iterator();
+				int nbPoints = t.getPoints().size();
+				xCoord = new double[nbPoints];
+				yCoord = new double[nbPoints];
+				int cpt = 0;
+				while (it.hasNext()) {
+					Point pt = it.next();
+
+					x = (pt.getX() * zoom) + offSetX;
+					y = (pt.getY() * zoom) + offSetY;
+
+					xCoord[cpt] = x;
+					yCoord[cpt] = y;
+
+					cpt++;
+				}
+				gc.fillPolygon(xCoord, yCoord, nbPoints);
+			}
+			break;
 		}
 	}
 
@@ -122,32 +246,90 @@ public class Model {
 		double middlescreeny = canvas.getHeight() / 2;
 		double x = 0;
 		double y = 0;
+		double z = 0;
 		double[] xCoord = null;
 		double[] yCoord = null;
+		double[] zCoord = null;
 
-		double offSetX = middlescreenx;
-		double offSetY = middlescreeny;
+		double offSetX;
+		double offSetZ;
+		double offSetY;
 
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 
-		for (Face t : faces) {
-			Iterator<Point> it = t.getPoints().iterator();
-			xCoord = new double[t.getPoints().size()];
-			yCoord = new double[t.getPoints().size()];
-			int cpt = 0;
-			while (it.hasNext()) {
-				Point pt = it.next();
+		switch (axis) {
+		case XAXIS:
+			offSetZ = middlescreenx + offsetZ;
+			offSetY = middlescreeny + offsetY;
+			for (Face t : faces) {
+				Iterator<Point> it = t.getPoints().iterator();
+				int nbPoints = t.getPoints().size();
+				zCoord = new double[nbPoints];
+				yCoord = new double[nbPoints];
+				int cpt = 0;
+				while (it.hasNext()) {
+					Point pt = it.next();
 
-				x = (pt.getX() * zoom) + offSetX;
-				y = (pt.getY() * zoom) + offSetY;
+					z = (pt.getZ() * zoom) + offSetZ;
+					y = (pt.getY() * zoom) + offSetY;
 
-				xCoord[cpt] = x;
-				yCoord[cpt] = y;
+					zCoord[cpt] = z;
+					yCoord[cpt] = y;
 
-				cpt++;
+					cpt++;
+				}
+				gc.strokePolygon(zCoord, yCoord, nbPoints);
+				gc.fillPolygon(zCoord, yCoord, nbPoints);
 			}
-			gc.strokePolygon(xCoord, yCoord, t.getPoints().size());
-			gc.fillPolygon(xCoord, yCoord, t.getPoints().size());
+			break;
+		case YAXIS:
+			offSetZ = middlescreeny + offsetZ;
+			offSetX = middlescreenx + offsetX;
+			for (Face t : faces) {
+				Iterator<Point> it = t.getPoints().iterator();
+				int nbPoints = t.getPoints().size();
+				zCoord = new double[nbPoints];
+				xCoord = new double[nbPoints];
+				int cpt = 0;
+				while (it.hasNext()) {
+					Point pt = it.next();
+
+					z = (pt.getZ() * zoom) + offSetZ;
+					x = (pt.getX() * zoom) + offSetX;
+
+					zCoord[cpt] = z;
+					xCoord[cpt] = x;
+
+					cpt++;
+				}
+				gc.strokePolygon(xCoord, zCoord, nbPoints);
+				gc.fillPolygon(xCoord, zCoord, nbPoints);
+			}
+			break;
+		case ZAXIS:
+			offSetX = middlescreenx + offsetX;
+			offSetY = middlescreeny + offsetY;
+			for (Face t : faces) {
+				Iterator<Point> it = t.getPoints().iterator();
+				int nbPoints = t.getPoints().size();
+				xCoord = new double[nbPoints];
+				yCoord = new double[nbPoints];
+				int cpt = 0;
+				while (it.hasNext()) {
+					Point pt = it.next();
+
+					x = (pt.getX() * zoom) + offSetX;
+					y = (pt.getY() * zoom) + offSetY;
+
+					xCoord[cpt] = x;
+					yCoord[cpt] = y;
+
+					cpt++;
+				}
+				gc.strokePolygon(xCoord, yCoord, nbPoints);
+				gc.fillPolygon(xCoord, yCoord, nbPoints);
+			}
+			break;
 		}
 	}
 
@@ -251,7 +433,7 @@ public class Model {
 		return new Point(centerCoord[0], centerCoord[1], centerCoord[2]);
 	}
 
-	private double calculateAutoScale(Canvas canvas) {
+	public double calculateAutoScale(Canvas canvas) {
 		Double calculatedZoom = null;
 
 		System.out.println("Autoscale started...");
@@ -320,7 +502,38 @@ public class Model {
 
 	// Calcul
 	private void rotateZ(double tetha) {
+		double sinTheta = Math.sin(tetha);
+		double cosTheta = Math.cos(tetha);
+		for (Point p : points) {
+			double newX = (p.getX() * cosTheta) - (p.getY() * sinTheta);
+			double newY = (p.getX() * sinTheta) + (p.getY() * cosTheta);
+			p.setX(newX);
+			p.setY(newY);
+		}
+	}
 
+	public void translate(Axis axis, double distance) {
+		switch (axis) {
+		case XAXIS:
+			this.offsetX += distance;
+			break;
+		case YAXIS:
+			this.offsetY += distance;
+			break;
+		case ZAXIS:
+			this.offsetZ += distance;
+			break;
+		}
+	}
+	
+	public void copy(Model model) {
+		if(model == null) return;
+		this.center = model.center;
+		this.faces = model.faces;
+		this.points = model.points;
+		this.offsetX = model.offsetX;
+		this.offsetY = model.offsetY;
+		this.offsetZ = model.offsetZ;
 	}
 
 	/**
@@ -358,7 +571,7 @@ public class Model {
 	private class XAxisComparator implements Comparator<Face> {
 		@Override
 		public int compare(Face o1, Face o2) {
-			return o1.getAverageX() - o2.getAverageX() < 0 ? 1 : -1;
+			return o2.getAverageX() - o1.getAverageX() < 0 ? 1 : -1;
 		}
 	}
 

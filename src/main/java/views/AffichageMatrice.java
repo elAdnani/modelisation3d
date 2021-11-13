@@ -8,10 +8,6 @@ import java.util.Iterator;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -22,11 +18,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -46,9 +39,6 @@ public class AffichageMatrice extends Application {
 
 	private Matrice points = null; // Liste des points
 	private ArrayList<FaceMatrice> faces = null; // Liste des faces
-	
-	
-	
 
 	private double offSetY; // Décalage sur l'axe Y
 	private double offSetX; // Décalage sur l'axe X
@@ -64,26 +54,26 @@ public class AffichageMatrice extends Application {
 	double amplitude = 1;
 	double amplitudeX = 1;
 	double amplitudeY = 1;
-	
-	final int indiceX=0;
-	final int indiceY=1;
-	final int indiceZ=2;
 
-	
-	static String path= System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator
-			+ "resources";
-	
+	final int indiceX = 0;
+	final int indiceY = 1;
+	final int indiceZ = 2;
+
+	double[] centerCoord;
+
+	static String path = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main"
+			+ File.separator + "resources";
+
 	@Override
 	public void start(Stage primaryStage) {
 		ListView<String> listPly = new ListView<String>();
-		
-		
+
 		primaryStage.setTitle("Modélisateur 3D");
-		
+
 		listDirectory(path, listPly);
 
-		file  = path+ File.separator + "cube.ply";
-		
+		file = path + File.separator + "cube.ply";
+
 		/* CREATION DU MENU */
 		MenuBar menuBar = new MenuBar();
 
@@ -97,11 +87,10 @@ public class AffichageMatrice extends Application {
 
 		fileMenu.getItems().add(openFileItem);
 		fileMenu.getItems().add(exitItem);
-		
-		
+
 		menuBar.getMenus().add(fileMenu);
 		menuBar.getMenus().add(helpMenu);
-		
+
 		/* INTERACTION AVEC LE MENU */
 		openFileItem.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
@@ -132,59 +121,49 @@ public class AffichageMatrice extends Application {
 				Screen.getPrimary().getBounds().getHeight());
 
 		canvas = new Canvas(Screen.getPrimary().getBounds().getWidth(), Screen.getPrimary().getBounds().getHeight());
-		canvas.setOnScroll(new EventHandler<ScrollEvent>() {
-
-			@Override
-			public void handle(ScrollEvent event) {
-				double deltaY = event.getDeltaY();
-				System.out.println("deltaY = " + deltaY);
-				System.out.println("DEGREE_DE_ZOOM = " + DEGREE_DE_ZOOM);
-				if (deltaY < 0 && DEGREE_DE_ZOOM > 0) {
-					DEGREE_DE_ZOOM -= 0.1;
-					affichagePly();
-				} else {
-					DEGREE_DE_ZOOM += 0.1;
-					affichagePly();
-				}
+		canvas.setOnScroll(event -> {
+			double deltaY = event.getDeltaY();
+			System.out.println("deltaY = " + deltaY);
+			System.out.println("DEGREE_DE_ZOOM = " + DEGREE_DE_ZOOM);
+			if (deltaY < 0 && DEGREE_DE_ZOOM > 0) {
+				DEGREE_DE_ZOOM -= 0.1;
+				affichagePly();
+			} else {
+				DEGREE_DE_ZOOM += 0.1;
+				affichagePly();
 			}
-
 		});
-		
-		listPly.setMinSize(canvas.getWidth()/20, 50);
-		listPly.setOnMouseClicked(e->{
-			if(!this.file.equals(path + File.separator+listPly.getSelectionModel().getSelectedItem())) {
+
+		listPly.setMinSize(canvas.getWidth() / 20, 50);
+		listPly.setOnMouseClicked(e -> {
+			if (!this.file.equals(path + File.separator + listPly.getSelectionModel().getSelectedItem())) {
 				System.out.println(this.file);
-				AffichageMatrice.this.file = path + File.separator +listPly.getSelectionModel().getSelectedItem();
+				AffichageMatrice.this.file = path + File.separator + listPly.getSelectionModel().getSelectedItem();
 				System.out.println(this.file);
 				chargeFichier();
 				affichagePly();
 			}
 
 		});
-		
+
 		BorderPane root = new BorderPane(canvas);
 
-		HBox rv = new HBox(listPly,root);
+		HBox rv = new HBox(listPly, root);
 		vBox.getChildren().addAll(rv);
-		
+
 		chargeFichier();
 
 		affichagePly();
 
-		canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
-			public void handle(MouseEvent event) {
+		canvas.setOnMouseDragged(event -> {
+			double mouseX = event.getSceneX();
+			double mouseY = event.getSceneY();
+			rotate3DX(toRadian(mouseY - oldMouseY));
+			rotate3DY(toRadian(mouseX - oldMouseX));
+			oldMouseX = mouseX;
+			oldMouseY = mouseY;
 
-				double mouseX = event.getSceneX();
-				double mouseY = event.getSceneY();
-				rotate3DX(toRadian(mouseY - oldMouseY));
-				rotate3DY(toRadian(mouseX - oldMouseX));
-				oldMouseX = mouseX;
-				oldMouseY = mouseY;
-
-				affichagePly();
-
-			}
-
+			affichagePly();
 		});
 
 		/* AFFICHAGE DE LA FIGURE 3D */
@@ -240,7 +219,7 @@ public class AffichageMatrice extends Application {
 
 	private void chargeFichier() {
 		try {
-			points =  RecuperationPly.recuperationMatrice(file);
+			points = RecuperationPly.recuperationMatrice(file);
 			faces = (ArrayList<FaceMatrice>) RecuperationPly.recuperationFacesMatrice(file);
 			centerCoord = getCenter();
 		} catch (Exception e) {
@@ -249,36 +228,31 @@ public class AffichageMatrice extends Application {
 		sortByZ();
 	}
 
-	// TODO A supprimer si ne marche pas
-	double[] centerCoord;
-	
 	private void listDirectory(String dir, ListView<String> plyListe) {
-        if(plyListe==null) {
-        	plyListe = new ListView<String>();
-        }
- 
+		if (plyListe == null) {
+			plyListe = new ListView<String>();
+		}
+
 		File file = new File(dir);
-        
-        File[] liste = file.listFiles();
-        for(File item : liste){
-          if(item.isFile() && item.getName().endsWith(".ply"))
-          { 
-        	 System.out.println(item.getName());
-        	  plyListe.getItems().add(item.getName());
-          } 
 
-        }
-        
-    }
+		File[] liste = file.listFiles();
+		for (File item : liste) {
+			if (item.isFile() && item.getName().endsWith(".ply")) {
+				System.out.println(item.getName());
+				plyListe.getItems().add(item.getName());
+			}
 
-	
+		}
+
+	}
+
 	/**
 	 * Efface le canvas, lis le fichier et trace la figure
 	 * 
 	 */
 
 	private void affichagePly() {
-		
+
 //		MergeSort sort = new MergeSort(points);
 //		sort.sortGivenArray();
 //		this.points = sort.getSortedArray();
@@ -349,18 +323,17 @@ public class AffichageMatrice extends Application {
 	private void rotate3DX(double tetha) {
 		double sinTheta = Math.sin(tetha);
 		double cosTheta = Math.cos(tetha);
-		
+
 		/**
 		 * points.multiplication(Matrice.getRotation(tetha));
 		 * 
 		 */
-		
-		
+
 		for (Matrice p : points) {
 			double newY = (p.lire(indiceY, 0) * cosTheta) - (p.lire(indiceZ, 0) * sinTheta);
 			double newZ = (p.lire(indiceY, 0) * sinTheta) + (p.lire(indiceZ, 0) * cosTheta);
-			p.ecrire(indiceY,0,newY);
-			p.ecrire(indiceZ,0,newY);
+			p.ecrire(indiceY, 0, newY);
+			p.ecrire(indiceZ, 0, newY);
 		}
 		sortByZ();
 
@@ -372,8 +345,8 @@ public class AffichageMatrice extends Application {
 		for (Matrice p : points) {
 			double newX = (p.lire(indiceX, 0) * cosTheta) + (p.lire(indiceZ, 0) * sinTheta);
 			double newZ = (p.lire(indiceZ, 0) * cosTheta) - (p.lire(indiceX, 0) * sinTheta);
-			p.ecrire(indiceX,0,newX);
-			p.ecrire(indiceZ,0,newZ);
+			p.ecrire(indiceX, 0, newX);
+			p.ecrire(indiceZ, 0, newZ);
 		}
 		sortByZ();
 
@@ -394,9 +367,9 @@ public class AffichageMatrice extends Application {
 
 		for (Iterator<Matrice> iterator = points.iterator(); iterator.hasNext();) {
 			Matrice point = iterator.next();
-			double currX = point.lire(indiceX,0);
-			double currY = point.lire(indiceY,0);
-			double currZ = point.lire(indiceZ,0);
+			double currX = point.lire(indiceX, 0);
+			double currY = point.lire(indiceY, 0);
+			double currZ = point.lire(indiceZ, 0);
 			if (xMin == null || currX < xMin)
 				xMin = currX;
 			if (xMax == null || currX > xMax)
@@ -439,22 +412,17 @@ public class AffichageMatrice extends Application {
 	private void sortByZ() {
 		long start = System.nanoTime();
 		System.out.println("Sorting started...");
-		
-		
-		
+
 		Collections.sort(faces, new Comparator<FaceMatrice>() {
 
 			@Override
 			public int compare(FaceMatrice o1, FaceMatrice o2) {
 				return 1;
-			//	return o1.ge//.compare(o2.getPoints(points));
+				// return o1.ge//.compare(o2.getPoints(points));
 			}
 
-			
 		});
-		
-		
-		
+
 		long end = System.nanoTime();
 		System.out
 				.println("Sorting done in " + (end - start) + " nanoseconds (" + (end - start) / 1_000_000.0 + " ms)");

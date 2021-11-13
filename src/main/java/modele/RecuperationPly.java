@@ -1,21 +1,24 @@
 package modele;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * 
- * Cette classe sert à la récupération des fichiers PLY, elle permet ainsi d'obtenir les données tri-dimensionnelles provenant de scanners 3D. <br>
+ * Cette classe sert à la récupération des fichiers PLY, elle permet ainsi
+ * d'obtenir les données tri-dimensionnelles provenant de scanners 3D. <br>
  * 
  *
  * @author <a href="mailto:adnan.kouakoua@univ-lille1.fr">Adnân KOUAKOUA</a>
- * IUT-A Informatique, Universite de Lille.
+ *         IUT-A Informatique, Universite de Lille.
  * @date 28 sept. 2021
  */
 public class RecuperationPly {
-	
+
 	private static int nbVertex;
 	private static int nbFace;
 
@@ -35,31 +38,21 @@ public class RecuperationPly {
 
 		List<Point> res = new ArrayList<>();
 
-		FileReader fichierPly = null;
-
-		try
-		{
-
-			fichierPly = new FileReader(fichier);
+		try (BufferedReader reader = new BufferedReader(new FileReader(fichier))) {
 
 			String ligne;
-
-			BufferedReader reader = new BufferedReader(fichierPly);
 			placerApresLaTeteDuFichier(reader);
-			String tab[];
+			String[] tab;
 			int i = 0;
-			while (i < nbVertex)
-			{
+			while (i < nbVertex) {
 				ligne = reader.readLine();
 
-				if (ligne != null && !ligne.isEmpty())
-				{
+				if (ligne != null && !ligne.isEmpty()) {
 
 					tab = ligne.split(" ");
 
 					res.add(new Point(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
-				} else
-				{
+				} else {
 					i--;
 				}
 
@@ -69,10 +62,7 @@ public class RecuperationPly {
 
 			// reader.mark(i);
 			// reader.reset();
-			reader.close();
-
-		} catch (IOException o)
-		{
+		} catch (IOException o) {
 			o.printStackTrace();
 		}
 
@@ -80,14 +70,15 @@ public class RecuperationPly {
 	}
 
 	public static final int NBLIGNEPOINT3D = 3;
-	
-	
+
 	/**
-	 * Recupere la liste des points dans un fichier PLY donné en parametre directement dans une matrice
+	 * Recupere la liste des points dans un fichier PLY donné en parametre
+	 * directement dans une matrice
 	 * 
 	 * @param fichier - Chemin vers le fichier
 	 * @return {@link List} de {@link Point}
-	 * @throws Exception Le fichier n'est pas alors en format PLY ou sa composition n'est 
+	 * @throws Exception Le fichier n'est pas alors en format PLY ou sa composition
+	 *                   n'est
 	 */
 	public static Matrice recuperationMatrice(String fichier) throws Exception {
 		checkFormat(fichier);
@@ -96,8 +87,7 @@ public class RecuperationPly {
 
 		FileReader fichierPly = null;
 
-		try
-		{
+		try {
 
 			fichierPly = new FileReader(fichier);
 			String ligneLectureFichier = "";
@@ -106,22 +96,19 @@ public class RecuperationPly {
 			placerApresLaTeteDuFichier(reader);
 			String[] tab;
 
-			donnees = new double[3][nbVertex];
+			donnees = new double[4][nbVertex];
 
 			int colonne = 0;
-			while (colonne < nbVertex)
-			{
+			while (colonne < nbVertex) {
 				ligneLectureFichier = reader.readLine();
 
-				if (!ligneLectureFichier.isEmpty())
-				{
+				if (!ligneLectureFichier.isEmpty()) {
 					tab = ligneLectureFichier.split(" ");
 
-					for (int ligne = 0; ligne < 3; ligne++)
-					{
+					for (int ligne = 0; ligne < 3; ligne++) {
 						donnees[ligne][colonne] = Double.valueOf(tab[ligne]);
 					}
-						donnees[3][colonne]=0;
+					donnees[3][colonne] = 0;
 
 				} else
 					colonne--;
@@ -132,8 +119,7 @@ public class RecuperationPly {
 			// reader.mark(colonne);
 			// reader.read();
 			reader.close();
-		} catch (IOException o)
-		{
+		} catch (IOException o) {
 
 			o.printStackTrace();
 		}
@@ -150,13 +136,12 @@ public class RecuperationPly {
 	 * @throws Exception
 	 */
 	public static List<Face> recuperationFaces(String fichier, List<Point> points) {
-		
-		List<Face> res= null;
+
+		List<Face> res = null;
 		FileReader fichierPly;
-		try
-		{
+		try {
 			checkFormat(fichier);
-			res=new ArrayList<>();
+			res = new ArrayList<>();
 
 			fichierPly = new FileReader(fichier);
 
@@ -167,21 +152,18 @@ public class RecuperationPly {
 
 			String[] tab;
 
-			for (int i = 1; i <= nbVertex; i++)
-			{
+			for (int i = 1; i <= nbVertex; i++) {
 				ligne = reader.readLine();
 				if (ligne.isEmpty())
 					i--;
 			}
 
-			for (int j = 0; j < nbFace; j++)
-			{
+			for (int j = 0; j < nbFace; j++) {
 				ligne = reader.readLine();
 
 				tab = ligne.split(" ");
 				Face ensembleDePoint = new Face();
-				for (int i = 1; i < tab.length; i++)
-				{
+				for (int i = 1; i < tab.length; i++) {
 					ensembleDePoint.add(points.get(Integer.valueOf(tab[i])));
 				}
 				res.add(ensembleDePoint);
@@ -192,18 +174,17 @@ public class RecuperationPly {
 			fichierPly.close();
 			reader.close();
 
-		} catch (Exception o)
-		{
+		} catch (Exception o) {
 
 			o.printStackTrace();
-		} 
-		
-		
+		}
+
 		return res;
 	}
 
 	/**
-	 *  Recupère les faces les indices des points de la matrice d'un fichier PLY.
+	 * Recupère les faces les indices des points de la matrice d'un fichier PLY.
+	 * 
 	 * @param fichier
 	 * @return {@link FaceMatrice}
 	 * @throws Exception
@@ -215,8 +196,7 @@ public class RecuperationPly {
 
 		FileReader fichierPly = null;
 
-		try
-		{
+		try {
 
 			fichierPly = new FileReader(fichier);
 
@@ -227,21 +207,18 @@ public class RecuperationPly {
 
 			String[] tab;
 
-			for (int i = 1; i <= nbVertex; i++)
-			{
+			for (int i = 1; i <= nbVertex; i++) {
 				ligne = reader.readLine();
 				if (ligne.isEmpty())
 					i--;
 			}
 
-			for (int j = 0; j < nbFace; j++)
-			{
+			for (int j = 0; j < nbFace; j++) {
 				ligne = reader.readLine();
 				tab = ligne.split(" ");
 
 				FaceMatrice indiceDesEnsemblesDePoint = new FaceMatrice();
-				for (int i = 1; i < tab.length; i++)
-				{
+				for (int i = 1; i < tab.length; i++) {
 					indiceDesEnsemblesDePoint.add(Integer.valueOf(tab[i]));
 				}
 				res.add(indiceDesEnsemblesDePoint);
@@ -250,8 +227,7 @@ public class RecuperationPly {
 			// reader.mark(nbLigneLue+nbVertex+nbFace);
 			// reader.reset();
 			reader.close();
-		} catch (IOException o)
-		{
+		} catch (IOException o) {
 
 			o.printStackTrace();
 		}
@@ -268,10 +244,8 @@ public class RecuperationPly {
 	 */
 	public static int nombreOccurence(String mes, char c) {
 		int cpt = 0;
-		for (int i = 0; i < mes.length(); i++)
-		{
-			if (mes.charAt(i) == c)
-			{
+		for (int i = 0; i < mes.length(); i++) {
+			if (mes.charAt(i) == c) {
 				cpt++;
 			}
 		}
@@ -287,41 +261,35 @@ public class RecuperationPly {
 	 */
 	private static int placerApresLaTeteDuFichier(BufferedReader raf) {
 		int cpt = 0;
-		try
-		{
+		try {
 
 			String ligne;
 			ligne = raf.readLine();
-			if (!ligne.toLowerCase().contains("ply"))
-			{ // TODO ajouter une classe exception
+			if (!ligne.toLowerCase().contains("ply")) { // TODO ajouter une classe exception
 				throw new Exception(" (Fichier invalide. Le fichier n'est pas au format ply.)");
 			}
 
-			while (!ligne.contains("element vertex"))
-			{
+			while (!ligne.contains("element vertex")) {
 				ligne = raf.readLine();
 				cpt++;
 			}
 			String[] lineV = ligne.split(" ");
 			nbVertex = Integer.parseInt(lineV[lineV.length - 1]);
 
-			while (!ligne.contains("element face"))
-			{
+			while (!ligne.contains("element face")) {
 				ligne = raf.readLine();
 				cpt++;
 			}
 			String[] lineF = ligne.split(" ");
 			nbFace = Integer.parseInt(lineF[lineF.length - 1]);
 
-			while (!ligne.contains("end_header"))
-			{
+			while (!ligne.contains("end_header")) {
 				ligne = raf.readLine();
 				cpt++;
 
 			}
 
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		// on se replace tout au début du fichier
@@ -335,10 +303,63 @@ public class RecuperationPly {
 	 * @throws Exception
 	 */
 	public static void checkFormat(String file) throws Exception {
-		if (!file.endsWith(".ply"))
-		{
+		if (!file.endsWith(".ply")) {
 			throw new Exception(file + " (Fichier invalide. Le fichier n'est pas au format ply.)");
 		} // TODO REALISER UNE CLASSE ERREUR
 	}
 
+	public static int getNBVertices(String filepath) {
+		try {
+			checkFormat(filepath);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		int nb = 0;
+
+		try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
+			String ligne = br.readLine();
+			
+			while (!ligne.contains("element vertex")) {
+				ligne = br.readLine();
+			}
+			
+			String[] line = ligne.split(" ");
+			nb = Integer.parseInt(line[line.length - 1]);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		return nb;
+	}
+
+	
+	public static int getNBFaces(String filepath) {
+		try {
+			checkFormat(filepath);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		int nb = 0;
+
+		try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
+			String ligne = br.readLine();
+			
+			while (!ligne.contains("element face")) {
+				ligne = br.readLine();
+			}
+			
+			String[] line = ligne.split(" ");
+			nb = Integer.parseInt(line[line.length - 1]);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		return nb;
+	}
 }
