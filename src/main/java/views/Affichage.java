@@ -117,14 +117,14 @@ public class Affichage extends ConnectableProperty {
 	}
 
 	public void setZoom(double zoom) {
-		if(!propagating) {
+		if (!propagating) {
 			propagating = true;
 			this.zoom = zoom;
 			for (Observer obs : attached) {
 				Affichage af = (Affichage) obs;
 				af.setZoom(zoom);
-				af.view.zoomSlider.setValue(zoom/100);
-			}			
+				af.view.zoomSlider.setValue(zoom / 100);
+			}
 			propagating = false;
 		}
 	}
@@ -136,10 +136,11 @@ public class Affichage extends ConnectableProperty {
 	public void setAxis(Axis axis) {
 		this.axis = axis;
 	}
-	
+
 	@Override
 	public void setValue(Object val) {
-		if(val == null) return;
+		if (val == null)
+			return;
 		if (!propagating) {
 			propagating = true;
 			this.model = new Model();
@@ -148,9 +149,20 @@ public class Affichage extends ConnectableProperty {
 			propagating = false;
 		}
 	}
-	
+
 	@Override
 	public void update(Subject subject) {
 		setValue(((Affichage) subject).getModel());
+	}
+
+	public void updateTheme(String theme) {
+		if (!propagating) {
+			propagating = true;
+			for (Observer obs : attached) {
+				Affichage af = (Affichage) obs;
+				af.view.changeTheme(theme);
+			}
+			propagating = false;
+		}
 	}
 }

@@ -62,6 +62,8 @@ public class View extends Stage {
 	private DrawingMethod method = null;
 	protected double oldMouseX;
 	protected double oldMouseY;
+	
+	public String theme = "default";
 
 	public View() {
 		this(Axis.ZAXIS);
@@ -88,13 +90,15 @@ public class View extends Stage {
 
 		zoomSlider = createSlider();
 
+		/* CREATION DE LA FENETRE */
+		VBox vBox = new VBox();
+		Scene scene = new Scene(vBox);
+
 		MenuBar menuBar = createMenuBar();
+		vBox.getChildren().add(menuBar);
 
 		/* CREATION DES OUTILS */
 		VBox outils = createToolBox();
-
-		/* CREATION DE LA FENETRE */
-		VBox vBox = new VBox(menuBar);
 
 		/* INITIALISATION DU BORDERPANE */
 		HBox root = new HBox();
@@ -127,12 +131,11 @@ public class View extends Stage {
 			}
 		});
 		vBox.getStyleClass().add("scene");
-		Scene scene = new Scene(vBox);
-		URL resourcecss = getClass().getResource("../styles/darkmode.css");
-		if (resourcecss != null) {
-			String css = resourcecss.toExternalForm();
-			scene.getStylesheets().add(css);
-		}
+//		URL resourcecss = getClass().getResource("../styles/darkmode.css");
+//		if (resourcecss != null) {
+//			String css = resourcecss.toExternalForm();
+//			scene.getStylesheets().add(css);
+//		}
 		setScene(scene);
 		show();
 	}
@@ -146,6 +149,7 @@ public class View extends Stage {
 		Menu ressourceMenu = new Menu("Ressources");
 		Menu viewMenu = new Menu("View");
 		Menu helpMenu = new Menu("Aide");
+		Menu themeMenu = new Menu("Themes");
 
 		MenuItem openFileItem = new MenuItem("Open File...");
 		MenuItem exitItem = new MenuItem("Exit");
@@ -154,11 +158,16 @@ public class View extends Stage {
 		RadioMenuItem face = new RadioMenuItem("Face");
 		RadioMenuItem droit = new RadioMenuItem("Droit");
 
+		RadioMenuItem defaultTheme = new RadioMenuItem("Default");
+		RadioMenuItem darkTheme = new RadioMenuItem("Dark");
+		RadioMenuItem solarisTheme = new RadioMenuItem("Solaris");
+
 		SeparatorMenuItem sep = new SeparatorMenuItem();
 		SeparatorMenuItem sepView = new SeparatorMenuItem();
 
 		ToggleGroup grp = new ToggleGroup();
 		ToggleGroup grpView = new ToggleGroup();
+		ToggleGroup themeView = new ToggleGroup();
 
 		fileMenu.getItems().add(openFileItem);
 		fileMenu.getItems().add(ressourceMenu);
@@ -167,7 +176,8 @@ public class View extends Stage {
 
 		menuBar.getMenus().add(fileMenu);
 		menuBar.getMenus().add(viewMenu);
-		menuBar.getMenus().add(helpMenu);
+		menuBar.getMenus().add(themeMenu);
+//		menuBar.getMenus().add(helpMenu);
 
 		ressourceMenu.getItems().addAll(createRessourcePlyMenu());
 
@@ -229,6 +239,29 @@ public class View extends Stage {
 			droit.setSelected(true);
 
 		viewMenu.getItems().addAll(haut, face, droit);
+
+		defaultTheme.setToggleGroup(themeView);
+		darkTheme.setToggleGroup(themeView);
+		solarisTheme.setToggleGroup(themeView);
+
+		defaultTheme.setOnAction(event -> {
+			changeTheme("default");
+		});
+
+		darkTheme.setOnAction(event -> {
+
+			changeTheme("../styles/darkmode.css");
+		});
+
+		solarisTheme.setOnAction(event -> {
+			changeTheme("../styles/solaris.css");
+		});
+
+		defaultTheme.setSelected(true);
+
+		themeMenu.getItems().add(defaultTheme);
+		themeMenu.getItems().add(darkTheme);
+		themeMenu.getItems().add(solarisTheme);
 
 		return menuBar;
 	}
@@ -481,9 +514,9 @@ public class View extends Stage {
 			try {
 				Path filepath = Path.of(f.getPath());
 				System.out.println("SizeOf " + f.getName() + ": " + (Files.size(filepath)) + " bytes");
-				item = new MenuItem(f.getName() + "(" + getSize(Files.size(filepath)) + ")"+
-				"\nfaces:" + RecuperationPly.getNBFaces(filepath.toString()) +
-				"; points:"+RecuperationPly.getNBVertices(filepath.toString()));
+				item = new MenuItem(f.getName() + "(" + getSize(Files.size(filepath)) + ")" + "\nfaces:"
+						+ RecuperationPly.getNBFaces(filepath.toString()) + "; points:"
+						+ RecuperationPly.getNBVertices(filepath.toString()));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -544,5 +577,22 @@ public class View extends Stage {
 
 	public DrawingMethod getDrawMethod() {
 		return method;
+	}
+
+	public void changeTheme(String themepath) {
+		if (themepath == null)
+			return;
+		if (themepath.equals("default")) {
+			this.getScene().getStylesheets().clear();
+			return;
+		}
+		URL resourcecss = getClass().getResource(themepath);
+		if (resourcecss != null) {
+			theme = themepath;
+			String css = resourcecss.toExternalForm();
+			this.getScene().getStylesheets().clear();
+			this.getScene().getStylesheets().add(css);
+		}
+		affichage.updateTheme(theme);
 	}
 }
