@@ -24,9 +24,11 @@
 
 ## Distribution du travail (qui a fait quoi)
 ### Hugo Sene :
-##### Zoom et son slider
+##### Zoom du modèle
 ##### Déplacements souris
 ##### Décoration css
+##### Affichage du modèle
+##### Rotation du modèle (début)
 
 ### Leo Ben Hatat :
 ##### Création/Intégration/Modification et implémentation de l'interface graphique (dans sa totalité)
