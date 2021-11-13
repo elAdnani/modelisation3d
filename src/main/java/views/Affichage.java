@@ -40,6 +40,7 @@ public class Affichage extends ConnectableProperty {
 			model = new Model();
 		this.model.loadFile(path);
 		this.view.zoomSlider.setValue(zoom/100);
+		notifyObservers();
 //		this.zoom = this.model.calculateAutoScale(canvas);
 	}
 

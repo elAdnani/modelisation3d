@@ -18,9 +18,9 @@
 ## Autres éléments demandés
 
 - [X] Tests pour les classes de calcul mathématique
-- [ ] Captures d'écran pour le rendu
-- [ ] Vidéo de présentation du rendu
-- [ ] Respect du format de rendu (cf Moodle)
+- [X] Captures d'écran pour le rendu
+- [X] Vidéo de présentation du rendu
+- [X] Respect du format de rendu (cf Moodle)
 
 ## Distribution du travail (qui a fait quoi)
 ### Hugo Sene :

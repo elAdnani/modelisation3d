@@ -354,22 +354,63 @@ public class View extends Stage {
 		moins.setPrefSize(35, 35);
 
 		right.setOnAction(e -> {
-			affichage.rotateModel(Axis.YAXIS, 4);
+			switch (affichage.getAxis()) {
+			case XAXIS:
+				affichage.rotateModel(Axis.YAXIS, 4);
+				break;
+			case YAXIS:
+				affichage.rotateModel(Axis.XAXIS, 4);
+				break;
+			case ZAXIS:
+				affichage.rotateModel(Axis.YAXIS, 4);
+				break;
+			}
 			drawModel();
 		});
 
 		left.setOnAction(e -> {
-			affichage.rotateModel(Axis.YAXIS, -4);
+			switch (affichage.getAxis()) {
+			case XAXIS:
+				affichage.rotateModel(Axis.YAXIS, -4);
+				break;
+			case YAXIS:
+				affichage.rotateModel(Axis.XAXIS, -4);
+				break;
+			case ZAXIS:
+				affichage.rotateModel(Axis.YAXIS, -4);
+				break;
+			}
+			
 			drawModel();
 		});
 
 		up.setOnAction(e -> {
-			affichage.rotateModel(Axis.XAXIS, 4);
+			switch (affichage.getAxis()) {
+			case XAXIS:
+				affichage.rotateModel(Axis.ZAXIS, 4);
+				break;
+			case YAXIS:
+				affichage.rotateModel(Axis.ZAXIS, 4);
+				break;
+			case ZAXIS:
+				affichage.rotateModel(Axis.XAXIS, 4);
+				break;
+			}
 			drawModel();
 		});
 
 		down.setOnAction(e -> {
-			affichage.rotateModel(Axis.XAXIS, -4);
+			switch (affichage.getAxis()) {
+			case XAXIS:
+				affichage.rotateModel(Axis.ZAXIS, -4);
+				break;
+			case YAXIS:
+				affichage.rotateModel(Axis.ZAXIS, -4);
+				break;
+			case ZAXIS:
+				affichage.rotateModel(Axis.XAXIS, -4);
+				break;
+			}
 			drawModel();
 		});
 
@@ -493,8 +534,20 @@ public class View extends Stage {
 						break;
 					}
 				} else if (event.getButton().equals(MouseButton.PRIMARY)) {
-					affichage.rotateModel(Axis.XAXIS, yDistance);
-					affichage.rotateModel(Axis.YAXIS, xDistance);
+					switch (affichage.getAxis()) {
+					case XAXIS:
+						affichage.rotateModel(Axis.ZAXIS, yDistance);
+						affichage.rotateModel(Axis.YAXIS, xDistance);
+						break;
+					case YAXIS:
+						affichage.rotateModel(Axis.XAXIS, yDistance);
+						affichage.rotateModel(Axis.ZAXIS, xDistance);
+						break;
+					case ZAXIS:
+						affichage.rotateModel(Axis.XAXIS, yDistance);
+						affichage.rotateModel(Axis.YAXIS, xDistance);
+						break;
+					}
 				}
 				oldMouseX = mouseX;
 				oldMouseY = mouseY;
