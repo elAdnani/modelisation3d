@@ -24,9 +24,12 @@
 
 ## Distribution du travail (qui a fait quoi)
 ### Hugo Sene :
+##### Zoom et son slider
+##### Déplacements souris
+##### Décoration css
 
 ### Leo Ben Hatat :
-##### Création et implémentation de l'interface graphique
+##### Création/Intégration/Modification et implémentation de l'interface graphique (dans sa totalité)
 
 ### Virgil Hazebroucq :
 ##### Rotation des modèles
@@ -41,6 +44,7 @@
 ##### Récupération des fichiers PLY
 ##### Réalisation du côté mathématique : Matrice (et pour introduire les matrices à notre projet)
 ##### On ajoute à cela les tests qui conviennent.
+##### Liste des fichiers à choisir
 
 ## Difficultés rencontrées
 ### Trouver un moyen optimisé pour réaliser les points (dans une matrice) et les faces~
