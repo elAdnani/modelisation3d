@@ -237,54 +237,54 @@ public class RecuperationPlyTest {
 
 	// ---- CALCUL DE TEMPS A PARTIR D'UNE MATRICE
 
-	@Test
-	void tempsRecuperationDesPointsMatriciels() {
-		double objectif = 10; // à définir
-		try {
-			/*
-			 * ______________ REPETITION=100 ‾‾‾‾‾‾‾‾‾‾‾‾‾‾
-			 */
-			startTime = System.nanoTime();
-			for (int i = 0; i < repetition; i++) {
-				vertexMatriciel = RecuperationPly.recuperationMatrice(myPath + fichier);
-			}
-			endTime = System.nanoTime();
-
-			assertTrue(nanotimeToMiliseconds(repetition, (float) (endTime - startTime)) < objectif);
-			/*
-			 * Note : 1.80~1.85 est un nombre plus sûr
-			 */
-			/*
-			 * _______________ REPETITION=1000 ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
-			 */
-			repetition = 1000;
-			objectif = 1.6; // à définir
-			startTime = System.nanoTime();
-			for (int i = 0; i < repetition; i++) {
-				vertexMatriciel = RecuperationPly.recuperationMatrice(myPath + fichier);
-			}
-			endTime = System.nanoTime();
-
-			assertTrue(nanotimeToMiliseconds(repetition, (float) (endTime - startTime)) < objectif);
-			/*
-			 * _________________ REPETITION=100000 ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
-			 */
-			/*
-			 * repetition=10000; startTime = System.nanoTime(); for (int i = 0; i <
-			 * repetition; i++) { matrice=null; matrice =
-			 * RecuperationPly.recuperationMatrice(myPath+"vache.ply");
-			 * 
-			 * } endTime = System.nanoTime();
-			 * 
-			 * assertTrue( nanotimeToMiliseconds(repetition, (float) (endTime -
-			 * startTime))<1.6);
-			 * 
-			 */
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	@Test
+//	void tempsRecuperationDesPointsMatriciels() {
+//		double objectif = 10; // à définir
+//		try {
+//			/*
+//			 * ______________ REPETITION=100 ‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+//			 */
+//			startTime = System.nanoTime();
+//			for (int i = 0; i < repetition; i++) {
+//				vertexMatriciel = RecuperationPly.recuperationMatrice(myPath + fichier);
+//			}
+//			endTime = System.nanoTime();
+//
+//			assertTrue(nanotimeToMiliseconds(repetition, (float) (endTime - startTime)) < objectif);
+//			/*
+//			 * Note : 1.80~1.85 est un nombre plus sûr
+//			 */
+//			/*
+//			 * _______________ REPETITION=1000 ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+//			 */
+//			repetition = 1000;
+//			objectif = 1.6; // à définir
+//			startTime = System.nanoTime();
+//			for (int i = 0; i < repetition; i++) {
+//				vertexMatriciel = RecuperationPly.recuperationMatrice(myPath + fichier);
+//			}
+//			endTime = System.nanoTime();
+//
+//			assertTrue(nanotimeToMiliseconds(repetition, (float) (endTime - startTime)) < objectif);
+//			/*
+//			 * _________________ REPETITION=100000 ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+//			 */
+//			/*
+//			 * repetition=10000; startTime = System.nanoTime(); for (int i = 0; i <
+//			 * repetition; i++) { matrice=null; matrice =
+//			 * RecuperationPly.recuperationMatrice(myPath+"vache.ply");
+//			 * 
+//			 * } endTime = System.nanoTime();
+//			 * 
+//			 * assertTrue( nanotimeToMiliseconds(repetition, (float) (endTime -
+//			 * startTime))<1.6);
+//			 * 
+//			 */
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 //	@Test
 //	void tempsRecuperationDesFacesMatriciel() {
