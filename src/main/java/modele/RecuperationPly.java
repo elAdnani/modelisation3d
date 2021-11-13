@@ -37,7 +37,6 @@ public class RecuperationPly {
 	 * @throws Exception
 	 */
 	public static List<Point> recuperationPoints(String fichier) throws Exception {
-	
 
 		List<Point> res = new ArrayList<>();
 
@@ -90,7 +89,6 @@ public class RecuperationPly {
 	 *                   n'est
 	 */
 	public static Matrice recuperationMatrice(String fichier) throws Exception {
-
 
 		double[][] donnees = null;
 
@@ -328,11 +326,11 @@ public class RecuperationPly {
 
 		try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
 			String ligne = br.readLine();
-			
+
 			while (!ligne.contains("element vertex")) {
 				ligne = br.readLine();
 			}
-			
+
 			String[] line = ligne.split(" ");
 			nb = Integer.parseInt(line[line.length - 1]);
 		} catch (FileNotFoundException e) {
@@ -344,7 +342,6 @@ public class RecuperationPly {
 		return nb;
 	}
 
-	
 	public static int getNBFaces(String filepath) {
 		try {
 			checkFormat(filepath);
@@ -356,11 +353,11 @@ public class RecuperationPly {
 
 		try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
 			String ligne = br.readLine();
-			
+
 			while (!ligne.contains("element face")) {
 				ligne = br.readLine();
 			}
-			
+
 			String[] line = ligne.split(" ");
 			nb = Integer.parseInt(line[line.length - 1]);
 		} catch (FileNotFoundException e) {

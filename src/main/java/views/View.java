@@ -58,8 +58,9 @@ public class View extends Stage {
 	private double defaultCanvasWidthPercentile = 0.85;
 
 	private String file = null;
-	private static String path = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main"
-			+ File.separator + "resources" + File.separator + "models" + File.separator;
+//	private static String path = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main"
+//	+ File.separator + "resources" + File.separator + "models" + File.separator;
+	private static String path = System.getProperty("user.dir") + File.separator + "exemples" + File.separator;
 
 	private Affichage affichage = null;
 	private DrawingMethod method = null;
@@ -184,7 +185,7 @@ public class View extends Stage {
 		menuBar.getMenus().add(helpMenu);
 
 		helpMenu.getItems().add(helpItem);
-		
+
 		ressourceMenu.getItems().addAll(createRessourcePlyMenu());
 
 		openFileItem.setOnAction(event -> {
@@ -216,11 +217,12 @@ public class View extends Stage {
 		exitItem.setOnAction(event -> {
 			Platform.exit();
 		});
-		
+
 		helpItem.setOnAction(event -> {
 			Alert alert = new Alert(AlertType.INFORMATION);
 			alert.setTitle("Aide");
-			alert.setContentText("Bienvenue dans notre modélisateur 3d !\nJe vous invite à naviguer dans le menu Fichier pour ouvrir un fichier .ply.\nUne fois sélectionné, rendez-vous dans le menu View pour choisir comment vous voulez visualiser votre modèle.\nSi le thème par défaut vous pique un peu les yeux, essayez nos autres thèmes accessibles dans le menu du même nom.\n\nA votre droite vous trouverez différents boutons.\nLes boutons \"Vue de face\", \"Vue de droite\" et \"Vue de haut\" vous ouvrira une nouvelle page synchronisé avec la première sauf pour la vue des modèles qui est au choix.\nEn dessous, nous trouvons les boutons liés à la rotation du modèle.\nPlus bas nous avons le zoom allant de x0 à x10.");
+			alert.setContentText(
+					"Bienvenue dans notre modélisateur 3d !\nJe vous invite à naviguer dans le menu Fichier pour ouvrir un fichier .ply.\nUne fois sélectionné, rendez-vous dans le menu View pour choisir comment vous voulez visualiser votre modèle.\nSi le thème par défaut vous pique un peu les yeux, essayez nos autres thèmes accessibles dans le menu du même nom.\n\nA votre droite vous trouverez différents boutons.\nLes boutons \"Vue de face\", \"Vue de droite\" et \"Vue de haut\" vous ouvrira une nouvelle page synchronisé avec la première sauf pour la vue des modèles qui est au choix.\nEn dessous, nous trouvons les boutons liés à la rotation du modèle.\nPlus bas nous avons le zoom allant de x0 à x10.");
 			alert.showAndWait();
 		});
 
@@ -541,16 +543,16 @@ public class View extends Stage {
 				item = new MenuItem(f.getName() + " (" + getSize(attributes.size()) + ")" + "\nfaces:"
 						+ RecuperationPly.getNBFaces(filepath.toString()) + "; points:"
 						+ RecuperationPly.getNBVertices(filepath.toString()));
+				item.setOnAction(event -> {
+					loadFile(f.getPath());
+					clearCanvas();
+					drawModel();
+				});
+				menuItems.add(item);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			item.setOnAction(event -> {
-				loadFile(f.getPath());
-				clearCanvas();
-				drawModel();
-			});
 
-			menuItems.add(item);
 		}
 
 		return menuItems;
