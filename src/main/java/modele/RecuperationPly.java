@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+
 /**
  * 
  * Cette classe sert à la récupération des fichiers PLY, elle permet ainsi
@@ -34,7 +37,7 @@ public class RecuperationPly {
 	 * @throws Exception
 	 */
 	public static List<Point> recuperationPoints(String fichier) throws Exception {
-		checkFormat(fichier);
+	
 
 		List<Point> res = new ArrayList<>();
 
@@ -63,6 +66,12 @@ public class RecuperationPly {
 			// reader.mark(i);
 			// reader.reset();
 		} catch (IOException o) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error Dialog");
+			alert.setHeaderText("Look, an Error Dialog");
+			alert.setContentText("Ooops, there was an error!");
+
+			alert.showAndWait();
 			o.printStackTrace();
 		}
 
@@ -81,7 +90,7 @@ public class RecuperationPly {
 	 *                   n'est
 	 */
 	public static Matrice recuperationMatrice(String fichier) throws Exception {
-		checkFormat(fichier);
+
 
 		double[][] donnees = null;
 

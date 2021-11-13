@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,6 +19,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -62,7 +65,7 @@ public class View extends Stage {
 	private DrawingMethod method = null;
 	protected double oldMouseX;
 	protected double oldMouseY;
-	
+
 	public String theme = "default";
 
 	public View() {
@@ -148,11 +151,12 @@ public class View extends Stage {
 		Menu fileMenu = new Menu("Fichier");
 		Menu ressourceMenu = new Menu("Ressources");
 		Menu viewMenu = new Menu("View");
-		Menu helpMenu = new Menu("Aide");
+		Menu helpMenu = new Menu("Help");
 		Menu themeMenu = new Menu("Themes");
 
 		MenuItem openFileItem = new MenuItem("Open File...");
 		MenuItem exitItem = new MenuItem("Exit");
+		MenuItem helpItem = new MenuItem("Show Help");
 
 		RadioMenuItem haut = new RadioMenuItem("Haut");
 		RadioMenuItem face = new RadioMenuItem("Face");
@@ -177,8 +181,10 @@ public class View extends Stage {
 		menuBar.getMenus().add(fileMenu);
 		menuBar.getMenus().add(viewMenu);
 		menuBar.getMenus().add(themeMenu);
-//		menuBar.getMenus().add(helpMenu);
+		menuBar.getMenus().add(helpMenu);
 
+		helpMenu.getItems().add(helpItem);
+		
 		ressourceMenu.getItems().addAll(createRessourcePlyMenu());
 
 		openFileItem.setOnAction(event -> {
@@ -188,16 +194,34 @@ public class View extends Stage {
 					new ExtensionFilter("All Files", "*.*"));
 			File choosedfile = fileChooser.showOpenDialog(null);
 
-			if (file != null) {
-				file = choosedfile.getAbsolutePath();
-				affichage.getModel().loadFile(file);
-				drawModel();
+			if (choosedfile != null) {
+				try {
+					RecuperationPly.checkFormat(choosedfile.getAbsolutePath());
+					file = choosedfile.getAbsolutePath();
+					affichage.getModel().loadFile(file);
+					drawModel();
+				} catch (Exception e) {
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Erreur");
+					alert.setHeaderText("Format Incompatible");
+					alert.setContentText("Le fichier ne peut pas être lu");
+
+					alert.showAndWait();
+
+				}
 			}
 
 		});
 
 		exitItem.setOnAction(event -> {
 			Platform.exit();
+		});
+		
+		helpItem.setOnAction(event -> {
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("Aide");
+			alert.setContentText("Bienvenue dans notre modélisateur 3d !\nJe vous invite à naviguer dans le menu Fichier pour ouvrir un fichier .ply.\nUne fois sélectionné, rendez-vous dans le menu View pour choisir comment vous voulez visualiser votre modèle.\nSi le thème par défaut vous pique un peu les yeux, essayez nos autres thèmes accessibles dans le menu du même nom.\n\nA votre droite vous trouverez différents boutons.\nLes boutons \"Vue de face\", \"Vue de droite\" et \"Vue de haut\" vous ouvrira une nouvelle page synchronisé avec la première sauf pour la vue des modèles qui est au choix.\nEn dessous, nous trouvons les boutons liés à la rotation du modèle.\nPlus bas nous avons le zoom allant de x0 à x10.");
+			alert.showAndWait();
 		});
 
 		for (DrawingMethod m : DrawingMethod.values()) {
@@ -513,8 +537,8 @@ public class View extends Stage {
 			MenuItem item = new MenuItem("Erreur!");
 			try {
 				Path filepath = Path.of(f.getPath());
-				System.out.println("SizeOf " + f.getName() + ": " + (Files.size(filepath)) + " bytes");
-				item = new MenuItem(f.getName() + "(" + getSize(Files.size(filepath)) + ")" + "\nfaces:"
+				BasicFileAttributes attributes = Files.readAttributes(filepath, BasicFileAttributes.class);
+				item = new MenuItem(f.getName() + " (" + getSize(attributes.size()) + ")" + "\nfaces:"
 						+ RecuperationPly.getNBFaces(filepath.toString()) + "; points:"
 						+ RecuperationPly.getNBVertices(filepath.toString()));
 			} catch (IOException e) {

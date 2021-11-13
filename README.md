@@ -1,5 +1,5 @@
 # Membres de l'équipe
-# Hugo Sene; Leo Ben Hatat; Virgil Hazebroucq;Adnan Kouakoua
+# Hugo Sene, Leo Ben Hatat, Virgil Hazebroucq, Adnan Kouakoua
 
 # Livrable 1
 
@@ -8,12 +8,12 @@
 - [ ] Afficher la liste détaillée des modèles
 - [X] Il est possible de choisir le modèle à visualiser dans la liste
 - [X] Le modèle est chargé et visualisé
-- [ ] Message d'erreur en cas d'erreur de format dans le fichier
+- [X] Message d'erreur en cas d'erreur de format dans le fichier
 - [X] La visualisation est correcte
 - [ ] On visualise simultanément trois vues du modèle (de face, de haut, de côté)
-- [ ] Rotation
-- [ ] Translation
-- [ ] Homotétie
+- [X] Rotation
+- [X] Translation
+- [X] Homotétie
 
 ## Autres éléments demandés
 
@@ -26,10 +26,14 @@
 ### Hugo Sene :
 
 ### Leo Ben Hatat :
+##### Création et implémentation de l'interface graphique
 
 ### Virgil Hazebroucq :
 
 #### Adnan Kouakoua :
+##### Récupération des fichiers PLY
+##### Réalisation du côté mathématique : Matrice (et pour introduire les matrices à notre projet)
+##### On ajoute à cela les tests qui conviennent.
 
 ## Difficultés rencontrées
 ### Trouver un moyen optimisé pour réaliser les points (dans une matrice) et les faces~

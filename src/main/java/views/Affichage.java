@@ -2,7 +2,7 @@ package views;
 
 import connectable.ConnectableProperty;
 import connectable.Observer;
-import connectable.Subject;
+import connectable.Subject; 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -39,6 +39,7 @@ public class Affichage extends ConnectableProperty {
 		if (this.model == null)
 			model = new Model();
 		this.model.loadFile(path);
+		this.view.zoomSlider.setValue(zoom/100);
 //		this.zoom = this.model.calculateAutoScale(canvas);
 	}
 
