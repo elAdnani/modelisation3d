@@ -1,0 +1,15 @@
+
+5 règles les plus importants :
+-  CommentRequired: Les commentaires sont importants pour la compréhesion du projet, il est aussi nécéssaire d'avoir une explication lorsqu'on veut utiliser la méthode dans une autre classe.
+-  LawOfDemeter: Pour la portabilité du projet et la réutilisation des classes il est important de respecter cette règle, elle permet aussi la lisibilité dans le projet.
+- NcssCount: Limite les lignes dans une méthode/ classe, n'est pas forcément à respecter mais permet de nous permettrait d'être concis.
+- TooManyFields: Nous forcer à créer une classe si trop d'element sont trop nombreux dans une même catégorie. 
+- UnusedFormalParameter: Faire simple, être concis. Et éviter des éléments inutiles dans les méthodes. Cela pourrait au contraire nous gêner et obliger d'aller chercher d'instancier de nouveaux objects qui ne seront jamais utilisés.
+- OnlyOneReturn: Avoir une meilleur visibilité (toujours une même variable de résultat et c'est plus optimisé !) .
+
+5 règles qui pose problème dans le projet (pourtant pas choisi):
+- AvoidThrowingRawException : On réalise une erreur pour observer quelle opération a eu lieu. Il peut poser problème, tant qu'il n'est pas traité.
+- UnusedImports:  Ce n'est pas génant, il ajoute des lignes inutiles mais elle ne sont utilisé dans l'exécution. Pour notre projet, il n'y a pas de grande répercution.
+- MissingOverring: Dans notre projet, il n'est pas utile car il y a très peu d'élément l'utilisant (le Overring), il n'y a que deux couches (Object et une classe du projet) il est donc pas nécéssaire.
+- DataflowAnomalyAnalysis: On l'utilise pour un compteur par exemple, il est frequemment
+- NullAssignment : Les valeurs null, se font écraser pour le moment ainsi il peut être un problème par la suite dans l'avancement de notre projet, mais pas pour le moment

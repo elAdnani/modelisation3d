@@ -1,0 +1,15 @@
+Règles Importantes :
+ 
+NamingConventions (classes et variable) : pour imposer une convention et avoir un code homogène
+UnusedAssignement : eviter le code inutile
+NullAssignment : eviter les declarations inutiles
+AvoidDeeplyNestedIfStmts : pour éviter les conditions trop complexe
+LawOfDemeter : pour que les appels au methodes restent lisible et compréhensible
+
+Règles Comprométantes:
+
+God Class : peut être problématique dans les views
+OnlyOneReturn : Mettre plusieurs return est plus simple et reduit le nombre ligne de code
+TooManyField: beaucoup de champ sont nécessaire dans les views 
+ExcessiveImports : beaucoup d'importations sont nécessaire avec JavaFX
+NcssCount : les views contiennent beaucoup de fonctions essentiels
