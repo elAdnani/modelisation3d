@@ -1,0 +1,13 @@
+5 règles les plus importantes :
+    - UnesedAssigment : Permet d'éviter le code inutile
+    - ShortVariable : Permet d'avoir des noms de variable compréhensible pour le lecteur
+    - ExcessiveMethodLength : Permet une meilleur organisation et lecture du code
+    - CommentRequired : Permet de créer une javadoc formel
+    - InutileLocalAvantRetour :  Évite la création de variables inutiles
+
+5 règles qui posent actuellement problème non choisis :
+    - ExcessiveImports : JavaFX nécessite beaucoup d'imports
+    - CommentSize : Les commentaires mis sont nécessaires
+    - GodClass : Les méthodes sont nécessaires dans ces classes
+    - OnlyOneReturn : Permet un code plus court
+    - LongVariable : Les noms permettent de savoir à quoi servent les variables
