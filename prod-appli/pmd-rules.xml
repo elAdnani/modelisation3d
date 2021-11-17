@@ -14,4 +14,78 @@
             <property name="ncssOptions" value="" />
         </properties>
     </rule>
+
+    <rule ref="category/java/documentation.xml/CommentRequired" />
+
+    <rule ref="category/java/errorprone.xml/ConstructorCallsOverridableMethod" />
+
+    <rule ref="category/java/codestyle.xml/UnnecessaryLocalBeforeReturn" />
+
+    <rule ref="category/java/design.xml/ExcessiveMethodLength">
+    <properties>
+        <property name="minimum" value="70.0" />
+    </properties>
+</rule>
+
+    <rule ref="category/java/codestyle.xml/ShortVariable">
+    <properties>
+        <property name="minimum" value="3" />
+    </properties>
+</rule>
+
+    <rule ref="category/java/bestpractices.xml/UnusedAssignment">
+<properties>
+        <property name="checkUnusedPrefixIncrement" value="false" />
+        <property name="reportUnusedVariables" value="true" />
+    </properties>
+</rule>
+
+    <rule ref="category/java/design.xml/TooManyFields">
+    <properties>
+        <property name="maxfields" value="10" />
+    </properties>
+</rule>
+
+    <rule ref="category/java/errorprone.xml/AvoidFieldNameMatchingMethodName" />
+
+    <rule ref="category/java/errorprone.xml/AvoidFieldNameMatchingTypeName" />
+
+    <rule ref="category/java/errorprone.xml/AvoidLiteralsInIfCondition">
+
+    <rule ref="category/java/design.xml/UseUtilityClass" />
+
+    <rule ref="category/java/bestpractices.xml/UnusedImports" />
+
+    <rule ref="category/java/codestyle.xml/DuplicateImports" />
+
+    <rule ref="category/java/bestpractices.xml/UnusedLocalVariable" />
+
+    <rule ref="category/java/codestyle.xml/OnlyOneReturn" />
+
+    <rule ref="category/java/bestpractices.xml/UnusedFormalParameter" />
+
+    <rule ref="category/java/codestyle.xml/ClassNamingConventions">
+    <properties>
+        <property name="classPattern" value="[A-Z][a-zA-Z0-9]*" />
+        <property name="abstractClassPattern" value="[A-Z][a-zA-Z0-9]*" />
+        <property name="interfacePattern" value="[A-Z][a-zA-Z0-9]*" />
+        <property name="enumPattern" value="[A-Z][a-zA-Z0-9]*" />
+        <property name="annotationPattern" value="[A-Z][a-zA-Z0-9]*" />
+        <property name="utilityClassPattern" value="[A-Z][a-zA-Z0-9]*" />
+    </properties>
+</rule>
+
+<rule ref="category/java/design.xml/LawOfDemeter" />
+
+    <rule ref="category/java/codestyle.xml/PrematureDeclaration" />
+
+    <rule ref="category/java/codestyle.xml/UseDiamondOperator" />   
+
+
+
+
+
+
+
+
 </ruleset>

@@ -48,6 +48,7 @@ import util.Axis;
 import util.DrawingMethod;
 import util.PlyFileFilter;
 
+@SuppressWarnings("PMD.LawOfDemeter")
 public class View extends Stage {
 
 	private Canvas canvas = null;
