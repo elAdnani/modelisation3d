@@ -1,5 +1,8 @@
 package views;
 
+import connectable.ConnectableProperty;
+import connectable.Observer;
+import connectable.Subject; 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -7,10 +10,11 @@ import modele.Model;
 import util.Axis;
 import util.DrawingMethod;
 
-public class Affichage {
+public class Affichage extends ConnectableProperty {
 
 	private Model model = null;
 	private Canvas canvas = null;
+	private View view = null;
 	private Axis axis = Axis.ZAXIS;
 
 	public Double zoom = null; // Calcul
@@ -20,16 +24,24 @@ public class Affichage {
 //	private int frameTimeIndex = 0; // Interface
 //	private boolean arrayFilled = false; // Interface
 
-	public Affichage(Canvas canvas) {
+	public Affichage(View view) {
+		this(view, Axis.ZAXIS);
+	}
+
+	public Affichage(View view, Axis axis) {
 		this.zoom = 100.0;
-		this.canvas = canvas;
-		drawAxis();
+		this.view = view;
+		this.canvas = view.getCanvas();
+		this.axis = axis;
 	}
 
 	public void loadFile(String path) {
 		if (this.model == null)
 			model = new Model();
 		this.model.loadFile(path);
+		this.view.zoomSlider.setValue(zoom/100);
+		notifyObservers();
+//		this.zoom = this.model.calculateAutoScale(canvas);
 	}
 
 	/**
@@ -40,9 +52,11 @@ public class Affichage {
 		if (model == null)
 			return;
 		clearCanvas();
-		drawAxis();
+//		drawAxis();
 		this.model.sortPoints(this.axis);
 		this.model.draw(canvas, this.axis, zoom, method);
+		System.out.println(this.attached.size());
+		notifyObservers();
 	}
 
 	public void drawAxis() {
@@ -55,7 +69,15 @@ public class Affichage {
 	}
 
 	public void rotateModel(Axis axis, double theta) {
+		if (this.model == null)
+			return;
 		this.model.rotate(axis, toRadian(theta));
+	}
+
+	public void translateModel(Axis axis, double distance) {
+		if (this.model == null)
+			return;
+		this.model.translate(axis, distance);
 	}
 
 	// Calcul
@@ -97,6 +119,52 @@ public class Affichage {
 	}
 
 	public void setZoom(double zoom) {
-		this.zoom = zoom;
+		if (!propagating) {
+			propagating = true;
+			this.zoom = zoom;
+			for (Observer obs : attached) {
+				Affichage af = (Affichage) obs;
+				af.setZoom(zoom);
+				af.view.zoomSlider.setValue(zoom / 100);
+			}
+			propagating = false;
+		}
+	}
+
+	public Axis getAxis() {
+		return axis;
+	}
+
+	public void setAxis(Axis axis) {
+		this.axis = axis;
+	}
+
+	@Override
+	public void setValue(Object val) {
+		if (val == null)
+			return;
+		if (!propagating) {
+			propagating = true;
+			this.model = new Model();
+			this.model.copy((Model) val);
+			drawModel(view.getDrawMethod());
+			propagating = false;
+		}
+	}
+
+	@Override
+	public void update(Subject subject) {
+		setValue(((Affichage) subject).getModel());
+	}
+
+	public void updateTheme(String theme) {
+		if (!propagating) {
+			propagating = true;
+			for (Observer obs : attached) {
+				Affichage af = (Affichage) obs;
+				af.view.changeTheme(theme);
+			}
+			propagating = false;
+		}
 	}
 }
