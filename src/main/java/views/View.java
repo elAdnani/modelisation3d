@@ -42,7 +42,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import modele.Model;
 import modele.RecuperationPly;
 import util.Axis;
 import util.DrawingMethod;
@@ -50,8 +49,14 @@ import util.PlyFileFilter;
 
 @SuppressWarnings("PMD.LawOfDemeter")
 public class View extends Stage {
+	private HBox root;
 
 	private Canvas canvas = null;
+	private Canvas vueface;
+	private Canvas vuedroite;
+	private Canvas vuehaut;
+
+	private GridPane gridpane;
 
 	public Slider zoomSlider = null;
 	public double zoomIncrement = 10.0;
@@ -63,7 +68,7 @@ public class View extends Stage {
 //	+ File.separator + "resources" + File.separator + "models" + File.separator;
 	private static String path = System.getProperty("user.dir") + File.separator + "exemples" + File.separator;
 
-	private Affichage affichage = null;
+	private List<Affichage> affichages = null;
 	private DrawingMethod method = null;
 	protected double oldMouseX;
 	protected double oldMouseY;
@@ -88,12 +93,56 @@ public class View extends Stage {
 		setTitle("Modélisateur 3D");
 
 		/* INITIALISATION DU CANVAS */
-		createCanvas(Screen.getPrimary().getBounds().getWidth() * defaultCanvasWidthPercentile,
+		// createCanvas(Screen.getPrimary().getBounds().getWidth() *
+		// defaultCanvasWidthPercentile,
+		// Screen.getPrimary().getBounds().getHeight());
+		gridpane = new GridPane();
+		gridpane.resize(Screen.getPrimary().getBounds().getWidth() * defaultCanvasWidthPercentile,
 				Screen.getPrimary().getBounds().getHeight());
+		createCanvas(gridpane.getWidth() / 2, gridpane.getHeight() / 2);
 
-		affichage = new Affichage(this, axis);
+		affichages = new ArrayList<Affichage>();
+
+		vueface = new Canvas(gridpane.getWidth() / 2, gridpane.getHeight() / 2);
+		vueface.getGraphicsContext2D().setFill(Color.LIGHTGRAY);
+		Affichage affichageFace = new Affichage(this, vueface, Axis.XAXIS);
+		attachCanvas(vueface, affichageFace);
+		affichages.add(affichageFace);
+		gridpane.add(vueface, 0, 0);
+
+		vuedroite = new Canvas(gridpane.getWidth() / 2, gridpane.getHeight() / 2);
+		vuedroite.getGraphicsContext2D().setFill(Color.LIGHTGRAY);
+		Affichage affichageDroite = new Affichage(this, vuedroite, Axis.ZAXIS);
+		attachCanvas(vuedroite, affichageDroite);
+		affichages.add(affichageDroite);
+		gridpane.add(vuedroite, 0, 1);
+
+		vuehaut = new Canvas(gridpane.getWidth() / 2, gridpane.getHeight() / 2);
+		vuehaut.getGraphicsContext2D().setFill(Color.LIGHTGRAY);
+		Affichage affichageHaut = new Affichage(this, vuehaut, Axis.YAXIS);
+		attachCanvas(vuehaut, affichageHaut);
+		affichages.add(affichageHaut);
+		gridpane.add(vuehaut, 1, 0);
 
 		zoomSlider = createSlider();
+		
+		for (int i = 0; i < affichages.size(); i++) {
+			Affichage aff = affichages.get(i);
+			for (int j = 0; j < affichages.size(); j++) {
+				Affichage aff2 = affichages.get(j);
+				if(!aff2.equals(aff)) {
+					aff2.setModel(aff.getModel());
+					aff2.setZoom(aff.getZoom());
+					aff2.biconnectTo(aff);					
+				}
+			}
+		}
+
+
+		gridpane.getChildren().forEach(node -> {
+			Canvas c = ((Canvas) node);
+			c.getGraphicsContext2D().strokeRect(0, 0, c.getWidth(), c.getHeight());
+		});
 
 		/* CREATION DE LA FENETRE */
 		VBox vBox = new VBox();
@@ -106,8 +155,8 @@ public class View extends Stage {
 		VBox outils = createToolBox();
 
 		/* INITIALISATION DU BORDERPANE */
-		HBox root = new HBox();
-		root.getChildren().addAll(canvas, outils);
+		root = new HBox();
+		root.getChildren().addAll(gridpane, outils);
 		vBox.getChildren().addAll(root);
 
 		loadFile(file);
@@ -115,24 +164,25 @@ public class View extends Stage {
 
 		vBox.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			public void handle(KeyEvent e) {
-				if (e.getCode() == KeyCode.RIGHT) {
-					affichage.rotateModel(Axis.YAXIS, 1);
-					drawModel();
-				}
-				if (e.getCode() == KeyCode.LEFT) {
-					affichage.rotateModel(Axis.YAXIS, -1);
-					drawModel();
+				affichages.forEach(affichage -> {
+					if (e.getCode() == KeyCode.RIGHT) {
+						affichage.rotateModel(Axis.YAXIS, 1);
+						drawModel();
+					}
+					if (e.getCode() == KeyCode.LEFT) {
+						affichage.rotateModel(Axis.YAXIS, -1);
+						drawModel();
 
-				}
-				if (e.getCode() == KeyCode.UP) {
-					affichage.rotateModel(Axis.XAXIS, 1);
-					drawModel();
-				}
-				if (e.getCode() == KeyCode.DOWN) {
-					affichage.rotateModel(Axis.XAXIS, -1);
-					drawModel();
-
-				}
+					}
+					if (e.getCode() == KeyCode.UP) {
+						affichage.rotateModel(Axis.XAXIS, 1);
+						drawModel();
+					}
+					if (e.getCode() == KeyCode.DOWN) {
+						affichage.rotateModel(Axis.XAXIS, -1);
+						drawModel();
+					}
+				});
 			}
 		});
 		vBox.getStyleClass().add("scene");
@@ -200,7 +250,9 @@ public class View extends Stage {
 				try {
 					RecuperationPly.checkFormat(choosedfile.getAbsolutePath());
 					file = choosedfile.getAbsolutePath();
-					affichage.getModel().loadFile(file);
+					affichages.forEach(affichage -> {
+						affichage.getModel().loadFile(file);
+					});
 					drawModel();
 				} catch (Exception e) {
 					Alert alert = new Alert(AlertType.ERROR);
@@ -243,27 +295,36 @@ public class View extends Stage {
 
 		haut.setToggleGroup(grpView);
 		haut.setOnAction(event -> {
-			this.affichage.setAxis(Axis.YAXIS);
-			drawModel();
+			affichages.forEach(affichage -> {
+				affichage.setAxis(Axis.YAXIS);
+				drawModel();
+			});
 		});
 
 		face.setToggleGroup(grpView);
 		face.setOnAction(event -> {
-			this.affichage.setAxis(Axis.XAXIS);
+			affichages.forEach(affichage -> {
+				affichage.setAxis(Axis.XAXIS);
+			});
 			drawModel();
 		});
 		droit.setToggleGroup(grpView);
 		droit.setOnAction(event -> {
-			this.affichage.setAxis(Axis.ZAXIS);
+			affichages.forEach(affichage -> {
+
+				affichage.setAxis(Axis.ZAXIS);
+			});
 			drawModel();
 		});
+		affichages.forEach(affichage -> {
 
-		if (this.affichage.getAxis().equals(Axis.XAXIS))
-			face.setSelected(true);
-		else if (this.affichage.getAxis().equals(Axis.YAXIS))
-			haut.setSelected(true);
-		else if (this.affichage.getAxis().equals(Axis.ZAXIS))
-			droit.setSelected(true);
+			if (affichage.getAxis().equals(Axis.XAXIS))
+				face.setSelected(true);
+			else if (affichage.getAxis().equals(Axis.YAXIS))
+				haut.setSelected(true);
+			else if (affichage.getAxis().equals(Axis.ZAXIS))
+				droit.setSelected(true);
+		});
 
 		viewMenu.getItems().addAll(haut, face, droit);
 
@@ -355,113 +416,139 @@ public class View extends Stage {
 		moins.setPrefSize(35, 35);
 
 		right.setOnAction(e -> {
-			switch (affichage.getAxis()) {
-			case XAXIS:
-				affichage.rotateModel(Axis.YAXIS, 4);
-				break;
-			case YAXIS:
-				affichage.rotateModel(Axis.XAXIS, 4);
-				break;
-			case ZAXIS:
-				affichage.rotateModel(Axis.YAXIS, 4);
-				break;
-			}
+			affichages.forEach(affichage -> {
+
+				switch (affichage.getAxis()) {
+				case XAXIS:
+					affichage.rotateModel(Axis.YAXIS, 4);
+					break;
+				case YAXIS:
+					affichage.rotateModel(Axis.XAXIS, 4);
+					break;
+				case ZAXIS:
+					affichage.rotateModel(Axis.YAXIS, 4);
+					break;
+				}
+			});
 			drawModel();
 		});
 
 		left.setOnAction(e -> {
-			switch (affichage.getAxis()) {
-			case XAXIS:
-				affichage.rotateModel(Axis.YAXIS, -4);
-				break;
-			case YAXIS:
-				affichage.rotateModel(Axis.XAXIS, -4);
-				break;
-			case ZAXIS:
-				affichage.rotateModel(Axis.YAXIS, -4);
-				break;
-			}
-			
+			affichages.forEach(affichage -> {
+
+				switch (affichage.getAxis()) {
+				case XAXIS:
+					affichage.rotateModel(Axis.YAXIS, -4);
+					break;
+				case YAXIS:
+					affichage.rotateModel(Axis.XAXIS, -4);
+					break;
+				case ZAXIS:
+					affichage.rotateModel(Axis.YAXIS, -4);
+					break;
+				}
+
+			});
 			drawModel();
 		});
 
 		up.setOnAction(e -> {
-			switch (affichage.getAxis()) {
-			case XAXIS:
-				affichage.rotateModel(Axis.ZAXIS, 4);
-				break;
-			case YAXIS:
-				affichage.rotateModel(Axis.ZAXIS, 4);
-				break;
-			case ZAXIS:
-				affichage.rotateModel(Axis.XAXIS, 4);
-				break;
-			}
+			affichages.forEach(affichage -> {
+
+				switch (affichage.getAxis()) {
+				case XAXIS:
+					affichage.rotateModel(Axis.ZAXIS, 4);
+					break;
+				case YAXIS:
+					affichage.rotateModel(Axis.ZAXIS, 4);
+					break;
+				case ZAXIS:
+					affichage.rotateModel(Axis.XAXIS, 4);
+					break;
+				}
+			});
 			drawModel();
 		});
 
 		down.setOnAction(e -> {
-			switch (affichage.getAxis()) {
-			case XAXIS:
-				affichage.rotateModel(Axis.ZAXIS, -4);
-				break;
-			case YAXIS:
-				affichage.rotateModel(Axis.ZAXIS, -4);
-				break;
-			case ZAXIS:
-				affichage.rotateModel(Axis.XAXIS, -4);
-				break;
-			}
+			affichages.forEach(affichage -> {
+
+				switch (affichage.getAxis()) {
+				case XAXIS:
+					affichage.rotateModel(Axis.ZAXIS, -4);
+					break;
+				case YAXIS:
+					affichage.rotateModel(Axis.ZAXIS, -4);
+					break;
+				case ZAXIS:
+					affichage.rotateModel(Axis.XAXIS, -4);
+					break;
+				}
+			});
 			drawModel();
 		});
 
 		face.setOnAction(e -> {
-			View fv = new View(Axis.XAXIS, this.method);
-			fv.affichage.setModel(new Model());
-			fv.affichage.getModel().copy(this.affichage.getModel());
-			fv.affichage.setZoom(this.affichage.getZoom());
-			fv.affichage.biconnectTo(this.affichage);
-			fv.drawModel();
+			/*
+			 * View fv = new View(Axis.XAXIS, this.method); fv.affichage.setModel(new
+			 * Model()); fv.affichage.getModel().copy(this.affichage.getModel());
+			 * fv.affichage.setZoom(this.affichage.getZoom());
+			 * fv.affichage.biconnectTo(this.affichage); fv.drawModel();
+			 */
+			/*
+			 * gridpane.add(new Canvas(canvas.getWidth() / 2, canvas.getHeight()), 0, 1);
+			 * gridpane.add(new Canvas(canvas.getWidth() / 2, canvas.getHeight()), 0, 0);
+			 * gridpane.getChildren().forEach(node -> { Canvas c = ((Canvas) node);
+			 * c.getGraphicsContext2D().strokeRect(0, 0, c.getWidth(), c.getHeight()); });
+			 * System.out.println(gridpane.getChildren().size());
+			 */
+
 		});
 
 		dessus.setOnAction(e -> {
-			View dv = new View(Axis.YAXIS, this.method);
-			dv.affichage.setModel(new Model());
-			dv.affichage.getModel().copy(this.affichage.getModel());
-			dv.affichage.setZoom(this.affichage.getZoom());
-			dv.affichage.biconnectTo(this.affichage);
-			dv.drawModel();
+//			View dv = new View(Axis.YAXIS, this.method);
+//			dv.affichage.setModel(new Model());
+//			dv.affichage.getModel().copy(this.affichage.getModel());
+//			dv.affichage.setZoom(this.affichage.getZoom());
+//			dv.affichage.biconnectTo(this.affichage);
+//			dv.drawModel();
 		});
 
 		droite.setOnAction(e -> {
-			View drv = new View(Axis.ZAXIS, this.method);
-			drv.affichage.setModel(new Model());
-			drv.affichage.getModel().copy(this.affichage.getModel());
-			drv.affichage.setZoom(this.affichage.getZoom());
-			drv.affichage.biconnectTo(this.affichage);
-			drv.drawModel();
+//			View drv = new View(Axis.ZAXIS, this.method);
+//			drv.affichage.setModel(new Model());
+//			drv.affichage.getModel().copy(this.affichage.getModel());
+//			drv.affichage.setZoom(this.affichage.getZoom());
+//			drv.affichage.biconnectTo(this.affichage);
+//			drv.drawModel();
 		});
 
 		plus.setOnAction(e -> {
-			if (affichage.zoom + zoomIncrement < zoomSlider.maxProperty().doubleValue() * 100) {
-				zoomSlider.setValue(zoomSlider.getValue() + zoomIncrement / 100);
-				affichage.setZoom(affichage.getZoom() + zoomIncrement);
-				drawModel();
-			} else {
-				zoomSlider.setValue(zoomSlider.maxProperty().doubleValue());
-				affichage.setZoom(zoomSlider.maxProperty().doubleValue() * 100);
-			}
+			affichages.forEach(affichage -> {
+
+				if (affichage.zoom + zoomIncrement < zoomSlider.maxProperty().doubleValue() * 100) {
+					zoomSlider.setValue(zoomSlider.getValue() + zoomIncrement / 100);
+					affichage.setZoom(affichage.getZoom() + zoomIncrement);
+					drawModel();
+				} else {
+					zoomSlider.setValue(zoomSlider.maxProperty().doubleValue());
+					affichage.setZoom(zoomSlider.maxProperty().doubleValue() * 100);
+				}
+			});
 		});
 
 		moins.setOnAction(e -> {
-			if (affichage.zoom - zoomIncrement > 0) {
-				zoomSlider.setValue(zoomSlider.getValue() - zoomIncrement / 100);
-				affichage.setZoom(affichage.getZoom() - zoomIncrement);
-				drawModel();
-			} else {
-				zoomSlider.setValue(0);
-				affichage.setZoom(0);
-			}
+			affichages.forEach(affichage -> {
+
+				if (affichage.zoom - zoomIncrement > 0) {
+					zoomSlider.setValue(zoomSlider.getValue() - zoomIncrement / 100);
+					affichage.setZoom(affichage.getZoom() - zoomIncrement);
+					drawModel();
+				} else {
+					zoomSlider.setValue(0);
+					affichage.setZoom(0);
+				}
+			});
 		});
 		outils.getStyleClass().add("outils");
 		return outils;
@@ -472,8 +559,10 @@ public class View extends Stage {
 		slider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				affichage.setZoom(zoomSlider.getValue() * 100);
-				drawModel();
+				affichages.forEach(affichage -> {
+					affichage.setZoom(zoomSlider.getValue() * 100);
+					drawModel();
+				});
 			}
 		});
 		return slider;
@@ -486,7 +575,7 @@ public class View extends Stage {
 		slider.setShowTickLabels(true);
 		slider.setShowTickMarks(true);
 		slider.setMajorTickUnit(1);
-		slider.setValue(affichage.getZoom());
+		slider.setValue(affichages.get(0).getZoom());
 		return slider;
 	}
 
@@ -503,6 +592,10 @@ public class View extends Stage {
 		canvas.getGraphicsContext2D().setFill(Color.GREY);
 
 		/* DEPLACEMENT SOURIS */
+
+	}
+
+	private void attachCanvas(Canvas canvas, Affichage affichage) {
 		canvas.setOnMousePressed(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {
 				double mouseX = event.getSceneX();
@@ -535,6 +628,7 @@ public class View extends Stage {
 						break;
 					}
 				} else if (event.getButton().equals(MouseButton.PRIMARY)) {
+
 					switch (affichage.getAxis()) {
 					case XAXIS:
 						affichage.rotateModel(Axis.ZAXIS, yDistance);
@@ -575,8 +669,12 @@ public class View extends Stage {
 	 * null
 	 */
 	private void clearCanvas() {
-		if (canvas != null)
-			this.affichage.clearCanvas();
+		if (canvas != null) {
+			affichages.forEach(affichage -> {
+				affichage.clearCanvas();
+
+			});
+		}
 	}
 
 	/**
@@ -616,14 +714,20 @@ public class View extends Stage {
 	 * Call the {@link Affichage#drawModel(Canvas)} method if the canvas is not null
 	 */
 	public void drawModel() {
-		if (canvas != null)
-			affichage.drawModel(method);
+		if (canvas != null) {
+			affichages.forEach(affichage -> {
+				affichage.drawModel(method);
+			});
+		}
 	}
 
 	public void loadFile(String file) {
 		if (file == null || file.isEmpty())
 			return; // TODO Remplacer le return par une erreur
-		affichage.loadFile(file);
+		affichages.forEach(affichage -> {
+
+			affichage.loadFile(file);
+		});
 	}
 
 	public static String getSize(long size) {
@@ -673,6 +777,9 @@ public class View extends Stage {
 			this.getScene().getStylesheets().clear();
 			this.getScene().getStylesheets().add(css);
 		}
-		affichage.updateTheme(theme);
+		affichages.forEach(affichage -> {
+
+			affichage.updateTheme(theme);
+		});
 	}
 }
