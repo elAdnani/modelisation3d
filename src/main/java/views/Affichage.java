@@ -165,6 +165,8 @@ public class Affichage extends ConnectableProperty {
 				af.view.changeTheme(theme);
 			}
 			propagating = false;
+		
 		}
 	}
+
 }

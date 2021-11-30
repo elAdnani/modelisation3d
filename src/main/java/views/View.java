@@ -7,13 +7,21 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
+import javafx.animation.Animation;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -68,6 +76,9 @@ public class View extends Stage {
 	protected double oldMouseY;
 
 	public String theme = "default";
+	
+	
+   private boolean rotating = false;
 
 	public View() {
 		this(Axis.ZAXIS);
@@ -144,6 +155,7 @@ public class View extends Stage {
 		show();
 	}
 
+	@SuppressWarnings("deprecation")
 	private MenuBar createMenuBar() {
 		// TODO Ajouter Aide
 
@@ -162,7 +174,8 @@ public class View extends Stage {
 		RadioMenuItem haut = new RadioMenuItem("Haut");
 		RadioMenuItem face = new RadioMenuItem("Face");
 		RadioMenuItem droit = new RadioMenuItem("Droit");
-
+		RadioMenuItem infRotateX= new RadioMenuItem("Infite Rotate X");
+		RadioMenuItem infRotateY= new RadioMenuItem("Infite Rotate Y");
 		RadioMenuItem defaultTheme = new RadioMenuItem("Default");
 		RadioMenuItem darkTheme = new RadioMenuItem("Dark");
 		RadioMenuItem solarisTheme = new RadioMenuItem("Solaris");
@@ -245,6 +258,34 @@ public class View extends Stage {
 			this.affichage.setAxis(Axis.YAXIS);
 			drawModel();
 		});
+		infRotateX.setOnAction(event -> {
+			Thread rotateThread  = new Thread();
+		
+			if(!rotating) {
+				rotateThread=infiniteRotate(Axis.XAXIS);
+				rotateThread.start();
+				rotating = true;
+			}else {
+				rotateThread.interrupt();
+				rotating = false;
+			}
+			infRotateX.setSelected(rotating);
+	
+		});
+		infRotateY.setOnAction(event -> {
+			Thread rotateThread  = new Thread();
+		
+			if(!rotating) {
+				rotateThread=infiniteRotate(Axis.YAXIS);
+				rotateThread.start();
+				rotating = true;
+			}else {
+				rotateThread.interrupt();
+				rotating = false;
+			}
+			infRotateY.setSelected(rotating);
+	
+		});
 
 		face.setToggleGroup(grpView);
 		face.setOnAction(event -> {
@@ -264,7 +305,7 @@ public class View extends Stage {
 		else if (this.affichage.getAxis().equals(Axis.ZAXIS))
 			droit.setSelected(true);
 
-		viewMenu.getItems().addAll(haut, face, droit);
+		viewMenu.getItems().addAll(haut, face, droit,infRotateX,infRotateY);
 
 		defaultTheme.setToggleGroup(themeView);
 		darkTheme.setToggleGroup(themeView);
@@ -617,6 +658,7 @@ public class View extends Stage {
 	public void drawModel() {
 		if (canvas != null)
 			affichage.drawModel(method);
+
 	}
 
 	public void loadFile(String file) {
@@ -674,4 +716,37 @@ public class View extends Stage {
 		}
 		affichage.updateTheme(theme);
 	}
+	
+	public Thread infiniteRotate(Axis axis){
+	
+		
+	
+
+        Task<Void> sleeper = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                try {
+                	
+                	int deg = 0;
+                    while(rotating) {
+                    	deg+=1;
+                    	System.out.println(deg);
+            			if(deg > 360) deg = 0;
+            			affichage.rotateModel(axis,deg);
+            			Thread.sleep(500);
+            			drawModel();
+            			
+                    }
+        			
+        			
+                } catch (InterruptedException e) {
+                }
+                return null;
+            }
+        };
+     
+        return new Thread(sleeper);
+        
+	}
+	
 }
