@@ -6,15 +6,15 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import connectable.ConnectableProperty;
-import connectable.ObservableProperty;
 import connectable.Subject;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import util.Axis;
 import util.DrawingMethod;
 
-public class Model {
+public class Model extends Subject{
+	
+	// TODO : Déplacer tout ce qui est dessin dans la classe Affichage
 
 	private List<Face> faces;
 	private List<Point> points;
@@ -498,6 +498,8 @@ public class Model {
 			p.setX(newX);
 			p.setZ(newZ);
 		}
+
+		//TODO : notifyObservers
 	}
 
 	// Calcul

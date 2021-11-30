@@ -33,6 +33,7 @@ public class Affichage extends ConnectableProperty {
 		this.view = view;
 		this.canvas = view.getCanvas();
 		this.axis = axis;
+		//TODO attach de la ou des vues au modèle
 	}
 
 	public void loadFile(String path) {
