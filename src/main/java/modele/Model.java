@@ -340,16 +340,14 @@ public class Model {
 	 * @throws FileNotFoundException 
 	 */
 	public void loadFile(String path) throws FileNotFoundException, FormatPlyException {
-		if (path == null || path.isBlank())
-			return; // TODO A remplacer par une exception
 		
-				RecuperationPly.recuperationFichier(path);
+			RecuperationPly.recuperationFichier(path);
 			points = RecuperationPly.getPoints();
 			faces = RecuperationPly.getFaces();
 			center = calculateCenter();
 			centerModel();
 		
-//		calculateAutoScale();
+//		calculateAutoScale(); TODO
 	}
 
 	/**

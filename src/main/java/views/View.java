@@ -600,13 +600,10 @@ public class View extends Stage {
 					drawModel();
 				});
 				menuItems.add(item);
-			} catch (IOException e) {
+			} catch (FormatPlyException | IOException e) { 
+				// on ne renvoie pas vers un message d'erreur. S'il un fichier n'est pas du bon format, on l'ignore simplement.
 				e.printStackTrace();
-			} catch (FormatPlyException e)
-			{
-				
-				erreur(e);
-			}
+			} 
 
 		}
 

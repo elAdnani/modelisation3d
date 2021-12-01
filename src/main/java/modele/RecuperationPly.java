@@ -35,22 +35,28 @@ public class RecuperationPly {
 			RecuperationPly.recuperationFichier(PATH+"vache.ply");
 		} catch (FileNotFoundException | FormatPlyException e) {}
 		System.out.println("nbVertex :" +nbVertex);
-		System.out.println(points);
-		System.out.println("nbFace : "+nbFace);
-		System.out.println(faces);
+		System.out.println(points.size());
+		for(Face p : faces) {
+			System.out.println(p.toString()+"\n");
+		}
+//		System.out.println("nbFace : "+nbFace);
+//		System.out.println(faces.size());
 		
 	}
+
 	
 	private static void resetDonnnee() {
 		nbVertex=-1;
 		nbFace=-1;
 	}
-
+	/**
+	 * 
+	 * @param fichier
+	 * @throws FormatPlyException
+	 * @throws FileNotFoundException
+	 */
 	public static void recuperationFichier(String fichier) throws FormatPlyException, FileNotFoundException {
-
-		checkFormat(fichier);
-		BufferedReader reader = new BufferedReader(new FileReader(fichier));
-		
+		BufferedReader reader = verificationDuFichier(fichier);
 		try {
 			lectureEnteteDuFichier(reader);
 			recuperationPoints(fichier,reader);
@@ -61,14 +67,27 @@ public class RecuperationPly {
 		
 
 	}
+	/**
+	 * 
+	 * @param fichier
+	 * @return
+	 * @throws FormatPlyException
+	 * @throws FileNotFoundException
+	 */
+	  private static BufferedReader verificationDuFichier(String fichier) throws FormatPlyException, FileNotFoundException{
+			checkFormat(fichier);
+			BufferedReader reader = new BufferedReader(new FileReader(fichier));
+			resetDonnnee();
+			return reader;
+		  
+	  }
 
 	/**
-	 * @TODO FAIRE DES TESTS Recupere la liste des points dans un fichier PLY donné
-	 *       en parametre
 	 * 
-	 * @param fichier - Chemin vers le fichier
-	 * @return {@link List} de {@link Point}
-	 * @throws Exception
+	 * @param fichier
+	 * @param reader
+	 * @throws FormatPlyException
+	 * @throws IOException
 	 */
 	protected static void recuperationPoints(String fichier, BufferedReader reader) throws FormatPlyException,IOException {
 
@@ -82,9 +101,8 @@ public class RecuperationPly {
 				ligne = reader.readLine();
 
 				if (ligne != null && !ligne.isEmpty()) {
-
+					
 					tab = ligne.split(" ");
-
 					res.add(new Point(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
 				} else {
 					i--;
@@ -134,14 +152,14 @@ public class RecuperationPly {
 	 * 
 	 * @param raf - RandomAccessFile
 	 * @throws FormatPlyException
-	 * @throws Exception          Le fichier ne convient pas comme fichier ply
+	 * @throws IOException
 	 */
 	protected static void lectureEnteteDuFichier(BufferedReader raf) throws FormatPlyException, IOException {
 
 		String ligne;
 			ligne = raf.readLine();
 
-			if (!ligne.toLowerCase().contains("ply")) { // TODO ajouter une classe exception
+			if (!ligne.toLowerCase().contains("ply")) { 
 				throw new FormatPlyException("Fichier invalide. Le fichier n'est pas au format ply.");
 			}
 			
@@ -166,73 +184,31 @@ public class RecuperationPly {
 
 		// on se replace tout au début du fichier
 	}
-	
-	
-	public static boolean finDuHead(String ligne) {
-		boolean res = false;
-		if(!ligne.contains("end_header")) {
-			res=true;
-		}
-		
-		
-		return res;
-	}
 
 	/**
 	 * Verifie si le fichier passé en paramètre est un fichier ply
 	 *
 	 * @param file - Chemin du fichier
-	 * @throws Exception
+	 * @throws FormatPlyException
 	 */
 	public static void checkFormat(String file) throws FormatPlyException {
 		if (!file.endsWith(".ply")) {
 			throw new FormatPlyException(file + " (Fichier invalide. Le fichier n'est pas au format ply.)");
 		} // TODO REALISER UNE CLASSE ERREUR
 	}
-	public static int getNBVertices(String filepath) {
-		try {
-			checkFormat(filepath);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		int nb = 0;
-
-		try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
-			String ligne = br.readLine();
-
-			while (!ligne.contains("element vertex")) {
-				ligne = br.readLine();
-			}
-
-			String[] line = ligne.split(" ");
-			nb = Integer.parseInt(line[line.length - 1]);
-		} catch (IOException e1) {e1.printStackTrace();}
-
-		return nb;
+	public static int getNBVertices(String fichier) throws FormatPlyException, IOException {
+		BufferedReader reader = verificationDuFichier(fichier);
+		lectureEnteteDuFichier(reader);
+		
+		return nbVertex;
 	}
 
-	public static int getNBFaces(String filepath) throws FormatPlyException {
-
-			checkFormat(filepath);
-
-		int nb = -1;
-
-		try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
-			String ligne = br.readLine();
-
-			while (!ligne.contains("element face")) {
-				ligne = br.readLine();
-			}
-
-			String[] line = ligne.split(" ");
-			nb = Integer.parseInt(line[line.length - 1]);
-			
-		} catch (IOException e) {e.printStackTrace();} 
-
-		return nb;
+	public static int getNBFaces(String fichier) throws FormatPlyException, IOException {
+		BufferedReader reader = verificationDuFichier(fichier);
+		lectureEnteteDuFichier(reader);
+		
+		return nbFace;
 	}
-
 
 	/**
 	 * 
@@ -249,7 +225,5 @@ public class RecuperationPly {
 	public static List<Face> getFaces() {
 		return faces;
 	}
-	
-	
 
 }
