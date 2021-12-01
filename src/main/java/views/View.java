@@ -2,6 +2,7 @@ package views;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -42,6 +43,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import modele.FormatPlyException;
 import modele.Model;
 import modele.RecuperationPly;
 import util.Axis;
@@ -197,20 +199,15 @@ public class View extends Stage {
 			File choosedfile = fileChooser.showOpenDialog(null);
 
 			if (choosedfile != null) {
-				try {
-					RecuperationPly.checkFormat(choosedfile.getAbsolutePath());
+
 					file = choosedfile.getAbsolutePath();
-					affichage.getModel().loadFile(file);
+					try
+					{
+						affichage.getModel().loadFile(file);
+					}catch (FormatPlyException | FileNotFoundException e)
+					{ erreur(e);}
 					drawModel();
-				} catch (Exception e) {
-					Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle("Erreur");
-					alert.setHeaderText("Format Incompatible");
-					alert.setContentText("Le fichier ne peut pas être lu");
 
-					alert.showAndWait();
-
-				}
 			}
 
 		});
@@ -605,6 +602,10 @@ public class View extends Stage {
 				menuItems.add(item);
 			} catch (IOException e) {
 				e.printStackTrace();
+			} catch (FormatPlyException e)
+			{
+				
+				erreur(e);
 			}
 
 		}
@@ -612,6 +613,21 @@ public class View extends Stage {
 		return menuItems;
 	}
 
+	
+	/**
+	 * Recupération de l'erreur PLY
+	 */
+	public void erreur(Exception e) {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle(e.getClass().getSimpleName());
+		alert.setHeaderText("Vous avez rencontrez un problème");
+		alert.setContentText(e.getMessage());
+		alert.showAndWait();
+		
+
+	}
+	
+	
 	/**
 	 * Call the {@link Affichage#drawModel(Canvas)} method if the canvas is not null
 	 */
@@ -621,9 +637,13 @@ public class View extends Stage {
 	}
 
 	public void loadFile(String file) {
-		if (file == null || file.isEmpty())
-			return; // TODO Remplacer le return par une erreur
-		affichage.loadFile(file);
+		try {
+			affichage.loadFile(file);
+		}
+		catch(FormatPlyException | FileNotFoundException e) {
+			erreur(e);
+		}
+		
 	}
 
 	public static String getSize(long size) {

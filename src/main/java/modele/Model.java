@@ -1,5 +1,6 @@
 package modele;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -335,20 +336,19 @@ public class Model {
 
 	/**
 	 * Load .ply file for current Model
+	 * @throws FormatPlyException 
+	 * @throws FileNotFoundException 
 	 */
-	public void loadFile(String path) {
+	public void loadFile(String path) throws FileNotFoundException, FormatPlyException {
 		if (path == null || path.isBlank())
 			return; // TODO A remplacer par une exception
-		try {
-			points = (ArrayList<Point>) RecuperationPly.recuperationPoints(path);
-			faces = (ArrayList<Face>) RecuperationPly.recuperationFaces(path, points);
+		
+				RecuperationPly.recuperationFichier(path);
+			points = RecuperationPly.getPoints();
+			faces = RecuperationPly.getFaces();
 			center = calculateCenter();
 			centerModel();
-		} catch (Exception e) {
-			// TODO Remplacer par une exception
-			System.out.println("Une exception est arrivé !");
-			e.printStackTrace();
-		}
+		
 //		calculateAutoScale();
 	}
 

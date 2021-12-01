@@ -1,11 +1,14 @@
 package views;
 
+import java.io.FileNotFoundException;
+
 import connectable.ConnectableProperty;
 import connectable.Observer;
 import connectable.Subject; 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import modele.FormatPlyException;
 import modele.Model;
 import util.Axis;
 import util.DrawingMethod;
@@ -35,7 +38,7 @@ public class Affichage extends ConnectableProperty {
 		this.axis = axis;
 	}
 
-	public void loadFile(String path) {
+	public void loadFile(String path) throws FileNotFoundException, FormatPlyException {
 		if (this.model == null)
 			model = new Model();
 		this.model.loadFile(path);
