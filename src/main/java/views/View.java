@@ -93,12 +93,12 @@ public class View extends Stage {
 		setTitle("Modélisateur 3D");
 
 		/* INITIALISATION DU CANVAS */
-		// createCanvas(Screen.getPrimary().getBounds().getWidth() *
-		// defaultCanvasWidthPercentile,
-		// Screen.getPrimary().getBounds().getHeight());
+		//createCanvas(Screen.getPrimary().getBounds().getWidth() * defaultCanvasWidthPercentile, Screen.getPrimary().getBounds().getHeight());
+		
 		gridpane = new GridPane();
 		gridpane.resize(Screen.getPrimary().getBounds().getWidth() * defaultCanvasWidthPercentile,
 				Screen.getPrimary().getBounds().getHeight());
+		
 		createCanvas(gridpane.getWidth() / 2, gridpane.getHeight() / 2);
 
 		affichages = new ArrayList<Affichage>();
@@ -108,21 +108,18 @@ public class View extends Stage {
 		Affichage affichageFace = new Affichage(this, vueface, Axis.XAXIS);
 		attachCanvas(vueface, affichageFace);
 		affichages.add(affichageFace);
-		gridpane.add(vueface, 0, 0);
 
 		vuedroite = new Canvas(gridpane.getWidth() / 2, gridpane.getHeight() / 2);
 		vuedroite.getGraphicsContext2D().setFill(Color.LIGHTGRAY);
 		Affichage affichageDroite = new Affichage(this, vuedroite, Axis.ZAXIS);
 		attachCanvas(vuedroite, affichageDroite);
 		affichages.add(affichageDroite);
-		gridpane.add(vuedroite, 0, 1);
 
 		vuehaut = new Canvas(gridpane.getWidth() / 2, gridpane.getHeight() / 2);
 		vuehaut.getGraphicsContext2D().setFill(Color.LIGHTGRAY);
 		Affichage affichageHaut = new Affichage(this, vuehaut, Axis.YAXIS);
 		attachCanvas(vuehaut, affichageHaut);
 		affichages.add(affichageHaut);
-		gridpane.add(vuehaut, 1, 0);
 
 		zoomSlider = createSlider();
 		
@@ -137,7 +134,6 @@ public class View extends Stage {
 				}
 			}
 		}
-
 
 		gridpane.getChildren().forEach(node -> {
 			Canvas c = ((Canvas) node);
@@ -156,8 +152,11 @@ public class View extends Stage {
 
 		/* INITIALISATION DU BORDERPANE */
 		root = new HBox();
-		root.getChildren().addAll(gridpane, outils);
+		outils.setPrefHeight(outils.getPrefHeight());
+		root.getChildren().addAll(outils, gridpane);
 		vBox.getChildren().addAll(root);
+
+		//root.setPrefSize(gridpane.getWidth(), gridpane.getHeight());
 
 		loadFile(file);
 		drawModel();
@@ -172,7 +171,6 @@ public class View extends Stage {
 					if (e.getCode() == KeyCode.LEFT) {
 						affichage.rotateModel(Axis.YAXIS, -1);
 						drawModel();
-
 					}
 					if (e.getCode() == KeyCode.UP) {
 						affichage.rotateModel(Axis.XAXIS, 1);
@@ -489,38 +487,15 @@ public class View extends Stage {
 		});
 
 		face.setOnAction(e -> {
-			/*
-			 * View fv = new View(Axis.XAXIS, this.method); fv.affichage.setModel(new
-			 * Model()); fv.affichage.getModel().copy(this.affichage.getModel());
-			 * fv.affichage.setZoom(this.affichage.getZoom());
-			 * fv.affichage.biconnectTo(this.affichage); fv.drawModel();
-			 */
-			/*
-			 * gridpane.add(new Canvas(canvas.getWidth() / 2, canvas.getHeight()), 0, 1);
-			 * gridpane.add(new Canvas(canvas.getWidth() / 2, canvas.getHeight()), 0, 0);
-			 * gridpane.getChildren().forEach(node -> { Canvas c = ((Canvas) node);
-			 * c.getGraphicsContext2D().strokeRect(0, 0, c.getWidth(), c.getHeight()); });
-			 * System.out.println(gridpane.getChildren().size());
-			 */
-
+			gridpane.add(vueface, 0, 0);
 		});
 
 		dessus.setOnAction(e -> {
-//			View dv = new View(Axis.YAXIS, this.method);
-//			dv.affichage.setModel(new Model());
-//			dv.affichage.getModel().copy(this.affichage.getModel());
-//			dv.affichage.setZoom(this.affichage.getZoom());
-//			dv.affichage.biconnectTo(this.affichage);
-//			dv.drawModel();
+			gridpane.add(vuehaut, 1, 0);
 		});
 
 		droite.setOnAction(e -> {
-//			View drv = new View(Axis.ZAXIS, this.method);
-//			drv.affichage.setModel(new Model());
-//			drv.affichage.getModel().copy(this.affichage.getModel());
-//			drv.affichage.setZoom(this.affichage.getZoom());
-//			drv.affichage.biconnectTo(this.affichage);
-//			drv.drawModel();
+			gridpane.add(vuedroite, 0, 1);
 		});
 
 		plus.setOnAction(e -> {
