@@ -12,9 +12,7 @@ package modele;
  */
 public class Point {
 
-	private double x;
-	private double y;
-	private double z;
+	Matrice coordonnees;
 
 	/**
 	 * Par défaut le point est de coordonnée (0,0,0)
@@ -24,53 +22,46 @@ public class Point {
 	}
 
 	public Point(double x, double y, double z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		
+		this.coordonnees= new Matrice(new double[][]{{x},{y},{z},{0}});
+		
 	}
 
-	/**
-	 * Renvoie un tableau de coordonnée correspondant au point
-	 * 
-	 * @return
-	 */
-	public double[] getTableau() {
-		return new double[] { x, y, z };
-	}
 
 	public double getX() {
-		return x;
+		return this.coordonnees.lire(0, 0);
 	}
 
 	public void setX(double x) {
-		this.x = x;
+		this.coordonnees.ecrire(0, 0, x);
 	}
 
 	public double getY() {
-		return y;
+		return this.coordonnees.lire(1, 0);
 	}
 
 	public void setY(double y) {
-		this.y = y;
+		this.coordonnees.ecrire(1, 0, y);
 	}
 
 	public double getZ() {
-		return z;
+		return this.coordonnees.lire(2, 0);
 	}
 
 	public void setZ(double z) {
-		this.z = z;
+		this.coordonnees.ecrire(2, 0, z);
 	}
 
 	public void setPoint(double x, double y, double z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.setX(x);
+		this.setY(y);
+		this.setZ(z);
 	}
+	
 
 	@Override
 	public String toString() {
-		return "[" + x + "," + y + "," + z + "]";
+		return "[" + this.getX() + "," + this.getY() + "," + this.getZ() + "]";
 	}
 
 }
