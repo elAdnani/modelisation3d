@@ -6,11 +6,21 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.nio.file.attribute.AclFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.DosFileAttributes;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.sound.midi.MidiFileFormat;
+
+import org.w3c.dom.Document;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -46,6 +56,7 @@ import javafx.stage.Stage;
 import modele.FormatPlyException;
 import modele.Model;
 import modele.RecuperationPly;
+
 import util.Axis;
 import util.DrawingMethod;
 import util.PlyFileFilter;
@@ -589,9 +600,12 @@ public class View extends Stage {
 		for (File f : liste) {
 			MenuItem item = new MenuItem("Erreur!");
 			try {
+
 				Path filepath = Path.of(f.getPath());
+				System.out.println(Files.getFileAttributeView(filepath, PosixFileAttributeView.class));
+				AclFileAttributeView  att = Files.getFileAttributeView(filepath, AclFileAttributeView.class);
 				BasicFileAttributes attributes = Files.readAttributes(filepath, BasicFileAttributes.class);
-				item = new MenuItem(f.getName() + " (" + getSize(attributes.size()) + ")" + "\nfaces:"
+				item = new MenuItem(f.getName() + "\nAuthor: "+att.getOwner().getName()+" (" + getSize(attributes.size()) + ")" + "\nfaces:"
 						+ RecuperationPly.getNBFaces(filepath.toString()) + "; points:"
 						+ RecuperationPly.getNBVertices(filepath.toString()));
 				item.setOnAction(event -> {
