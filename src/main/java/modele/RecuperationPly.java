@@ -29,22 +29,24 @@ public class RecuperationPly {
 
 	}
 	
-	public static void main(String[] args) throws FormatPlyException {
-		final String PATH = System.getProperty("user.dir") + File.separator + "exemples" + File.separator;
-		try {
-			RecuperationPly.recuperationFichier(PATH+"vache.ply");
-		} catch (FileNotFoundException | FormatPlyException e) {}
-		System.out.println("nbVertex :" +nbVertex);
-		System.out.println(points.size());
-		for(Face p : faces) {
-			System.out.println(p.toString()+"\n");
-		}
+//	public static void main(String[] args) throws FormatPlyException {
+//		final String PATH = System.getProperty("user.dir") + File.separator + "exemples" + File.separator;
+//		try {
+//			RecuperationPly.recuperationFichier(PATH+"vache.ply");
+//		} catch (FileNotFoundException | FormatPlyException e) {}
+//		System.out.println("nbVertex :" +nbVertex);
+//		System.out.println(points.size());
+//		for(Face p : faces) {
+//			System.out.println(p.toString()+"\n");
+//		}
 //		System.out.println("nbFace : "+nbFace);
 //		System.out.println(faces.size());
-		
-	}
+//		
+//	}
 
-	
+	/**
+	 * Réinitialise les données 
+	 */
 	private static void resetDonnnee() {
 		nbVertex=-1;
 		nbFace=-1;
@@ -192,9 +194,9 @@ public class RecuperationPly {
 	 * @throws FormatPlyException
 	 */
 	public static void checkFormat(String file) throws FormatPlyException {
-		if (!file.endsWith(".ply")) {
+		if (file!=null && !file.endsWith(".ply")) {
 			throw new FormatPlyException(file + " (Fichier invalide. Le fichier n'est pas au format ply.)");
-		} // TODO REALISER UNE CLASSE ERREUR
+		} 
 	}
 	public static int getNBVertices(String fichier) throws FormatPlyException, IOException {
 		BufferedReader reader = verificationDuFichier(fichier);

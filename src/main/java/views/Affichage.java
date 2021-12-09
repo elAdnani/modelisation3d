@@ -41,9 +41,12 @@ public class Affichage extends ConnectableProperty {
 	public void loadFile(String path) throws FileNotFoundException, FormatPlyException {
 		if (this.model == null)
 			model = new Model();
-		this.model.loadFile(path);
-		this.view.zoomSlider.setValue(zoom/100);
-		notifyObservers();
+		if (path!=null) {
+			this.model.loadFile(path);
+			this.view.zoomSlider.setValue(zoom/100);
+			notifyObservers();
+		}
+
 //		this.zoom = this.model.calculateAutoScale(canvas);
 	}
 
