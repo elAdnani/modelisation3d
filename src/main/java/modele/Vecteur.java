@@ -14,7 +14,6 @@ public class Vecteur {
 			
 		}
 
-
 		public double getX() {
 			return this.coordonnees.lire(0, 0);
 		}

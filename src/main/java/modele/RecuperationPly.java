@@ -136,11 +136,14 @@ public class RecuperationPly {
 				ligne = reader.readLine();
 
 				tab = ligne.split(" ");
-				Face ensembleDePoint = new Face();
+				
+				List<Point> pointsDeLaFace = new ArrayList<Point>();
 				for (int i = 1; i < tab.length; i++) {
-					ensembleDePoint.add(points.get(Integer.valueOf(tab[i])));
+					pointsDeLaFace.add(points.get(Integer.valueOf(tab[i])));
 				}
-				res.add(ensembleDePoint);
+				Face face = new Face(pointsDeLaFace);
+				
+				res.add(face);
 			}
 
 			reader.close();
