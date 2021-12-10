@@ -37,7 +37,11 @@ public class Affichage extends ConnectableProperty {
 		this.canvas = view.getCanvas();
 		this.axis = axis;
 	}
+	
+	public void loadLight() {
 
+	}
+	
 	public void loadFile(String path) throws FileNotFoundException, FormatPlyException {
 		if (this.model == null)
 			model = new Model();

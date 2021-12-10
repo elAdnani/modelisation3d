@@ -7,23 +7,21 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import connectable.ConnectableProperty;
-import connectable.ObservableProperty;
-import connectable.Subject;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Paint;
 import util.Axis;
 import util.DrawingMethod;
 
 public class Model {
 
-	private List<Face> faces;
+	private List<Face>  faces;
 	private List<Point> points;
-	private Point center;
+	private Point       center;
 
-	private double offsetX = 0.0;
-	private double offsetY = 0.0;
-	private double offsetZ = 0.0;
+	private double      offsetX = 0.0;
+	private double      offsetY = 0.0;
+	private double      offsetZ = 0.0;
 
 	public Model() {
 		super();
@@ -84,13 +82,15 @@ public class Model {
 		case XAXIS:
 			offSetZ = middlescreenx + offsetZ;
 			offSetY = middlescreeny + offsetY;
-			for (Face t : faces) {
+			for (Face t : faces)
+			{
 				Iterator<Point> it = t.getPoints().iterator();
 				int nbPoints = t.getPoints().size();
 				zCoord = new double[nbPoints];
 				yCoord = new double[nbPoints];
 				int cpt = 0;
-				while (it.hasNext()) {
+				while (it.hasNext())
+				{
 					Point pt = it.next();
 
 					z = (pt.getZ() * zoom) + offSetZ;
@@ -102,18 +102,21 @@ public class Model {
 					cpt++;
 				}
 				gc.strokePolygon(zCoord, yCoord, nbPoints);
+				System.out.println(canvas.getGraphicsContext2D().getStroke());
 			}
 			break;
 		case YAXIS:
 			offSetZ = middlescreeny + offsetZ;
 			offSetX = middlescreenx + offsetX;
-			for (Face t : faces) {
+			for (Face t : faces)
+			{
 				Iterator<Point> it = t.getPoints().iterator();
 				int nbPoints = t.getPoints().size();
 				zCoord = new double[nbPoints];
 				xCoord = new double[nbPoints];
 				int cpt = 0;
-				while (it.hasNext()) {
+				while (it.hasNext())
+				{
 					Point pt = it.next();
 
 					z = (pt.getZ() * zoom) + offSetZ;
@@ -125,18 +128,21 @@ public class Model {
 					cpt++;
 				}
 				gc.strokePolygon(xCoord, zCoord, nbPoints);
+				System.out.println(canvas.getGraphicsContext2D().getStroke());
 			}
 			break;
 		case ZAXIS:
 			offSetX = middlescreenx + offsetX;
 			offSetY = middlescreeny + offsetY;
-			for (Face t : faces) {
+			for (Face t : faces)
+			{
 				Iterator<Point> it = t.getPoints().iterator();
 				int nbPoints = t.getPoints().size();
 				xCoord = new double[nbPoints];
 				yCoord = new double[nbPoints];
 				int cpt = 0;
-				while (it.hasNext()) {
+				while (it.hasNext())
+				{
 					Point pt = it.next();
 
 					x = (pt.getX() * zoom) + offSetX;
@@ -148,6 +154,7 @@ public class Model {
 					cpt++;
 				}
 				gc.strokePolygon(xCoord, yCoord, nbPoints);
+				System.out.println(canvas.getGraphicsContext2D().getStroke());
 			}
 			break;
 		}
@@ -173,13 +180,15 @@ public class Model {
 		case XAXIS:
 			offSetZ = middlescreenx + offsetZ;
 			offSetY = middlescreeny + offsetY;
-			for (Face t : faces) {
+			for (Face t : faces)
+			{
 				Iterator<Point> it = t.getPoints().iterator();
 				int nbPoints = t.getPoints().size();
 				zCoord = new double[nbPoints];
 				yCoord = new double[nbPoints];
 				int cpt = 0;
-				while (it.hasNext()) {
+				while (it.hasNext())
+				{
 					Point pt = it.next();
 
 					z = (pt.getZ() * zoom) + offSetZ;
@@ -196,13 +205,15 @@ public class Model {
 		case YAXIS:
 			offSetZ = middlescreeny + offsetZ;
 			offSetX = middlescreenx + offsetX;
-			for (Face t : faces) {
+			for (Face t : faces)
+			{
 				Iterator<Point> it = t.getPoints().iterator();
 				int nbPoints = t.getPoints().size();
 				zCoord = new double[nbPoints];
 				xCoord = new double[nbPoints];
 				int cpt = 0;
-				while (it.hasNext()) {
+				while (it.hasNext())
+				{
 					Point pt = it.next();
 
 					z = (pt.getZ() * zoom) + offSetZ;
@@ -219,13 +230,15 @@ public class Model {
 		case ZAXIS:
 			offSetX = middlescreenx + offsetX;
 			offSetY = middlescreeny + offsetY;
-			for (Face t : faces) {
+			for (Face t : faces)
+			{
 				Iterator<Point> it = t.getPoints().iterator();
 				int nbPoints = t.getPoints().size();
 				xCoord = new double[nbPoints];
 				yCoord = new double[nbPoints];
 				int cpt = 0;
-				while (it.hasNext()) {
+				while (it.hasNext())
+				{
 					Point pt = it.next();
 
 					x = (pt.getX() * zoom) + offSetX;
@@ -281,6 +294,8 @@ public class Model {
 				}
 				gc.strokePolygon(zCoord, yCoord, nbPoints);
 				gc.fillPolygon(zCoord, yCoord, nbPoints);
+				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x", (int)(double)(200 * t.degreDeCouleur()), (int)(double)(1*t.degreDeCouleur()), (int)(double)(1*t.degreDeCouleur()) ) ));
+				
 			}
 			break;
 		case YAXIS:
@@ -305,11 +320,14 @@ public class Model {
 				}
 				gc.strokePolygon(xCoord, zCoord, nbPoints);
 				gc.fillPolygon(xCoord, zCoord, nbPoints);
+				
+				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x", (int)(double)(200 * t.degreDeCouleur()), (int)(double)(1*t.degreDeCouleur()), (int)(double)(1*t.degreDeCouleur()) ) ));
 			}
 			break;
 		case ZAXIS:
 			offSetX = middlescreenx + offsetX;
 			offSetY = middlescreeny + offsetY;
+			int i=0;
 			for (Face t : faces) {
 				Iterator<Point> it = t.getPoints().iterator();
 				int nbPoints = t.getPoints().size();
@@ -329,6 +347,10 @@ public class Model {
 				}
 				gc.strokePolygon(xCoord, yCoord, nbPoints);
 				gc.fillPolygon(xCoord, yCoord, nbPoints);
+
+				System.out.println("COLOR FACE"+i+" "+t.degreDeCouleur());
+				i++;
+				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x",(int)(128 * t.degreDeCouleur()), (int)(1*t.degreDeCouleur()), (int)(1*t.degreDeCouleur()) ) ));
 			}
 			break;
 		}
@@ -336,17 +358,18 @@ public class Model {
 
 	/**
 	 * Load .ply file for current Model
-	 * @throws FormatPlyException 
-	 * @throws FileNotFoundException 
+	 * 
+	 * @throws FormatPlyException
+	 * @throws FileNotFoundException
 	 */
 	public void loadFile(String path) throws FileNotFoundException, FormatPlyException {
-		
-			RecuperationPly.recuperationFichier(path);
-			points = RecuperationPly.getPoints();
-			faces = RecuperationPly.getFaces();
-			center = calculateCenter();
-			centerModel();
-		
+
+		RecuperationPly.recuperationFichier(path);
+		points = RecuperationPly.getPoints();
+		faces = RecuperationPly.getFaces();
+		center = calculateCenter();
+		centerModel();
+
 //		calculateAutoScale(); TODO
 	}
 
@@ -359,7 +382,8 @@ public class Model {
 		double height = Math.pow(center.getY() * 2, 2);
 		double breadth = Math.pow(center.getZ() * 2, 2);
 		double diagonal = Math.sqrt(length + height + breadth);
-		for (Point p : points) {
+		for (Point p : points)
+		{
 			p.setX((p.getX() - center.getX()) / diagonal);
 			p.setY((p.getY() - center.getY()) / diagonal);
 			p.setZ((p.getZ() - center.getZ()) / diagonal);
@@ -401,7 +425,8 @@ public class Model {
 		Double zMin = null;
 		Double zMax = null;
 
-		for (Iterator<Point> iterator = points.iterator(); iterator.hasNext();) {
+		for (Iterator<Point> iterator = points.iterator(); iterator.hasNext();)
+		{
 			Point point = iterator.next();
 			double currX = point.getX();
 			double currY = point.getY();
@@ -478,7 +503,8 @@ public class Model {
 	private void rotateX(double tetha) {
 		double sinTheta = Math.sin(tetha);
 		double cosTheta = Math.cos(tetha);
-		for (Point p : points) {
+		for (Point p : points)
+		{
 			double newY = (p.getY() * cosTheta) - (p.getZ() * sinTheta);
 			double newZ = (p.getY() * sinTheta) + (p.getZ() * cosTheta);
 			p.setY(newY);
@@ -490,7 +516,8 @@ public class Model {
 	private void rotateY(double tetha) {
 		double sinTheta = Math.sin(tetha);
 		double cosTheta = Math.cos(tetha);
-		for (Point p : points) {
+		for (Point p : points)
+		{
 			double newX = (p.getX() * cosTheta) + (p.getZ() * sinTheta);
 			double newZ = (p.getZ() * cosTheta) - (p.getX() * sinTheta);
 			p.setX(newX);
@@ -502,7 +529,8 @@ public class Model {
 	private void rotateZ(double tetha) {
 		double sinTheta = Math.sin(tetha);
 		double cosTheta = Math.cos(tetha);
-		for (Point p : points) {
+		for (Point p : points)
+		{
 			double newX = (p.getX() * cosTheta) - (p.getY() * sinTheta);
 			double newY = (p.getX() * sinTheta) + (p.getY() * cosTheta);
 			p.setX(newX);
@@ -523,9 +551,10 @@ public class Model {
 			break;
 		}
 	}
-	
+
 	public void copy(Model model) {
-		if(model == null) return;
+		if (model == null)
+			return;
 		this.center = model.center;
 		this.faces = model.faces;
 		this.points = model.points;
