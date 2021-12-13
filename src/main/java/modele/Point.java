@@ -61,7 +61,7 @@ public class Point {
 
 	@Override
 	public String toString() {
-		return "[" + this.getX() + "," + this.getY() + "," + this.getZ() + "]";
+		return "Point[" + this.getX() + "," + this.getY() + "," + this.getZ() + "]";
 	}
 
 }

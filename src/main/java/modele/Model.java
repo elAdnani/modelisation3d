@@ -292,9 +292,11 @@ public class Model {
 
 					cpt++;
 				}
+				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x",(int)(128 * t.degreDeCouleur()), (int)(10*t.degreDeCouleur()), (int)(10*t.degreDeCouleur()) ) ));
 				gc.strokePolygon(zCoord, yCoord, nbPoints);
 				gc.fillPolygon(zCoord, yCoord, nbPoints);
-				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x", (int)(double)(200 * t.degreDeCouleur()), (int)(double)(1*t.degreDeCouleur()), (int)(double)(1*t.degreDeCouleur()) ) ));
+				System.out.println(String.format("#%02x%02x%02x",(int)(128 * t.degreDeCouleur()), (int)(1*t.degreDeCouleur()), (int)(1*t.degreDeCouleur()) ));
+				System.out.println((int)(128 * t.degreDeCouleur())+" "+ (int)(1*t.degreDeCouleur())+" "+ (int)(1*t.degreDeCouleur()) );
 				
 			}
 			break;
@@ -318,10 +320,10 @@ public class Model {
 
 					cpt++;
 				}
+				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x",(int)(128 * t.degreDeCouleur()), (int)(10*t.degreDeCouleur()), (int)(10*t.degreDeCouleur()) ) ));
 				gc.strokePolygon(xCoord, zCoord, nbPoints);
 				gc.fillPolygon(xCoord, zCoord, nbPoints);
-				
-				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x", (int)(double)(200 * t.degreDeCouleur()), (int)(double)(1*t.degreDeCouleur()), (int)(double)(1*t.degreDeCouleur()) ) ));
+
 			}
 			break;
 		case ZAXIS:
@@ -345,12 +347,14 @@ public class Model {
 
 					cpt++;
 				}
+				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x",(int)(128 * t.degreDeCouleur()), (int)(10*t.degreDeCouleur()), (int)(10*t.degreDeCouleur()) ) ));
 				gc.strokePolygon(xCoord, yCoord, nbPoints);
+				
 				gc.fillPolygon(xCoord, yCoord, nbPoints);
 
 				System.out.println("COLOR FACE"+i+" "+t.degreDeCouleur());
 				i++;
-				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x",(int)(128 * t.degreDeCouleur()), (int)(1*t.degreDeCouleur()), (int)(1*t.degreDeCouleur()) ) ));
+				
 			}
 			break;
 		}
@@ -598,7 +602,12 @@ public class Model {
 	private class XAxisComparator implements Comparator<Face> {
 		@Override
 		public int compare(Face o1, Face o2) {
-			return o2.getAverageX() - o1.getAverageX() < 0 ? 1 : -1;
+			double av1 = o1.getAverageX();
+			double av2 = o2.getAverageX();
+			if(av2 == av1) {
+				return 0;
+			}
+			return av2 - av1 < 0 ? 1 : -1;
 		}
 	}
 
@@ -609,7 +618,12 @@ public class Model {
 	private class YAxisComparator implements Comparator<Face> {
 		@Override
 		public int compare(Face o1, Face o2) {
-			return o1.getAverageY() - o2.getAverageY() < 0 ? 1 : -1;
+			double av1 = o1.getAverageY();
+			double av2 = o2.getAverageY();
+			if(av2 == av1) {
+				return 0;
+			}
+			return av2 - av1 < 0 ? 1 : -1;
 		}
 	}
 
@@ -620,7 +634,12 @@ public class Model {
 	private class ZAxisComparator implements Comparator<Face> {
 		@Override
 		public int compare(Face o1, Face o2) {
-			return o1.getAverageZ() - o2.getAverageZ() < 0 ? 1 : -1;
+			double av1 = o1.getAverageZ();
+			double av2 = o2.getAverageZ();
+			if(av2 == av1) {
+				return 0;
+			}
+			return av2 - av1 < 0 ? 1 : -1;
 		}
 	}
 

@@ -615,7 +615,7 @@ public class View extends Stage {
 				});
 				menuItems.add(item);
 			} catch (FormatPlyException | IOException e) { 
-				// on ne renvoie pas vers un message d'erreur. S'il un fichier n'est pas du bon format, on l'ignore simplement.
+				// on ne renvoie pas vers un message d'erreur. Si un fichier n'est pas du bon format, on l'ignore simplement.
 				e.printStackTrace();
 			} 
 

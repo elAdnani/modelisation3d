@@ -6,7 +6,7 @@ import java.util.List;
 public class Face {
 
 	private List<Point> points;
-	private static final   Vecteur SOURCELUMINEUSE = new Vecteur(1, 1, 1);
+	private static final   Vecteur SOURCELUMINEUSE = new Vecteur(0, 0, 1);
 	private Vecteur normalUnitaire;
 
 	// List<Integer> reference; // indice de la matrice des listes de point
@@ -19,7 +19,7 @@ public class Face {
 	public Face(List<Point> points) {
 		this.points = points;
 		if(points.size()>=3) {
-			normalUnitaire();
+			this.normalUnitaire = Vecteur.normalUnitaire(this.points.get(0),this.points.get(1),this.points.get(2));
 		}
 	}
 
@@ -63,34 +63,22 @@ public class Face {
 		return sum / points.size();
 	}
 	
-	private void normalUnitaire() {
-		
-		Point A = points.get(0);
-		Point B = points.get(1);
-		Point C = points.get(2);
-		
-		Vecteur AB  = new Vecteur(B.getX()-A.getX(), B.getY()-A.getY(), B.getZ()-A.getZ());
-		Vecteur AC  = new Vecteur(C.getX()-A.getX(), C.getY()-A.getY(), C.getZ()-A.getZ());
-		
-		double detX = (AB.getY()*AC.getZ()) - (AC.getY()*AB.getZ());
-		double detY = (AC.getX()*AB.getZ()) - (AC.getZ()* AB.getX());
-		double detZ =(AB.getX()*AC.getY()) - (AC.getX()*AB.getY());
-	//	Vecteur ABvAC = new Vecteur(detX, detY, detZ);
-		
-		double normeABvAC = Math.sqrt(detX*detX+ detY*detY + detZ*detZ);
-		
-		this.normalUnitaire = new Vecteur(detX/normeABvAC, detY/normeABvAC, detZ/normeABvAC);
-	}
 	
 	public double degreDeCouleur() {
-		if(this.normalUnitaire == null) {
-			normalUnitaire();
+		if(this.points.size() >=3 && this.normalUnitaire == null) {
+			this.normalUnitaire = Vecteur.normalUnitaire(this.points.get(0),this.points.get(1),this.points.get(2));
 		}
-		double res =(this.normalUnitaire.getX() * SOURCELUMINEUSE.getX()) + (this.normalUnitaire.getY() * SOURCELUMINEUSE.getY()) + (this.normalUnitaire.getZ() * SOURCELUMINEUSE.getZ());
-		if(res<0) {
-			res=0;
+		double degreDeCouleur =	(double)(this.normalUnitaire.getX() * SOURCELUMINEUSE.getX()) 
+								+ (double)(this.normalUnitaire.getY() * SOURCELUMINEUSE.getY()) 
+								+ (double)(this.normalUnitaire.getZ() * SOURCELUMINEUSE.getZ());
+		if(degreDeCouleur<0) {
+			degreDeCouleur=0;
 		}
-		return res;
+		if(degreDeCouleur>255) {
+			degreDeCouleur=255;
+		}
+
+		return degreDeCouleur;
 		
 	}
 	
@@ -107,7 +95,7 @@ public class Face {
 	public void add(Point p) {
 		this.points.add(p);
 		if(points.size()>=3) {
-			normalUnitaire();
+			this.normalUnitaire = Vecteur.normalUnitaire(this.points.get(0),this.points.get(2),this.points.get(3));
 		}
 	}
 
