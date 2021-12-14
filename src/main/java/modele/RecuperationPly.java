@@ -142,19 +142,13 @@ public class RecuperationPly {
 	 * @return {@link List} de {@link Face}
 	 * @throws Exception
 	 */
-	public static List<Face> recuperationFaces(String fichier, List<Point> points) {
+	public static List<Face> recuperationFaces(String fichier, List<Point> points) throws Exception {
 
-		List<Face> res = null;
-		FileReader fichierPly;
-		try {
-			checkFormat(fichier);
-			res = new ArrayList<>();
+		checkFormat(fichier);
 
-			fichierPly = new FileReader(fichier);
-
+		List<Face> res = new ArrayList<>();
+		try (BufferedReader reader = new BufferedReader(new FileReader(fichier))) {
 			String ligne;
-
-			BufferedReader reader = new BufferedReader(fichierPly);
 			placerApresLaTeteDuFichier(reader);
 
 			String[] tab;
@@ -178,8 +172,6 @@ public class RecuperationPly {
 
 			// reader.mark(nbLigneLue+nbVertex+nbFace);
 			// reader.reset();
-			fichierPly.close();
-			reader.close();
 
 		} catch (Exception o) {
 
@@ -200,16 +192,10 @@ public class RecuperationPly {
 		checkFormat(fichier);
 
 		List<FaceMatrice> res = new ArrayList<>();
-
-		FileReader fichierPly = null;
-
-		try {
-
-			fichierPly = new FileReader(fichier);
+		try (BufferedReader reader = new BufferedReader(new FileReader(fichier));) {
 
 			String ligne;
 
-			BufferedReader reader = new BufferedReader(fichierPly);
 			placerApresLaTeteDuFichier(reader);
 
 			String[] tab;
@@ -230,10 +216,8 @@ public class RecuperationPly {
 				}
 				res.add(indiceDesEnsemblesDePoint);
 			}
-			fichierPly.close();
 			// reader.mark(nbLigneLue+nbVertex+nbFace);
 			// reader.reset();
-			reader.close();
 		} catch (IOException o) {
 
 			o.printStackTrace();
