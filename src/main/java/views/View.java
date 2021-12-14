@@ -2,11 +2,14 @@ package views;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.AclFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.PosixFileAttributeView;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,10 +46,12 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import modele.Model;
-import modele.RecuperationPly;
+import ply.RecuperationPly;
+import ply.exceptions.FormatPlyException;
 import util.Axis;
 import util.DrawingMethod;
 import util.PlyFileFilter;
+import util.Theme;
 
 @SuppressWarnings("PMD.LawOfDemeter")
 public class View extends Stage {
@@ -68,7 +73,7 @@ public class View extends Stage {
 	protected double oldMouseX;
 	protected double oldMouseY;
 
-	public String theme = "default";
+	private Theme theme = Theme.DEFAULT;
 
 	public View() {
 		this(Axis.ZAXIS);
@@ -146,7 +151,6 @@ public class View extends Stage {
 	}
 
 	private MenuBar createMenuBar() {
-		// TODO Ajouter Aide
 
 		MenuBar menuBar = new MenuBar();
 
@@ -164,9 +168,9 @@ public class View extends Stage {
 		RadioMenuItem face = new RadioMenuItem("Face");
 		RadioMenuItem droit = new RadioMenuItem("Droit");
 
-		RadioMenuItem defaultTheme = new RadioMenuItem("Default");
-		RadioMenuItem darkTheme = new RadioMenuItem("Dark");
-		RadioMenuItem solarisTheme = new RadioMenuItem("Solaris");
+		RadioMenuItem defaultTheme = new RadioMenuItem(Theme.DEFAULT.toString());
+		RadioMenuItem darkTheme = new RadioMenuItem(Theme.DARK.toString());
+		RadioMenuItem solarisTheme = new RadioMenuItem(Theme.SOLARIS.toString());
 
 		SeparatorMenuItem sep = new SeparatorMenuItem();
 		SeparatorMenuItem sepView = new SeparatorMenuItem();
@@ -197,20 +201,15 @@ public class View extends Stage {
 			File choosedfile = fileChooser.showOpenDialog(null);
 
 			if (choosedfile != null) {
+
+				file = choosedfile.getAbsolutePath();
 				try {
-					RecuperationPly.checkFormat(choosedfile.getAbsolutePath());
-					file = choosedfile.getAbsolutePath();
 					affichage.getModel().loadFile(file);
-					drawModel();
-				} catch (Exception e) {
-					Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle("Erreur");
-					alert.setHeaderText("Format Incompatible");
-					alert.setContentText("Le fichier ne peut pas être lu");
-
-					alert.showAndWait();
-
+				} catch (FormatPlyException | FileNotFoundException e) {
+					erreur(e);
 				}
+				drawModel();
+
 			}
 
 		});
@@ -272,16 +271,15 @@ public class View extends Stage {
 		solarisTheme.setToggleGroup(themeView);
 
 		defaultTheme.setOnAction(event -> {
-			changeTheme("default");
+			changeTheme(Theme.DEFAULT);
 		});
 
 		darkTheme.setOnAction(event -> {
-
-			changeTheme("../styles/darkmode.css");
+			changeTheme(Theme.DARK);
 		});
 
 		solarisTheme.setOnAction(event -> {
-			changeTheme("../styles/solaris.css");
+			changeTheme(Theme.SOLARIS);
 		});
 
 		defaultTheme.setSelected(true);
@@ -381,7 +379,7 @@ public class View extends Stage {
 				affichage.rotateModel(Axis.YAXIS, -4);
 				break;
 			}
-			
+
 			drawModel();
 		});
 
@@ -588,28 +586,47 @@ public class View extends Stage {
 		File directory = new File(path);
 		FileFilter filter = new PlyFileFilter();
 		File[] liste = directory.listFiles(filter);
-		List<MenuItem> menuItems = new ArrayList<MenuItem>();
+		List<MenuItem> menuItems = new ArrayList<>();
 		for (File f : liste) {
+			System.out.println(f.getAbsolutePath());
 			MenuItem item = new MenuItem("Erreur!");
 			try {
+
 				Path filepath = Path.of(f.getPath());
+				System.out.println(Files.getFileAttributeView(filepath, PosixFileAttributeView.class));
+				AclFileAttributeView att = Files.getFileAttributeView(filepath, AclFileAttributeView.class);
 				BasicFileAttributes attributes = Files.readAttributes(filepath, BasicFileAttributes.class);
-				item = new MenuItem(f.getName() + " (" + getSize(attributes.size()) + ")" + "\nfaces:"
-						+ RecuperationPly.getNBFaces(filepath.toString()) + "; points:"
-						+ RecuperationPly.getNBVertices(filepath.toString()));
+				item = new MenuItem(
+						f.getName() + "\nAuthor: " + att.getOwner().getName() + " (" + getSize(attributes.size()) + ")"
+								+ "\nfaces:" + RecuperationPly.getNBFaces(filepath.toString()) + "; points:"
+								+ RecuperationPly.getNBVertices(filepath.toString()));
 				item.setOnAction(event -> {
 					loadFile(f.getPath());
 					clearCanvas();
 					drawModel();
 				});
 				menuItems.add(item);
-			} catch (IOException e) {
+			} catch (FormatPlyException | IOException e) {
+				// on ne renvoie pas vers un message d'erreur. Si un fichier n'est pas du bon
+				// format, on l'ignore simplement.
 				e.printStackTrace();
 			}
 
 		}
 
 		return menuItems;
+	}
+
+	/**
+	 * Recupération de l'erreur PLY
+	 */
+	public void erreur(Exception e) {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle(e.getClass().getSimpleName());
+		alert.setHeaderText("Vous avez rencontrez un problème");
+		alert.setContentText(e.getMessage());
+		alert.showAndWait();
+
 	}
 
 	/**
@@ -621,13 +638,17 @@ public class View extends Stage {
 	}
 
 	public void loadFile(String file) {
-		if (file == null || file.isEmpty())
-			return; // TODO Remplacer le return par une erreur
-		affichage.loadFile(file);
+		try {
+			affichage.loadFile(file);
+		} catch (FormatPlyException | FileNotFoundException e) {
+			erreur(e);
+		}
+
 	}
 
 	public static String getSize(long size) {
 		String s = "";
+
 		long kilo = 1024;
 		long mega = kilo * kilo;
 		long giga = mega * kilo;
@@ -637,6 +658,7 @@ public class View extends Stage {
 		double mb = kb / kilo;
 		double gb = mb / kilo;
 		double tb = gb / kilo;
+
 		if (size < kilo) {
 			s = size + " Bytes";
 		} else if (size >= kilo && size < mega) {
@@ -648,6 +670,7 @@ public class View extends Stage {
 		} else if (size >= tera) {
 			s = String.format("%.2f", tb) + " TB";
 		}
+
 		return s;
 	}
 
@@ -659,19 +682,19 @@ public class View extends Stage {
 		return method;
 	}
 
-	public void changeTheme(String themepath) {
-		if (themepath == null)
+	public void changeTheme(Theme theme) {
+		if (theme == null)
 			return;
-		if (themepath.equals("default")) {
+		else if (theme.equals(Theme.DEFAULT)) {
 			this.getScene().getStylesheets().clear();
-			return;
-		}
-		URL resourcecss = getClass().getResource(themepath);
-		if (resourcecss != null) {
-			theme = themepath;
-			String css = resourcecss.toExternalForm();
-			this.getScene().getStylesheets().clear();
-			this.getScene().getStylesheets().add(css);
+		} else {
+			URL resourcecss = getClass().getResource(theme.getPath());
+			if (resourcecss != null) {
+				this.theme = theme;
+				String css = resourcecss.toExternalForm();
+				this.getScene().getStylesheets().clear();
+				this.getScene().getStylesheets().add(css);
+			}
 		}
 		affichage.updateTheme(theme);
 	}

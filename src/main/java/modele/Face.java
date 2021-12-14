@@ -3,9 +3,13 @@ package modele;
 import java.util.ArrayList;
 import java.util.List;
 
+import math.Vecteur;
+
 public class Face {
 
 	private List<Point> points;
+	private static final Vecteur SOURCELUMINEUSE = new Vecteur(0, 0, 1);
+	private Vecteur normalUnitaire;
 
 	// List<Integer> reference; // indice de la matrice des listes de point
 	// Matrice METTRE EN PARAMETRE
@@ -16,10 +20,9 @@ public class Face {
 
 	public Face(List<Point> points) {
 		this.points = points;
-	}
-
-	public void add(Point p) {
-		this.points.add(p);
+		if (points.size() >= 3) {
+			this.normalUnitaire = Vecteur.normalUnitaire(this.points.get(0), this.points.get(1), this.points.get(2));
+		}
 	}
 
 	public List<Point> getPoints() {
@@ -60,6 +63,43 @@ public class Face {
 		}
 
 		return sum / points.size();
+	}
+
+	public double degreDeCouleur() {
+		double degreDeCouleur = -1;
+		if (this.points.size() >= 3) {
+
+			this.normalUnitaire = Vecteur.normalUnitaire(this.points.get(0), this.points.get(1), this.points.get(2));
+
+			degreDeCouleur = (double) (this.normalUnitaire.getX() * SOURCELUMINEUSE.getX())
+					+ (double) (this.normalUnitaire.getY() * SOURCELUMINEUSE.getY())
+					+ (double) (this.normalUnitaire.getZ() * SOURCELUMINEUSE.getZ());
+			if (degreDeCouleur < 0) {
+				degreDeCouleur = 0;
+			}
+			if (degreDeCouleur > 255) {
+				degreDeCouleur = 255;
+			}
+		}
+
+		return degreDeCouleur;
+
+	}
+
+	/*
+	 * public static void main(String[] args) {
+	 * 
+	 * Face f = new Face(); f.add(new Point(-2, 1, 3)); f.add(new Point(-3, 2, 3));
+	 * f.add(new Point(-2, 2, 5));
+	 * 
+	 * System.out.println(f.degreDeCouleur()); }
+	 */
+
+	public void add(Point p) {
+		this.points.add(p);
+		if (points.size() >= 3) {
+			this.normalUnitaire = Vecteur.normalUnitaire(this.points.get(0), this.points.get(2), this.points.get(3));
+		}
 	}
 
 }

@@ -1,4 +1,5 @@
-package modele;
+package math;
+
 /**
  * 
  * Cette classe permet d'obtenir des matrices servant aux transformation géométrique. <br>

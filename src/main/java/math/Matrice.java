@@ -1,4 +1,4 @@
-package modele;
+package math;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -12,7 +12,7 @@ import java.util.Iterator;
  * IUT-A Informatique, Universite de Lille.
  * @date 11 nov. 2021
  */
-public class Matrice implements Iterable<Matrice> {
+public class Matrice implements Iterable<Matrice>{
 	
 	/* ATTRIBUTS ______________________________ */
 

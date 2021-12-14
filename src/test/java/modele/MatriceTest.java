@@ -11,6 +11,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
+import math.Matrice;
+
 /**
  * 
  * Cette classe regroupe les testes confirmant les fonctionnalités des méthodes
