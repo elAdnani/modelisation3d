@@ -138,8 +138,7 @@ public class Affichage extends ConnectableProperty {
 			return;
 		if (!propagating) {
 			propagating = true;
-			this.model = new Model();
-			this.model.copy((Model) val);
+			this.model = (Model)val;
 			drawModel(view.getDrawMethod());
 			propagating = false;
 		}
