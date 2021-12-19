@@ -7,9 +7,12 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileOwnerAttributeView;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
@@ -37,6 +40,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -46,6 +50,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Screen;
@@ -197,6 +202,7 @@ public class View extends Stage {
 		ToggleGroup grpView = new ToggleGroup();
 		ToggleGroup themeView = new ToggleGroup();
 
+
 		fileMenu.getItems().add(openFileItem);
 		fileMenu.getItems().add(ressourceMenu);
 		fileMenu.getItems().add(sep);
@@ -208,9 +214,19 @@ public class View extends Stage {
 		menuBar.getMenus().add(helpMenu);
 
 		helpMenu.getItems().add(helpItem);
-
+		TextField search = new TextField();
+		search.setPromptText("Search a model here");
+		search.textProperty().addListener((observable, oldValue, newValue) -> {
+		    System.out.println("textfield changed from " + oldValue + " to " + newValue);
+		    //chercher la valeur	
+		   // ressourceMenu.getItems().addAll(searchModel(newValue));
+		});
+		MenuItem searchbar = new MenuItem();
+		searchbar.setGraphic(search);
+		ressourceMenu.getItems().add(searchbar);
 		ressourceMenu.getItems().addAll(createRessourcePlyMenu());
-
+		
+		
 		openFileItem.setOnAction(event -> {
 			FileChooser fileChooser = new FileChooser();
 			fileChooser.setTitle("Open File");
@@ -650,16 +666,31 @@ public class View extends Stage {
 		FileFilter filter = new PlyFileFilter();
 		File[] liste = directory.listFiles(filter);
 		List<MenuItem> menuItems = new ArrayList<MenuItem>();
-		for (File f : liste)
-		{
+	
+	
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	
+		for (File f : liste) {
+
 			MenuItem item = new MenuItem("Erreur!");
 			try
 			{
 				Path filepath = Path.of(f.getPath());
+				 FileOwnerAttributeView owner= Files.getFileAttributeView(filepath, 	FileOwnerAttributeView.class);
 				BasicFileAttributes attributes = Files.readAttributes(filepath, BasicFileAttributes.class);
-				item = new MenuItem(f.getName() + " (" + getSize(attributes.size()) + ")" + "\nfaces:"
-						+ RecuperationPly.getNBFaces(filepath.toString()) + "; points:"
-						+ RecuperationPly.getNBVertices(filepath.toString()));
+				VBox file_info = new VBox();
+				file_info.getStyleClass().add("files");
+				Text name = new Text(f.getName()+" (" + getSize(attributes.size()) + ")" );
+				Text faces = new Text(RecuperationPly.getNBFaces(filepath.toString())+" faces" );
+				Text points = new Text(RecuperationPly.getNBVertices(filepath.toString())+" points");
+				Text created = new Text("created : "+formatter.format(new Date(attributes.creationTime().toMillis())));
+				Text author = new Text("author : "+owner.getOwner().getName());
+				file_info.getChildren().addAll(name,faces,points,created,author);
+				
+				
+				item = new MenuItem();
+				item.setGraphic(file_info);
+						
 				item.setOnAction(event -> {
 					loadFile(f.getPath());
 					clearCanvas();
@@ -675,7 +706,43 @@ public class View extends Stage {
 
 		return menuItems;
 	}
-
+    public  List<ModelFile>getModels(){
+    	List<ModelFile> models = new ArrayList<ModelFile>();
+    	File directory = new File(path);
+		FileFilter filter = new PlyFileFilter();
+		File[] liste = directory.listFiles(filter);
+		List<MenuItem> menuItems = new ArrayList<MenuItem>();
+	
+	
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	
+		for (File f : liste) {
+			try {
+			Path filepath = Path.of(f.getPath());
+			 FileOwnerAttributeView owner= Files.getFileAttributeView(filepath, 	FileOwnerAttributeView.class);
+			BasicFileAttributes attributes = Files.readAttributes(filepath, BasicFileAttributes.class);
+			models.add(new ModelFile( f.getName()+" (" + getSize(attributes.size()) + ")" , 
+					RecuperationPly.getNBFaces(filepath.toString())+" faces",
+					RecuperationPly.getNBVertices(filepath.toString())+" points",
+					"created : "+formatter.format(new Date(attributes.creationTime().toMillis())),
+					"author : "+owner.getOwner().getName()
+					));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		 }
+    	
+		
+    	
+		return models;
+	
+}
+ public  List<ModelFile>searchModels(String regex){
+		List<ModelFile> models= getModels();
+		List<ModelFile> finded= new ArrayList<ModelFile>();
+		return finded;
+	
+}
 	/**
 	 * Call the {@link Affichage#drawModel(Canvas)} method if the canvas is not null
 	 */
@@ -747,6 +814,7 @@ public class View extends Stage {
 		}
 		affichage.updateTheme(theme);
 	}
+
 
 	public Thread infiniteRotate(Axis axis) {
 

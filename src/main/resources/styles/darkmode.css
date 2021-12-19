@@ -14,6 +14,9 @@
 .menu-item .label {
 	-fx-text-fill: white;
 }
+.menu-item .text{
+		-fx-text-fill: white;
+}
 
 .menu-item .label:focused {
 	-fx-background-color: white;
@@ -25,6 +28,7 @@
 }
 
 .context-menu {
+	-fx-text-fill: #ffffff;
 	-fx-background-color: #2d3134;
 	-fx-background-insets: 0, 1, 2;
 	-fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;
@@ -39,6 +43,7 @@
 	-fx-text-fill: #ffffff;
 	-fx-font-family: system-ui;
 	-fx-font-size: 17;
+
 }
 
 .button {
@@ -76,3 +81,10 @@
 .scene {
 	-fx-background-color: #dce0dc;
 }
+
+.files >.text { 
+ 
+ -fx-fill: white;
+
+}
+

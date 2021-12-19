@@ -11,6 +11,7 @@ import connectable.ObservableProperty;
 import connectable.Subject;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import util.Axis;
 import util.DrawingMethod;
 
@@ -23,6 +24,8 @@ public class Model {
 	private double offsetX = 0.0;
 	private double offsetY = 0.0;
 	private double offsetZ = 0.0;
+	private double lightX = 200;
+	private double lightY = 10;
 
 	public Model() {
 		super();
@@ -100,7 +103,11 @@ public class Model {
 
 					cpt++;
 				}
+				gc.setFill(Color.rgb(10, 10, 10));
 				gc.strokePolygon(zCoord, yCoord, nbPoints);
+			
+				
+				
 			}
 			break;
 		case YAXIS:
@@ -109,7 +116,7 @@ public class Model {
 			for (Face t : faces) {
 				Iterator<Point> it = t.getPoints().iterator();
 				int nbPoints = t.getPoints().size();
-				zCoord = new double[nbPoints];
+				double lightX = 200;	zCoord = new double[nbPoints];
 				xCoord = new double[nbPoints];
 				int cpt = 0;
 				while (it.hasNext()) {
@@ -151,7 +158,7 @@ public class Model {
 			break;
 		}
 	}
-
+	
 	private void drawSolid(Canvas canvas, Axis axis, double zoom) {
 		double middlescreenx = canvas.getWidth() / 2;
 		double middlescreeny = canvas.getHeight() / 2;
@@ -328,6 +335,7 @@ public class Model {
 				}
 				gc.strokePolygon(xCoord, yCoord, nbPoints);
 				gc.fillPolygon(xCoord, yCoord, nbPoints);
+				
 			}
 			break;
 		}
@@ -596,5 +604,8 @@ public class Model {
 			return o1.getAverageZ() - o2.getAverageZ() < 0 ? 1 : -1;
 		}
 	}
-
+//	private Color shade (Point p,Color c) {
+//		
+//		return new Color();
+//	}
 }
