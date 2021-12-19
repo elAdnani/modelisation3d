@@ -58,27 +58,33 @@ import util.PlyFileFilter;
 
 public class View extends Stage {
 
-	private Canvas canvas = null;
+	private Canvas        canvas                       = null;
 
-	public Slider zoomSlider = null;
-	public double zoomIncrement = 10.0;
+	public Slider         zoomSlider                   = null;
+	public double         zoomIncrement                = 10.0;
 
-	private double defaultCanvasWidthPercentile = 0.85;
+	private double        defaultCanvasWidthPercentile = 0.85;
 
-	private String file = null;
+	private String        file                         = null;
 //	private static String path = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main"
 //	+ File.separator + "resources" + File.separator + "models" + File.separator;
-	private static String path = System.getProperty("user.dir") + File.separator + "exemples" + File.separator;
+	private static String path                         = System.getProperty("user.dir") + File.separator + "exemples"
+			+ File.separator;
 
-	private Affichage affichage = null;
-	private DrawingMethod method = null;
-	protected double oldMouseX;
-	protected double oldMouseY;
+	private Affichage     affichage                    = null;
+	private DrawingMethod method                       = null;
+	protected double      oldMouseX;
+	protected double      oldMouseY;
 
-	public String theme = "default";
-	
-	
-   private boolean rotating = false;
+	public String         theme                        = "default";
+
+	//private boolean       rotating                     = false;
+
+	Thread xRotateThread = infiniteRotate(Axis.XAXIS);
+	Thread yRotateThread = infiniteRotate(Axis.YAXIS);
+
+	boolean rotatingX = false;
+	boolean rotatingY = false;
 
 	public View() {
 		this(Axis.ZAXIS);
@@ -125,20 +131,24 @@ public class View extends Stage {
 
 		vBox.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			public void handle(KeyEvent e) {
-				if (e.getCode() == KeyCode.RIGHT) {
+				if (e.getCode() == KeyCode.RIGHT)
+				{
 					affichage.rotateModel(Axis.YAXIS, 1);
 					drawModel();
 				}
-				if (e.getCode() == KeyCode.LEFT) {
+				if (e.getCode() == KeyCode.LEFT)
+				{
 					affichage.rotateModel(Axis.YAXIS, -1);
 					drawModel();
 
 				}
-				if (e.getCode() == KeyCode.UP) {
+				if (e.getCode() == KeyCode.UP)
+				{
 					affichage.rotateModel(Axis.XAXIS, 1);
 					drawModel();
 				}
-				if (e.getCode() == KeyCode.DOWN) {
+				if (e.getCode() == KeyCode.DOWN)
+				{
 					affichage.rotateModel(Axis.XAXIS, -1);
 					drawModel();
 
@@ -174,8 +184,8 @@ public class View extends Stage {
 		RadioMenuItem haut = new RadioMenuItem("Haut");
 		RadioMenuItem face = new RadioMenuItem("Face");
 		RadioMenuItem droit = new RadioMenuItem("Droit");
-		RadioMenuItem infRotateX= new RadioMenuItem("Infite Rotate X");
-		RadioMenuItem infRotateY= new RadioMenuItem("Infite Rotate Y");
+		RadioMenuItem infRotateX = new RadioMenuItem("Infite Rotate X");
+		RadioMenuItem infRotateY = new RadioMenuItem("Infite Rotate Y");
 		RadioMenuItem defaultTheme = new RadioMenuItem("Default");
 		RadioMenuItem darkTheme = new RadioMenuItem("Dark");
 		RadioMenuItem solarisTheme = new RadioMenuItem("Solaris");
@@ -208,13 +218,16 @@ public class View extends Stage {
 					new ExtensionFilter("All Files", "*.*"));
 			File choosedfile = fileChooser.showOpenDialog(null);
 
-			if (choosedfile != null) {
-				try {
+			if (choosedfile != null)
+			{
+				try
+				{
 					RecuperationPly.checkFormat(choosedfile.getAbsolutePath());
 					file = choosedfile.getAbsolutePath();
 					affichage.getModel().loadFile(file);
 					drawModel();
-				} catch (Exception e) {
+				} catch (Exception e)
+				{
 					Alert alert = new Alert(AlertType.ERROR);
 					alert.setTitle("Erreur");
 					alert.setHeaderText("Format Incompatible");
@@ -239,7 +252,8 @@ public class View extends Stage {
 			alert.showAndWait();
 		});
 
-		for (DrawingMethod m : DrawingMethod.values()) {
+		for (DrawingMethod m : DrawingMethod.values())
+		{
 			RadioMenuItem radioItem = new RadioMenuItem(m.name());
 			radioItem.setToggleGroup(grp);
 			radioItem.setOnAction(event -> {
@@ -258,33 +272,34 @@ public class View extends Stage {
 			this.affichage.setAxis(Axis.YAXIS);
 			drawModel();
 		});
-		infRotateX.setOnAction(event -> {
-			Thread rotateThread  = new Thread();
 		
-			if(!rotating) {
-				rotateThread=infiniteRotate(Axis.XAXIS);
-				rotateThread.start();
-				rotating = true;
-			}else {
-				rotateThread.interrupt();
-				rotating = false;
+		
+		infRotateX.setOnAction(event -> {
+			if (!rotatingX)
+			{
+				xRotateThread = infiniteRotate(Axis.XAXIS);
+				xRotateThread.start();
+				rotatingX = true;
+			} else
+			{
+				xRotateThread.interrupt();
+				rotatingX = false;
 			}
-			infRotateX.setSelected(rotating);
-	
+
 		});
 		infRotateY.setOnAction(event -> {
-			Thread rotateThread  = new Thread();
-		
-			if(!rotating) {
-				rotateThread=infiniteRotate(Axis.YAXIS);
-				rotateThread.start();
-				rotating = true;
-			}else {
-				rotateThread.interrupt();
-				rotating = false;
+
+			if (!rotatingY)
+			{
+				yRotateThread = infiniteRotate(Axis.YAXIS);
+				yRotateThread.start();
+				rotatingY = true;
+			} else
+			{
+				yRotateThread.interrupt();
+				rotatingY = false;
 			}
-			infRotateY.setSelected(rotating);
-	
+
 		});
 
 		face.setToggleGroup(grpView);
@@ -305,7 +320,7 @@ public class View extends Stage {
 		else if (this.affichage.getAxis().equals(Axis.ZAXIS))
 			droit.setSelected(true);
 
-		viewMenu.getItems().addAll(haut, face, droit,infRotateX,infRotateY);
+		viewMenu.getItems().addAll(haut, face, droit, infRotateX, infRotateY);
 
 		defaultTheme.setToggleGroup(themeView);
 		darkTheme.setToggleGroup(themeView);
@@ -421,7 +436,7 @@ public class View extends Stage {
 				affichage.rotateModel(Axis.YAXIS, -4);
 				break;
 			}
-			
+
 			drawModel();
 		});
 
@@ -483,22 +498,26 @@ public class View extends Stage {
 		});
 
 		plus.setOnAction(e -> {
-			if (affichage.zoom + zoomIncrement < zoomSlider.maxProperty().doubleValue() * 100) {
+			if (affichage.zoom + zoomIncrement < zoomSlider.maxProperty().doubleValue() * 100)
+			{
 				zoomSlider.setValue(zoomSlider.getValue() + zoomIncrement / 100);
 				affichage.setZoom(affichage.getZoom() + zoomIncrement);
 				drawModel();
-			} else {
+			} else
+			{
 				zoomSlider.setValue(zoomSlider.maxProperty().doubleValue());
 				affichage.setZoom(zoomSlider.maxProperty().doubleValue() * 100);
 			}
 		});
 
 		moins.setOnAction(e -> {
-			if (affichage.zoom - zoomIncrement > 0) {
+			if (affichage.zoom - zoomIncrement > 0)
+			{
 				zoomSlider.setValue(zoomSlider.getValue() - zoomIncrement / 100);
 				affichage.setZoom(affichage.getZoom() - zoomIncrement);
 				drawModel();
-			} else {
+			} else
+			{
 				zoomSlider.setValue(0);
 				affichage.setZoom(0);
 			}
@@ -559,7 +578,8 @@ public class View extends Stage {
 				double xDistance = mouseX - oldMouseX;
 				double yDistance = mouseY - oldMouseY;
 				System.out.println(event.getButton().name());
-				if (event.getButton().equals(MouseButton.SECONDARY)) {
+				if (event.getButton().equals(MouseButton.SECONDARY))
+				{
 					switch (affichage.getAxis()) {
 					case XAXIS:
 						affichage.translateModel(Axis.ZAXIS, xDistance);
@@ -574,7 +594,8 @@ public class View extends Stage {
 						affichage.translateModel(Axis.YAXIS, yDistance);
 						break;
 					}
-				} else if (event.getButton().equals(MouseButton.PRIMARY)) {
+				} else if (event.getButton().equals(MouseButton.PRIMARY))
+				{
 					switch (affichage.getAxis()) {
 					case XAXIS:
 						affichage.rotateModel(Axis.ZAXIS, yDistance);
@@ -629,9 +650,11 @@ public class View extends Stage {
 		FileFilter filter = new PlyFileFilter();
 		File[] liste = directory.listFiles(filter);
 		List<MenuItem> menuItems = new ArrayList<MenuItem>();
-		for (File f : liste) {
+		for (File f : liste)
+		{
 			MenuItem item = new MenuItem("Erreur!");
-			try {
+			try
+			{
 				Path filepath = Path.of(f.getPath());
 				BasicFileAttributes attributes = Files.readAttributes(filepath, BasicFileAttributes.class);
 				item = new MenuItem(f.getName() + " (" + getSize(attributes.size()) + ")" + "\nfaces:"
@@ -643,7 +666,8 @@ public class View extends Stage {
 					drawModel();
 				});
 				menuItems.add(item);
-			} catch (IOException e) {
+			} catch (IOException e)
+			{
 				e.printStackTrace();
 			}
 
@@ -678,15 +702,20 @@ public class View extends Stage {
 		double mb = kb / kilo;
 		double gb = mb / kilo;
 		double tb = gb / kilo;
-		if (size < kilo) {
+		if (size < kilo)
+		{
 			s = size + " Bytes";
-		} else if (size >= kilo && size < mega) {
+		} else if (size >= kilo && size < mega)
+		{
 			s = String.format("%.2f", kb) + " KB";
-		} else if (size >= mega && size < giga) {
+		} else if (size >= mega && size < giga)
+		{
 			s = String.format("%.2f", mb) + " MB";
-		} else if (size >= giga && size < tera) {
+		} else if (size >= giga && size < tera)
+		{
 			s = String.format("%.2f", gb) + " GB";
-		} else if (size >= tera) {
+		} else if (size >= tera)
+		{
 			s = String.format("%.2f", tb) + " TB";
 		}
 		return s;
@@ -703,12 +732,14 @@ public class View extends Stage {
 	public void changeTheme(String themepath) {
 		if (themepath == null)
 			return;
-		if (themepath.equals("default")) {
+		if (themepath.equals("default"))
+		{
 			this.getScene().getStylesheets().clear();
 			return;
 		}
 		URL resourcecss = getClass().getResource(themepath);
-		if (resourcecss != null) {
+		if (resourcecss != null)
+		{
 			theme = themepath;
 			String css = resourcecss.toExternalForm();
 			this.getScene().getStylesheets().clear();
@@ -716,37 +747,38 @@ public class View extends Stage {
 		}
 		affichage.updateTheme(theme);
 	}
-	
-	public Thread infiniteRotate(Axis axis){
-	
-		
-	
 
-        Task<Void> sleeper = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                try {
-                	
-                	int deg = 0;
-                    while(rotating) {
-                    	deg+=1;
-                    	System.out.println(deg);
-            			if(deg > 360) deg = 0;
-            			affichage.rotateModel(axis,deg);
-            			Thread.sleep(500);
-            			drawModel();
-            			
-                    }
-        			
-        			
-                } catch (InterruptedException e) {
-                }
-                return null;
-            }
-        };
-     
-        return new Thread(sleeper);
-        
+	public Thread infiniteRotate(Axis axis) {
+
+		Task<Void> sleeper = new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				try
+				{
+
+					double deg = 1;
+					boolean rotating = true;
+					while (rotating)
+					{
+						if(axis.equals(Axis.XAXIS))
+							rotating = rotatingX;
+						else if (axis.equals(Axis.YAXIS))
+							rotating = rotatingY;
+						affichage.rotateModel(axis, deg);
+						Thread.sleep(500);
+						drawModel();
+
+					}
+
+				} catch (InterruptedException e)
+				{
+				}
+				return null;
+			}
+		};
+
+		return new Thread(sleeper);
+
 	}
-	
+
 }

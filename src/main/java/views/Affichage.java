@@ -81,7 +81,7 @@ public class Affichage extends ConnectableProperty {
 	}
 
 	// Calcul
-	private static double toRadian(double degree) {
+	public static double toRadian(double degree) {
 		return degree * Math.PI / 180;
 	}
 
