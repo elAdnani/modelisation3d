@@ -275,89 +275,165 @@ public class Model {
 		case XAXIS:
 			offSetZ = middlescreenx + offsetZ;
 			offSetY = middlescreeny + offsetY;
-			for (Face t : faces) {
-				Iterator<Point> it = t.getPoints().iterator();
-				int nbPoints = t.getPoints().size();
-				zCoord = new double[nbPoints];
-				yCoord = new double[nbPoints];
-				int cpt = 0;
-				while (it.hasNext()) {
-					Point pt = it.next();
+			for (Face t : faces)
+			{
+				Iterator<Point> itP = t.getPoints().iterator();
+				int nbPointsP = t.getPoints().size();
+				xCoord = new double[nbPointsP];
+				yCoord = new double[nbPointsP];
+				int cptP=0;
+				while (itP.hasNext())
+				{
+					Point pt = itP.next();
 
-					z = (pt.getZ() * zoom) + offSetZ;
+					x = (pt.getX() * zoom) + offSetZ;
 					y = (pt.getY() * zoom) + offSetY;
 
-					zCoord[cpt] = z;
-					yCoord[cpt] = y;
+					xCoord[cptP] = x;
+					yCoord[cptP] = y;
 
-					cpt++;
+					cptP++;
 				}
-				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x",(int)(128 * t.degreDeCouleur()), (int)(10*t.degreDeCouleur()), (int)(10*t.degreDeCouleur()) ) ));
-				gc.strokePolygon(zCoord, yCoord, nbPoints);
-				gc.fillPolygon(zCoord, yCoord, nbPoints);
-				System.out.println(String.format("#%02x%02x%02x",(int)(128 * t.degreDeCouleur()), (int)(1*t.degreDeCouleur()), (int)(1*t.degreDeCouleur()) ));
-				System.out.println((int)(128 * t.degreDeCouleur())+" "+ (int)(1*t.degreDeCouleur())+" "+ (int)(1*t.degreDeCouleur()) );
-				
+				t.divisionTriangulaireX(3);
+				for (Face face : t.getFaces())
+				{
+					System.out.println("FACE SECOND "+face);
+					Iterator<Point> it = face.getPoints().iterator();
+					int nbPoints = face.getPoints().size();
+					zCoord = new double[nbPoints];
+					yCoord = new double[nbPoints];
+					int cpt = 0;
+					while (it.hasNext())
+					{
+						Point pt = it.next();
+
+						z = (pt.getZ() * zoom) + offSetZ;
+						y = (pt.getY() * zoom) + offSetY;
+
+						zCoord[cpt] = z;
+						yCoord[cpt] = y;
+
+						cpt++;
+					}
+					dessin(gc,face,xCoord,yCoord,nbPoints);
+				}
 			}
 			break;
 		case YAXIS:
 			offSetZ = middlescreeny + offsetZ;
 			offSetX = middlescreenx + offsetX;
-			for (Face t : faces) {
-				Iterator<Point> it = t.getPoints().iterator();
-				int nbPoints = t.getPoints().size();
-				zCoord = new double[nbPoints];
-				xCoord = new double[nbPoints];
-				int cpt = 0;
-				while (it.hasNext()) {
-					Point pt = it.next();
+			
+			for (Face t : faces)
+			{
+				Iterator<Point> itP = t.getPoints().iterator();
+				int nbPointsP = t.getPoints().size();
+				xCoord = new double[nbPointsP];
+				yCoord = new double[nbPointsP];
+				int cptP=0;
+				while (itP.hasNext())
+				{
+					Point pt = itP.next();
 
-					z = (pt.getZ() * zoom) + offSetZ;
-					x = (pt.getX() * zoom) + offSetX;
+					x = (pt.getX() * zoom) + offSetZ;
+					y = (pt.getY() * zoom) + offSetX;
 
-					zCoord[cpt] = z;
-					xCoord[cpt] = x;
+					xCoord[cptP] = x;
+					yCoord[cptP] = y;
 
-					cpt++;
+					cptP++;
 				}
-				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x",(int)(128 * t.degreDeCouleur()), (int)(10*t.degreDeCouleur()), (int)(10*t.degreDeCouleur()) ) ));
-				gc.strokePolygon(xCoord, zCoord, nbPoints);
-				gc.fillPolygon(xCoord, zCoord, nbPoints);
+				
+				t.divisionTriangulaireX(3);
+				for (Face face : t.getFaces())
+				{
+					System.out.println("FACE SECOND "+face);
+					Iterator<Point> it = face.getPoints().iterator();
+					int nbPoints = face.getPoints().size();
+					zCoord = new double[nbPoints];
+					xCoord = new double[nbPoints];
+					int cpt = 0;
+					while (it.hasNext())
+					{
+						Point pt = it.next();
 
+						z = (pt.getZ() * zoom) + offSetZ;
+						x = (pt.getX() * zoom) + offSetX;
+
+						zCoord[cpt] = z;
+						xCoord[cpt] = x;
+
+						cpt++;
+					}
+					dessin(gc,face,xCoord,yCoord,nbPoints);
+				}
 			}
 			break;
 		case ZAXIS:
 			offSetX = middlescreenx + offsetX;
 			offSetY = middlescreeny + offsetY;
-			int i=0;
-			for (Face t : faces) {
-				Iterator<Point> it = t.getPoints().iterator();
-				int nbPoints = t.getPoints().size();
-				xCoord = new double[nbPoints];
-				yCoord = new double[nbPoints];
-				int cpt = 0;
-				while (it.hasNext()) {
-					Point pt = it.next();
+			int i = 0;
+			for (Face t : faces)
+			{
+				Iterator<Point> itP = t.getPoints().iterator();
+				int nbPointsP = t.getPoints().size();
+				xCoord = new double[nbPointsP];
+				yCoord = new double[nbPointsP];
+				int cptP=0;
+				while (itP.hasNext())
+				{
+					Point pt = itP.next();
 
 					x = (pt.getX() * zoom) + offSetX;
 					y = (pt.getY() * zoom) + offSetY;
 
-					xCoord[cpt] = x;
-					yCoord[cpt] = y;
+					xCoord[cptP] = x;
+					yCoord[cptP] = y;
 
-					cpt++;
+					cptP++;
 				}
-				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x",(int)(128 * t.degreDeCouleur()), (int)(10*t.degreDeCouleur()), (int)(10*t.degreDeCouleur()) ) ));
-				gc.strokePolygon(xCoord, yCoord, nbPoints);
-				
-				gc.fillPolygon(xCoord, yCoord, nbPoints);
+				t.divisionTriangulaireX(3);
+				for (Face face : t.getFaces())
+				{
+					System.out.println("FACE SECOND "+face);
+					Iterator<Point> it = face.getPoints().iterator();
+					int nbPoints = face.getPoints().size();
+					xCoord = new double[nbPoints];
+					yCoord = new double[nbPoints];
+					int cpt = 0;
+					while (it.hasNext())
+					{
+						Point pt = it.next();
 
-				System.out.println("COLOR FACE"+i+" "+t.degreDeCouleur());
-				i++;
-				
+						x = (pt.getX() * zoom) + offSetX;
+						y = (pt.getY() * zoom) + offSetY;
+
+						xCoord[cpt] = x;
+						yCoord[cpt] = y;
+
+						cpt++;
+					}
+					dessin(gc,face,xCoord,yCoord,nbPoints);
+
+					
+					i++;
+				}
 			}
 			break;
+
 		}
+	}
+	
+	
+	public void dessin(GraphicsContext gc, Face face,double[] xCoord, double[]yCoord, int nbPoints ) {
+	//	int nombreAleatoire = 0 + (int)(Math.random() * ((255 - 0) + 1));
+	//	gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x",0 + (int)(Math.random() * ((255 - 0) + 1)), 0 + (int)(Math.random() * ((255 - 0) + 1)),0 + (int)(Math.random() * ((255 - 0) + 1)))));
+		
+		gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x", (int) (128 * face.degreDeCouleur()),
+				(int) (10 * face.degreDeCouleur()), (int) (10 * face.degreDeCouleur()))));
+		gc.strokePolygon(xCoord, yCoord, nbPoints);
+
+		gc.fillPolygon(xCoord, yCoord, nbPoints);
+
 	}
 
 	/**
@@ -604,7 +680,8 @@ public class Model {
 		public int compare(Face o1, Face o2) {
 			double av1 = o1.getAverageX();
 			double av2 = o2.getAverageX();
-			if(av2 == av1) {
+			if (av2 == av1)
+			{
 				return 0;
 			}
 			return av2 - av1 < 0 ? 1 : -1;
@@ -620,7 +697,8 @@ public class Model {
 		public int compare(Face o1, Face o2) {
 			double av1 = o1.getAverageY();
 			double av2 = o2.getAverageY();
-			if(av2 == av1) {
+			if (av2 == av1)
+			{
 				return 0;
 			}
 			return av2 - av1 < 0 ? 1 : -1;
@@ -636,7 +714,8 @@ public class Model {
 		public int compare(Face o1, Face o2) {
 			double av1 = o1.getAverageZ();
 			double av2 = o2.getAverageZ();
-			if(av2 == av1) {
+			if (av2 == av1)
+			{
 				return 0;
 			}
 			return av2 - av1 < 0 ? 1 : -1;

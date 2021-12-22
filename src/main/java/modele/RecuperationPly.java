@@ -142,7 +142,6 @@ public class RecuperationPly {
 					pointsDeLaFace.add(points.get(Integer.valueOf(tab[i])));
 				}
 				Face face = new Face(pointsDeLaFace);
-				
 				res.add(face);
 			}
 
