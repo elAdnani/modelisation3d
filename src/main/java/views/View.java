@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.SwingUtilities;
 
@@ -61,6 +63,7 @@ import util.Axis;
 import util.DrawingMethod;
 import util.PlyFileFilter;
 
+@SuppressWarnings("PMD.LawOfDemeter")
 public class View extends Stage {
 
 	private Canvas        canvas                       = null;
@@ -80,7 +83,7 @@ public class View extends Stage {
 	private DrawingMethod method                       = null;
 	protected double      oldMouseX;
 	protected double      oldMouseY;
-
+	private Menu ressourceMenu = new Menu("Ressources");
 	public String         theme                        = "default";
 
 	//private boolean       rotating                     = false;
@@ -90,7 +93,8 @@ public class View extends Stage {
 
 	boolean rotatingX = false;
 	boolean rotatingY = false;
-
+	TextField search = new TextField();
+	MenuItem searchbar = new MenuItem();
 	public View() {
 		this(Axis.ZAXIS);
 	}
@@ -106,7 +110,7 @@ public class View extends Stage {
 	public View(Axis axis, DrawingMethod method) {
 		this.method = method;
 
-		setTitle("Modélisateur 3D");
+		setTitle("ModÃ©lisateur 3D");
 
 		/* INITIALISATION DU CANVAS */
 		createCanvas(Screen.getPrimary().getBounds().getWidth() * defaultCanvasWidthPercentile,
@@ -177,7 +181,7 @@ public class View extends Stage {
 		MenuBar menuBar = new MenuBar();
 
 		Menu fileMenu = new Menu("Fichier");
-		Menu ressourceMenu = new Menu("Ressources");
+		
 		Menu viewMenu = new Menu("View");
 		Menu helpMenu = new Menu("Help");
 		Menu themeMenu = new Menu("Themes");
@@ -217,16 +221,14 @@ public class View extends Stage {
 		TextField search = new TextField();
 		search.setPromptText("Search a model here");
 		search.textProperty().addListener((observable, oldValue, newValue) -> {
-		    System.out.println("textfield changed from " + oldValue + " to " + newValue);
-		    //chercher la valeur	
-		   // ressourceMenu.getItems().addAll(searchModel(newValue));
+			 searchModels(newValue);
 		});
-		MenuItem searchbar = new MenuItem();
+	
 		searchbar.setGraphic(search);
 		ressourceMenu.getItems().add(searchbar);
-		ressourceMenu.getItems().addAll(createRessourcePlyMenu());
-		
-		
+		ressourceMenu.getItems().addAll(createRessourcePlyMenu(getModels()));
+			
+	
 		openFileItem.setOnAction(event -> {
 			FileChooser fileChooser = new FileChooser();
 			fileChooser.setTitle("Open File");
@@ -247,7 +249,7 @@ public class View extends Stage {
 					Alert alert = new Alert(AlertType.ERROR);
 					alert.setTitle("Erreur");
 					alert.setHeaderText("Format Incompatible");
-					alert.setContentText("Le fichier ne peut pas être lu");
+					alert.setContentText("Le fichier ne peut pas Ãªtre lu");
 
 					alert.showAndWait();
 
@@ -264,7 +266,7 @@ public class View extends Stage {
 			Alert alert = new Alert(AlertType.INFORMATION);
 			alert.setTitle("Aide");
 			alert.setContentText(
-					"Bienvenue dans notre modélisateur 3d !\nJe vous invite à naviguer dans le menu Fichier pour ouvrir un fichier .ply.\nUne fois sélectionné, rendez-vous dans le menu View pour choisir comment vous voulez visualiser votre modèle.\nSi le thème par défaut vous pique un peu les yeux, essayez nos autres thèmes accessibles dans le menu du même nom.\n\nA votre droite vous trouverez différents boutons.\nLes boutons \"Vue de face\", \"Vue de droite\" et \"Vue de haut\" vous ouvrira une nouvelle page synchronisé avec la première sauf pour la vue des modèles qui est au choix.\nEn dessous, nous trouvons les boutons liés à la rotation du modèle.\nPlus bas nous avons le zoom allant de x0 à x10.");
+					"Bienvenue dans notre modÃ©lisateur 3d !\nJe vous invite Ã  naviguer dans le menu Fichier pour ouvrir un fichier .ply.\nUne fois sÃ©lectionnÃ©, rendez-vous dans le menu View pour choisir comment vous voulez visualiser votre modÃ¨le.\nSi le thÃ¨me par dÃ©faut vous pique un peu les yeux, essayez nos autres thÃ¨mes accessibles dans le menu du mÃªme nom.\n\nA votre droite vous trouverez diffÃ©rents boutons.\nLes boutons \"Vue de face\", \"Vue de droite\" et \"Vue de haut\" vous ouvrira une nouvelle page synchronisÃ© avec la premiÃ¨re sauf pour la vue des modÃ¨les qui est au choix.\nEn dessous, nous trouvons les boutons liÃ©s Ã  la rotation du modÃ¨le.\nPlus bas nous avons le zoom allant de x0 Ã  x10.");
 			alert.showAndWait();
 		});
 
@@ -380,10 +382,10 @@ public class View extends Stage {
 		Button droite = new Button("Vue de droite");
 		Button dessus = new Button("Vue de haut");
 
-		Button up = new Button("↑");
-		Button down = new Button("↓");
-		Button right = new Button("→");
-		Button left = new Button("←");
+		Button up = new Button("â†‘");
+		Button down = new Button("â†“");
+		Button right = new Button("â†’");
+		Button left = new Button("â†�");
 
 		Button plus = new Button("+");
 		Button moins = new Button("-");
@@ -661,49 +663,30 @@ public class View extends Stage {
 	 * 
 	 * @return {@link Collection<MenuItem>}<{@link MenuItem}>
 	 */
-	private Collection<MenuItem> createRessourcePlyMenu() {
-		File directory = new File(path);
-		FileFilter filter = new PlyFileFilter();
-		File[] liste = directory.listFiles(filter);
+	private Collection<MenuItem> createRessourcePlyMenu(List<ModelFile> files) {
+	
+	
 		List<MenuItem> menuItems = new ArrayList<MenuItem>();
-	
-	
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-	
-		for (File f : liste) {
-
+		for(ModelFile  f: files) {
 			MenuItem item = new MenuItem("Erreur!");
-			try
-			{
-				Path filepath = Path.of(f.getPath());
-				 FileOwnerAttributeView owner= Files.getFileAttributeView(filepath, 	FileOwnerAttributeView.class);
-				BasicFileAttributes attributes = Files.readAttributes(filepath, BasicFileAttributes.class);
-				VBox file_info = new VBox();
-				file_info.getStyleClass().add("files");
-				Text name = new Text(f.getName()+" (" + getSize(attributes.size()) + ")" );
-				Text faces = new Text(RecuperationPly.getNBFaces(filepath.toString())+" faces" );
-				Text points = new Text(RecuperationPly.getNBVertices(filepath.toString())+" points");
-				Text created = new Text("created : "+formatter.format(new Date(attributes.creationTime().toMillis())));
-				Text author = new Text("author : "+owner.getOwner().getName());
-				file_info.getChildren().addAll(name,faces,points,created,author);
-				
-				
-				item = new MenuItem();
-				item.setGraphic(file_info);
-						
-				item.setOnAction(event -> {
-					loadFile(f.getPath());
-					clearCanvas();
-					drawModel();
-				});
-				menuItems.add(item);
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-
+			VBox file_info = new VBox();
+			Text name = new Text(f.getName()+" (" + f.getSize() + ")" );
+			Text faces = new Text(f.getFaces()+" faces" );
+			Text points = new Text(f.getPoints()+" points");
+			Text created = new Text("created : "+f.getCreated());
+			Text author = new Text("author : "+f.getAuthor());
+			file_info.getChildren().addAll(name,faces,points,created,author);
+			item = new MenuItem();
+			item.setGraphic(file_info);
+					
+			item.setOnAction(event -> {
+				loadFile((String)f.getPath());
+				clearCanvas();
+				drawModel();
+			});
+			menuItems.add(item);
 		}
-
+	
 		return menuItems;
 	}
     public  List<ModelFile>getModels(){
@@ -711,7 +694,7 @@ public class View extends Stage {
     	File directory = new File(path);
 		FileFilter filter = new PlyFileFilter();
 		File[] liste = directory.listFiles(filter);
-		List<MenuItem> menuItems = new ArrayList<MenuItem>();
+	
 	
 	
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -721,11 +704,14 @@ public class View extends Stage {
 			Path filepath = Path.of(f.getPath());
 			 FileOwnerAttributeView owner= Files.getFileAttributeView(filepath, 	FileOwnerAttributeView.class);
 			BasicFileAttributes attributes = Files.readAttributes(filepath, BasicFileAttributes.class);
-			models.add(new ModelFile( f.getName()+" (" + getSize(attributes.size()) + ")" , 
-					RecuperationPly.getNBFaces(filepath.toString())+" faces",
-					RecuperationPly.getNBVertices(filepath.toString())+" points",
-					"created : "+formatter.format(new Date(attributes.creationTime().toMillis())),
-					"author : "+owner.getOwner().getName()
+			models.add(new ModelFile( 
+					f.getPath(),
+					f.getName(),
+					getSize(attributes.size()) , 
+					RecuperationPly.getNBFaces(filepath.toString()),
+					RecuperationPly.getNBVertices(filepath.toString()),
+					formatter.format(new Date(attributes.creationTime().toMillis())),
+					owner.getOwner().getName()
 					));
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -737,10 +723,22 @@ public class View extends Stage {
 		return models;
 	
 }
- public  List<ModelFile>searchModels(String regex){
+ public void searchModels(String regex){
 		List<ModelFile> models= getModels();
-		List<ModelFile> finded= new ArrayList<ModelFile>();
-		return finded;
+		List<ModelFile> result= new ArrayList<ModelFile>();
+		Pattern pattern = Pattern.compile(regex);
+		for(ModelFile f : models ) {
+			
+		  Matcher matcher = pattern.matcher(f.getName());
+		  if(matcher.find()) result.add(f);
+		}
+		
+		
+		
+		
+		ressourceMenu.getItems().clear();
+		ressourceMenu.getItems().add(searchbar);
+		ressourceMenu.getItems().addAll(createRessourcePlyMenu(result));
 	
 }
 	/**
