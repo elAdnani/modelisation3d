@@ -1,5 +1,6 @@
 package views;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -7,7 +8,6 @@ import connectable.Observer;
 import connectable.Subject;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import modele.Face;
 import modele.Model;
@@ -18,19 +18,39 @@ import util.DrawingMethod;
 public class ModelisationCanvas extends Canvas implements Observer {
 
 	private Axis axis;
-		
-	/**
-	 * Efface le canvas, lis le fichier et trace la figure
-	 * 
-	 */
-	public void drawModel(DrawingMethod method) {
-		if (model == null)
-			return;
+	private DrawingMethod method;
+	double zoom;
+	private Model lastDrawnModel;
+
+	public ModelisationCanvas(double width, double height) {
+		this(width, height, Axis.ZAXIS, DrawingMethod.WIREFRAME);
+	}
+
+	public ModelisationCanvas(double width, double height, Axis axis) {
+		this(width, height, axis, DrawingMethod.WIREFRAME);
+	}
+	
+	public ModelisationCanvas(double width, double height, DrawingMethod method) {
+		this(width, height, Axis.ZAXIS, method);
+	}
+	
+	public ModelisationCanvas(double width, double height, Axis axis, DrawingMethod method) {
+		super(width, height);
+		this.axis = axis;
+		this.method = method;
+		this.zoom = 1;
+	}
+
+	
+	public void drawModel(Model model) {
+		if(model == null) return;
 		clearCanvas();
 		model.sortPoints(this.axis);
-		draw(canvas, this.axis, zoom, method);
-		System.out.println(this.attached.size());
-//		notifyObservers();
+		draw(model);
+	}
+
+	public void clearCanvas() {
+		getGraphicsContext2D().clearRect(0, 0, getWidth(), getHeight());
 	}
 
 	/**
@@ -38,24 +58,27 @@ public class ModelisationCanvas extends Canvas implements Observer {
 	 * 
 	 * @param canvas - The canvas to draw the model
 	 */
-	public void draw(Canvas canvas, Axis axis, double zoom, DrawingMethod method) {
-
-		long start = System.nanoTime();
+	public void draw(Model model) {
+		this.lastDrawnModel = model;
 		System.out.println("Drawing started...");
-
-		switch (method) {
-		case WIREFRAME:
-			drawWireframe(canvas, axis, zoom);
-			break;
-		case SOLID:
-			drawSolid(canvas, axis, zoom);
-			break;
-		case BOTH:
-			drawBoth(canvas, axis, zoom);
-			break;
-		default:
-			drawWireframe(canvas, axis, zoom);
-			break;
+		long start = System.nanoTime();
+		if (model != null) {
+			switch (method) {
+			case WIREFRAME:
+				drawWireframe(model, axis, zoom);
+				break;
+			case SOLID:
+				drawSolid(model, axis, zoom);
+				break;
+			case BOTH:
+				drawBoth(model, axis, zoom);
+				break;
+			default:
+				drawWireframe(model, axis, zoom);
+				break;
+			}
+		} else {
+			System.err.println("Canvas null");
 		}
 
 		long end = System.nanoTime();
@@ -64,9 +87,9 @@ public class ModelisationCanvas extends Canvas implements Observer {
 
 	}
 
-	private void drawWireframe(Canvas canvas, Axis axis, double zoom) {
-		double middlescreenx = canvas.getWidth() / 2;
-		double middlescreeny = canvas.getHeight() / 2;
+	private void drawWireframe(Model model, Axis axis, double zoom) {
+		double middlescreenx = this.getWidth() / 2;
+		double middlescreeny = this.getHeight() / 2;
 
 		double x = 0;
 		double y = 0;
@@ -86,7 +109,7 @@ public class ModelisationCanvas extends Canvas implements Observer {
 
 		List<Face> faces = model.getFaces();
 
-		GraphicsContext gc = canvas.getGraphicsContext2D();
+		GraphicsContext gc = this.getGraphicsContext2D();
 
 		switch (axis) {
 		case XAXIS:
@@ -110,7 +133,6 @@ public class ModelisationCanvas extends Canvas implements Observer {
 					cpt++;
 				}
 				gc.strokePolygon(zCoord, yCoord, nbPoints);
-				System.out.println(canvas.getGraphicsContext2D().getStroke());
 			}
 			break;
 		case YAXIS:
@@ -134,7 +156,6 @@ public class ModelisationCanvas extends Canvas implements Observer {
 					cpt++;
 				}
 				gc.strokePolygon(xCoord, zCoord, nbPoints);
-				System.out.println(canvas.getGraphicsContext2D().getStroke());
 			}
 			break;
 		case ZAXIS:
@@ -158,15 +179,15 @@ public class ModelisationCanvas extends Canvas implements Observer {
 					cpt++;
 				}
 				gc.strokePolygon(xCoord, yCoord, nbPoints);
-				System.out.println(canvas.getGraphicsContext2D().getStroke());
 			}
 			break;
 		}
+		gc.strokeOval(middlescreenx-2.5, middlescreeny-2.5, 5, 5);
 	}
 
 	private void drawSolid(Model model, Axis axis, double zoom) {
-		double middlescreenx = canvas.getWidth() / 2;
-		double middlescreeny = canvas.getHeight() / 2;
+		double middlescreenx = this.getWidth() / 2;
+		double middlescreeny = this.getHeight() / 2;
 
 		double x = 0;
 		double y = 0;
@@ -186,7 +207,7 @@ public class ModelisationCanvas extends Canvas implements Observer {
 
 		List<Face> faces = model.getFaces();
 
-		GraphicsContext gc = canvas.getGraphicsContext2D();
+		GraphicsContext gc = this.getGraphicsContext2D();
 
 		switch (axis) {
 		case XAXIS:
@@ -261,9 +282,9 @@ public class ModelisationCanvas extends Canvas implements Observer {
 		}
 	}
 
-	private void drawBoth(Canvas canvas, Axis axis, double zoom) {
-		double middlescreenx = canvas.getWidth() / 2;
-		double middlescreeny = canvas.getHeight() / 2;
+	private void drawBoth(Model model, Axis axis, double zoom) {
+		double middlescreenx = this.getWidth() / 2;
+		double middlescreeny = this.getHeight() / 2;
 
 		double x = 0;
 		double y = 0;
@@ -283,7 +304,7 @@ public class ModelisationCanvas extends Canvas implements Observer {
 
 		List<Face> faces = model.getFaces();
 
-		GraphicsContext gc = canvas.getGraphicsContext2D();
+		GraphicsContext gc = this.getGraphicsContext2D();
 
 		switch (axis) {
 		case XAXIS:
@@ -368,9 +389,12 @@ public class ModelisationCanvas extends Canvas implements Observer {
 				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x", (int) (128 * t.degreDeCouleur()),
 						(int) (10 * t.degreDeCouleur()), (int) (10 * t.degreDeCouleur()))));
 				gc.strokePolygon(xCoord, yCoord, nbPoints);
-
+				
 				gc.fillPolygon(xCoord, yCoord, nbPoints);
 
+				System.out.println("xcoords:" + Arrays.toString(xCoord));
+				System.out.println("ycoords:" + Arrays.toString(yCoord));
+				
 				System.out.println("COLOR FACE" + i + " " + t.degreDeCouleur());
 				i++;
 
@@ -378,26 +402,40 @@ public class ModelisationCanvas extends Canvas implements Observer {
 			break;
 		}
 	}
-
-	public void drawAxis() {
-		GraphicsContext gc = canvas.getGraphicsContext2D();
-		gc.setStroke(Color.RED);
-		gc.strokeLine(canvas.getWidth() / 2, 0, canvas.getWidth() / 2, canvas.getHeight());
-		gc.setStroke(Color.GREEN);
-		gc.strokeLine(0, canvas.getHeight() / 2, canvas.getWidth(), canvas.getHeight() / 2);
-		gc.setStroke(Color.BLACK);
+	
+	public DrawingMethod getMethod() {
+		return method;
 	}
 
+	public void setMethod(DrawingMethod method) {
+		this.method = method;
+		drawModel(this.lastDrawnModel);
+	}
+
+	public double getZoom() {
+		return zoom;
+	}
+
+	public void setZoom(double zoom) {
+		this.zoom = zoom;
+	}
+
+	public Axis getAxis() {
+		return axis;
+	}
+
+	public void setAxis(Axis axis) {
+		this.axis = axis;
+	}
+	
 	@Override
 	public void update(Subject subj) {
-		// TODO Auto-generated method stub
-		
+		drawModel((Model) subj);
 	}
 
 	@Override
 	public void update(Subject subj, Object data) {
-		// TODO Auto-generated method stub
-		
+		update(subj);
 	}
 
 }

@@ -230,6 +230,8 @@ public class Model extends Subject {
 		this.offsetY = model.offsetY;
 		this.offsetZ = model.offsetZ;
 	}
+	
+	
 
 	/**
 	 * GETTERS AND SETTERS
