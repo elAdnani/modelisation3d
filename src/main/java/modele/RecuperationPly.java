@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
  * Cette classe sert à la récupération des fichiers PLY, elle permet ainsi
  * d'obtenir les données tri-dimensionnelles provenant de scanners 3D. <br>
  * 
@@ -28,41 +27,26 @@ public class RecuperationPly {
 	private RecuperationPly() {
 
 	}
-	
-//	public static void main(String[] args) throws FormatPlyException {
-//		final String PATH = System.getProperty("user.dir") + File.separator + "exemples" + File.separator;
-//		try {
-//			RecuperationPly.recuperationFichier(PATH+"vache.ply");
-//		} catch (FileNotFoundException | FormatPlyException e) {}
-//		System.out.println("nbVertex :" +nbVertex);
-//		System.out.println(points.size());
-//		for(Face p : faces) {
-//			System.out.println(p.toString()+"\n");
-//		}
-//		System.out.println("nbFace : "+nbFace);
-//		System.out.println(faces.size());
-//		
-//	}
-
 	/**
-	 * Réinitialise les données 
+	 * Réinitialise les données du fichier
 	 */
 	private static void resetDonnnee() {
 		nbVertex=-1;
 		nbFace=-1;
 	}
 	/**
-	 * 
+	 * Attribue les informations que contient un fichier ply aux attribues de la classe
 	 * @param fichier
-	 * @throws FormatPlyException
-	 * @throws FileNotFoundException
+	 * @throws FormatPlyException	Si le fichier n'est pas du format PLY
+	 * @throws FileNotFoundException Si le fichier n'existe pas
 	 */
 	public static void recuperationFichier(String fichier) throws FormatPlyException, FileNotFoundException {
 		BufferedReader reader = verificationDuFichier(fichier);
+		resetDonnnee();
 		try {
 			lectureEnteteDuFichier(reader);
-			recuperationPoints(fichier,reader);
-			recuperationFaces(fichier, points,reader );
+			recuperationPoints(reader);
+			recuperationFaces(points,reader);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -70,28 +54,24 @@ public class RecuperationPly {
 
 	}
 	/**
-	 * 
-	 * @param fichier
-	 * @return
-	 * @throws FormatPlyException
-	 * @throws FileNotFoundException
+	 * Vérifie le format du fichier voulant être lu
+	 * @param Nom du fichier
+	 * @return Un flux d'entrée permettant la lecture du fichier
+	 * @throws FormatPlyException	Si le fichier n'est pas du format PLY
+	 * @throws FileNotFoundException Si le fichier n'existe pas
 	 */
 	  private static BufferedReader verificationDuFichier(String fichier) throws FormatPlyException, FileNotFoundException{
 			checkFormat(fichier);
-			BufferedReader reader = new BufferedReader(new FileReader(fichier));
-			resetDonnnee();
-			return reader;
+			return new BufferedReader(new FileReader(fichier));
 		  
 	  }
 
-	/**
-	 * 
-	 * @param fichier
-	 * @param reader
-	 * @throws FormatPlyException
-	 * @throws IOException
-	 */
-	protected static void recuperationPoints(String fichier, BufferedReader reader) throws FormatPlyException,IOException {
+	  /**
+	   * Récupère la liste des points du fichier
+	   * @param reader Lecteur du fichier
+	   * @throws IOException une opération d'entrée du fichier échoue
+	   */
+	protected static void recuperationPoints(BufferedReader reader) throws IOException {
 
 		List<Point> res = new ArrayList<>();
 
@@ -118,13 +98,11 @@ public class RecuperationPly {
 
 	/**
 	 * Recupere la liste des faces dans un fichier PLY donné en paramètre
-	 * 
-	 * @param fichier  - Chemin vers le fichier
-	 * @param Point3Ds - {@link List} de {@link Point}
-	 * @return {@link List} de {@link Face}
-	 * @throws IOException 
+	 * @param points Liste des points du fichier
+	 * @param reader Lecteur du fichier
+	 * @throws IOException une opération d'entrée du fichier échoue
 	 */
-	protected static void recuperationFaces(String fichier, List<Point> points,BufferedReader reader) throws IOException {
+	protected static void recuperationFaces(List<Point> points,BufferedReader reader) throws IOException {
 
 		List<Face> res = null;
 			res = new ArrayList<>();
@@ -137,7 +115,7 @@ public class RecuperationPly {
 
 				tab = ligne.split(" ");
 				
-				List<Point> pointsDeLaFace = new ArrayList<Point>();
+				List<Point> pointsDeLaFace = new ArrayList<>();
 				for (int i = 1; i < tab.length; i++) {
 					pointsDeLaFace.add(points.get(Integer.valueOf(tab[i])));
 				}
@@ -151,12 +129,11 @@ public class RecuperationPly {
 	}
 
 	/**
-	 * Lis le nombre de vertex et le nombre de face, puis se place à la fin du
-	 * header
-	 * 
-	 * @param raf - RandomAccessFile
-	 * @throws FormatPlyException
-	 * @throws IOException
+	 * Lis la l'entête du fichier. <br>
+	 * Permet à partir de cela d'obtenir le nombre de vertex et le nombre de face
+	 * @param raf - RandomAccessFile Le flux d'entrée représentant le fichier à lire
+	 * @throws FormatPlyException	Si le fichier n'est pas du format PLY
+	 * @throws IOException une opération d'entrée du fichier échoue
 	 */
 	protected static void lectureEnteteDuFichier(BufferedReader raf) throws FormatPlyException, IOException {
 
@@ -184,8 +161,6 @@ public class RecuperationPly {
 			if(nbVertex==-1 || nbFace==-1) {
 				throw new FormatPlyException("Le fichier ne respecte pas la convention PLY");
 			}
-			
-
 		// on se replace tout au début du fichier
 	}
 
@@ -200,6 +175,14 @@ public class RecuperationPly {
 			throw new FormatPlyException(file + " (Fichier invalide. Le fichier n'est pas au format ply.)");
 		} 
 	}
+	
+	/**
+	 * Récupère le nombre de point que contient un fichier en parcourant son entête
+	 * @param fichier
+	 * @return	le nombre de point
+	 * @throws FormatPlyException
+	 * @throws IOException
+	 */
 	public static int getNBVertices(String fichier) throws FormatPlyException, IOException {
 		BufferedReader reader = verificationDuFichier(fichier);
 		lectureEnteteDuFichier(reader);
@@ -207,6 +190,13 @@ public class RecuperationPly {
 		return nbVertex;
 	}
 
+	/**
+	 * Récupérer le nombre de face que contient un fichier en parcourant son entête
+	 * @param fichier
+	 * @return le nombre de face
+	 * @throws FormatPlyException
+	 * @throws IOException
+	 */
 	public static int getNBFaces(String fichier) throws FormatPlyException, IOException {
 		BufferedReader reader = verificationDuFichier(fichier);
 		lectureEnteteDuFichier(reader);
@@ -215,16 +205,16 @@ public class RecuperationPly {
 	}
 
 	/**
-	 * 
-	 * @return the points
+	 * Récupére les points du dernier fichier lu
+	 * @return les points
 	 */
 	public static List<Point> getPoints() {
 		return points;
 	}
 
 	/**
-	 * 
-	 * @return the faces
+	 * Récupére les faces du dernier fichier lu
+	 * @return les faces
 	 */
 	public static List<Face> getFaces() {
 		return faces;
