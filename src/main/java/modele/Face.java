@@ -3,7 +3,15 @@ package modele;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+/**
+ * Cette classe sert à générer les faces qui sont un ensemble de points. <br>
+ * Elle réalise le degré de luminosité par rapport à une source lumineuse.
+ *
+ * @author <a href="mailto:leo.benhatat.etu@univ-lille.fr">Leo BEN HATAT</a>
+ * @author <a href="mailto:adnan.kouakoua.etu@univ-lille.fr">Adnan KOUAKOUA</a>
+ *
+ * IUT-A Informatique, Universite de Lille.
+ */
 public class Face {
 
 	private List<Point>          points;
@@ -11,23 +19,21 @@ public class Face {
 	private Vecteur              normalUnitaire;
 	private List<Face> division ;
 
-	// List<Integer> reference; // indice de la matrice des listes de point
-	// Matrice METTRE EN PARAMETRE
-
 	public Face() {
 		this(new ArrayList<>());
 	}
-
+	/**
+	 * 
+	 * @param points Liste de point que compose la face
+	 */
 	public Face(List<Point> points) {
 		this.points = points;
-		if (points.size() >= 3)
-		{
-			this.normalUnitaire = Vecteur.normalUnitaire(this.points.get(0), this.points.get(1), this.points.get(2));
-		}
 		division = new ArrayList<>();
 	}
 	
-	// DIVISION : 1 triangle en 4 triangles
+	/**
+	 * Permet de diviser la face actuel en 4 faces
+	 */
 	public void divisionTriangulaire() {
 		Point a = this.points.get(0);
 		Point b = this.points.get(1);
@@ -56,9 +62,10 @@ public class Face {
 		division.add(new Face(new ArrayList<>(Arrays.asList(a, milieuBC, b))));
 		division.add(new Face(new ArrayList<>(Arrays.asList(a, milieuBC, c))));
 	}*/
+	
 	/**
-	 * x > 0
-	 * @param x
+	 * Permet de diviser la face actuel en nombre de fois spécifié en parametre.
+	 * @param x représente le nombre de division triangulaire réalisée sur chaque faces.
 	 */
 	public void divisionTriangulaireX( int x) {
 		if(x>0) {
@@ -68,6 +75,10 @@ public class Face {
 		}
 	}
 	
+	/**
+	 * Récupère les divisions d'une face actuel
+	 * @return
+	 */
 	private List<Face> getFace() {
 	        List<Face> res = new ArrayList<>();
 	        res.add(this);
@@ -81,7 +92,10 @@ public class Face {
 
 	        return res;
 	 }
-	
+	/**
+	 * Récupère l'entièreté des divisions de la face actuel
+	 * @return
+	 */
 	public List<Face> getFaces(){
 		 List<Face> res = new ArrayList<>();
 		for (Face e : this.division) {
@@ -111,7 +125,11 @@ public class Face {
 		sb.append("]");
 		return sb.toString();
 	}
-
+	
+	/**
+	 * Permet d'obtenir la somme des coordonnées Z de la face
+	 * @return somme des coordonnées Z
+	 */
 	public double getAverageZ() {
 		double sum = 0;
 		for (Point p : points)
@@ -122,6 +140,10 @@ public class Face {
 		return sum / points.size();
 	}
 
+	/**
+	 * Permet d'obtenir la somme des coordonnées Y de la face
+	 * @return somme des coordonnées Y
+	 */
 	public double getAverageY() {
 		double sum = 0;
 		for (Point p : points)
@@ -132,6 +154,10 @@ public class Face {
 		return sum / points.size();
 	}
 
+	/**
+	 * Permet d'obtenir la somme des coordonnées X de la face
+	 * @return somme des coordonnées X
+	 */
 	public double getAverageX() {
 		double sum = 0;
 		for (Point p : points)
@@ -142,6 +168,11 @@ public class Face {
 		return sum / points.size();
 	}
 
+	/**
+	 * Calcul le degré de couleur d'une face.<br>
+	 * En fonction de la source lumineuse indique le rapport de la projection.
+	 * @return le degré de couleur de la face
+	 */
 	public double degreDeCouleur() {
 		double degreDeCouleur = -1;
 		System.out.println("DEGRES COULEUR DEBUT");
@@ -170,22 +201,9 @@ public class Face {
 		return degreDeCouleur;
 
 	}
-
-	/*
-	 * public static void main(String[] args) {
-	 * 
-	 * Face f = new Face(); f.add(new Point(-2, 1, 3)); f.add(new Point(-3, 2, 3));
-	 * f.add(new Point(-2, 2, 5));
-	 * 
-	 * System.out.println(f.degreDeCouleur()); }
-	 */
-
+	
 	public void add(Point p) {
 		this.points.add(p);
-		if (points.size() >= 3)
-		{
-			this.normalUnitaire = Vecteur.normalUnitaire(this.points.get(0), this.points.get(2), this.points.get(3));
-		}
 	}
 
 }
