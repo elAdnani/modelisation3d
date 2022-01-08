@@ -15,7 +15,11 @@ package math;
  * @date 9 nov. 2021
  * 
  */
-public abstract class OutilMatriciel {
+public class OutilMatriciel {
+	
+	private OutilMatriciel() {
+		
+	}
 	
 	/**
 	 * Donne la matrice de cadrage de taille 4x4.<br>

@@ -2,16 +2,21 @@ package views;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.AclFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileOwnerAttributeView;
 import java.nio.file.attribute.PosixFileAttributeView;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -28,15 +33,25 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TabPane.TabClosingPolicy;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import ply.PlyProperties;
 import ply.RecuperationPly;
 import ply.exceptions.FormatPlyException;
 import util.Axis;
@@ -52,8 +67,9 @@ public class View extends Stage {
 	private Slider zoomSlider = null;
 	private double zoomIncrement = 10.0;
 	private double zoom = 100;
-	
-	private double defaultCanvasWidthPercentile = 0.85;
+	private double maxzoom = 1000;
+
+	private double defaultCanvasWidthPercentile = 0.80;
 
 	private static String path = System.getProperty("user.dir") + File.separator + "exemples" + File.separator;
 
@@ -62,8 +78,6 @@ public class View extends Stage {
 	protected double oldMouseX;
 	protected double oldMouseY;
 
-	private Theme theme = Theme.DEFAULT;
-
 	public View() {
 
 		setTitle("Modélisateur 3D");
@@ -71,14 +85,14 @@ public class View extends Stage {
 		controller = new Controller(this);
 
 		/* INITIALISATION DU CANVAS */
-		canvases = new ArrayList<ModelisationCanvas>();
-		canvases.add(createCanvas(Screen.getPrimary().getBounds().getWidth()/2 * defaultCanvasWidthPercentile,
-				Screen.getPrimary().getBounds().getHeight()/2, Axis.ZAXIS));
-		canvases.add(createCanvas(Screen.getPrimary().getBounds().getWidth()/2 * defaultCanvasWidthPercentile,
-				Screen.getPrimary().getBounds().getHeight()/2, Axis.XAXIS));
+		canvases = new ArrayList<>();
+		canvases.add(createCanvas(Screen.getPrimary().getBounds().getWidth() / 2 * defaultCanvasWidthPercentile,
+				Screen.getPrimary().getBounds().getHeight() / 2, Axis.ZAXIS));
+		canvases.add(createCanvas(Screen.getPrimary().getBounds().getWidth() / 2 * defaultCanvasWidthPercentile,
+				Screen.getPrimary().getBounds().getHeight() / 2, Axis.XAXIS));
 		canvases.add(createCanvas(Screen.getPrimary().getBounds().getWidth() * defaultCanvasWidthPercentile,
-				Screen.getPrimary().getBounds().getHeight()/2, Axis.YAXIS));
-		
+				Screen.getPrimary().getBounds().getHeight() / 2 - 50, Axis.YAXIS));
+
 		GridPane canvasPane = new GridPane();
 		setupCanvasGridpane(canvasPane, canvases);
 
@@ -94,6 +108,65 @@ public class View extends Stage {
 		/* CREATION DES OUTILS */
 		VBox outils = createToolBox();
 
+		TableView<PlyProperties> tableview = new TableView<>();
+		tableview.setEditable(true);
+
+		TableColumn<PlyProperties, String> nameColumn = new TableColumn<>("name");
+		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+		TableColumn<PlyProperties, String> pathColumn = new TableColumn<>("path");
+		pathColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
+		TableColumn<PlyProperties, String> sizeColumn = new TableColumn<>("size");
+		sizeColumn.setCellValueFactory(new PropertyValueFactory<>("size"));
+		TableColumn<PlyProperties, Integer> facesColumn = new TableColumn<>("faces");
+		facesColumn.setCellValueFactory(new PropertyValueFactory<>("faces"));
+		TableColumn<PlyProperties, Integer> pointsColumn = new TableColumn<>("points");
+		pointsColumn.setCellValueFactory(new PropertyValueFactory<>("points"));
+		TableColumn<PlyProperties, String> createdColumn = new TableColumn<>("created");
+		createdColumn.setCellValueFactory(new PropertyValueFactory<>("created"));
+		TableColumn<PlyProperties, String> authorColumn = new TableColumn<>("author");
+		authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
+
+		tableview.getColumns().addAll(nameColumn, pathColumn, sizeColumn, facesColumn, pointsColumn, createdColumn,
+				authorColumn);
+
+		tableview.getItems().addAll(getModels(null));
+
+		tableview.setRowFactory(tv -> {
+			TableRow<PlyProperties> row = new TableRow<>();
+			row.setOnMouseClicked(event -> {
+				if (event.getClickCount() == 2 && (!row.isEmpty())) {
+					PlyProperties rowData = row.getItem();
+					try {
+						controller.loadFile(rowData.getPath());
+					} catch (FileNotFoundException|FormatPlyException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			return row;
+		});
+
+		TextField searchField = new TextField();
+		searchField.setPromptText("Search a model here");
+		searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+			tableview.getItems().clear();
+			tableview.getItems().addAll(getModels(newValue));
+		});
+
+		VBox.setVgrow(tableview, Priority.ALWAYS);
+
+		VBox plyList = new VBox();
+		plyList.getChildren().addAll(searchField, tableview);
+
+		Tab tab = new Tab("PlyList");
+		tab.setContent(plyList);
+
+		TabPane tabpane = new TabPane(tab);
+		tabpane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
+		VBox.setVgrow(tabpane, Priority.ALWAYS);
+
+		outils.getChildren().add(tabpane);
+
 		/* INITIALISATION DU BORDERPANE */
 		HBox root = new HBox();
 		root.getChildren().addAll(canvasPane, outils);
@@ -101,14 +174,13 @@ public class View extends Stage {
 
 		controller.addKeyPressedEvent(vBox);
 		vBox.getStyleClass().add("scene");
-		// URL resourcecss = getClass().getResource("../styles/darkmode.css");
-		// if (resourcecss != null) {
-		// String css = resourcecss.toExternalForm();
-		// scene.getStylesheets().add(css);
-		// }
+
 		setScene(scene);
 		setMaximized(true);
 		show();
+
+		tabpane.lookup(".tab-pane .tab-header-area .tab-header-background")
+				.setStyle("-fx-background-color: transparent;");
 	}
 
 	private void setupCanvasGridpane(GridPane canvasPane, List<ModelisationCanvas> canvases) {
@@ -131,10 +203,6 @@ public class View extends Stage {
 		MenuItem exitItem = new MenuItem("Exit");
 		MenuItem helpItem = new MenuItem("Show Help");
 
-//		RadioMenuItem haut = new RadioMenuItem("Haut");
-//		RadioMenuItem face = new RadioMenuItem("Face");
-//		RadioMenuItem droit = new RadioMenuItem("Droit");
-
 		RadioMenuItem defaultTheme = new RadioMenuItem(Theme.DEFAULT.toString());
 		RadioMenuItem darkTheme = new RadioMenuItem(Theme.DARK.toString());
 		RadioMenuItem solarisTheme = new RadioMenuItem(Theme.SOLARIS.toString());
@@ -142,7 +210,6 @@ public class View extends Stage {
 		SeparatorMenuItem sep = new SeparatorMenuItem();
 
 		ToggleGroup grp = new ToggleGroup();
-//		ToggleGroup grpView = new ToggleGroup();
 		ToggleGroup themeView = new ToggleGroup();
 
 		fileMenu.getItems().add(openFileItem);
@@ -164,7 +231,7 @@ public class View extends Stage {
 		controller.setExitAction(exitItem);
 
 		controller.setHelpAction(helpItem);
-		
+
 		for (DrawingMethod m : DrawingMethod.values()) {
 			RadioMenuItem radioItem = new RadioMenuItem(m.name());
 			radioItem.setToggleGroup(grp);
@@ -174,27 +241,6 @@ public class View extends Stage {
 				radioItem.setSelected(true);
 			viewMenu.getItems().add(radioItem);
 		}
-
-
-
-//		haut.setToggleGroup(grpView);
-//		controller.setOnHaut(haut);
-//
-//		face.setToggleGroup(grpView);
-//		controller.setOnFace(face);
-//
-//		droit.setToggleGroup(grpView);
-//		controller.setOnDroit(droit);
-
-		//
-		// if (this.controller.getAxis().equals(Axis.XAXIS))
-		// face.setSelected(true);
-		// else if (this.controller.getAxis().equals(Axis.YAXIS))
-		// haut.setSelected(true);
-		// else if (this.controller.getAxis().equals(Axis.ZAXIS))
-		// droit.setSelected(true);
-
-//		viewMenu.getItems().addAll(haut, face, droit);
 
 		defaultTheme.setToggleGroup(themeView);
 		darkTheme.setToggleGroup(themeView);
@@ -233,15 +279,11 @@ public class View extends Stage {
 
 		Label nom = new Label("Menu");
 		Label nomZoom = new Label("Zoom");
-		
-//		Button face = new Button("Vue de face");
-//		Button droite = new Button("Vue de droite");
-//		Button dessus = new Button("Vue de haut");
 
-		Button up = new Button("â†‘");
-		Button down = new Button("â†“");
-		Button right = new Button("â†’");
-		Button left = new Button("â†�");
+		Button up = new Button("↑");
+		Button down = new Button("↓");
+		Button right = new Button("→");
+		Button left = new Button("←");
 
 		Button plus = new Button("+");
 		Button moins = new Button("-");
@@ -253,26 +295,17 @@ public class View extends Stage {
 		deplacementsButtons.add(down, 1, 2);
 		deplacementsButtons.add(right, 2, 1);
 
-//		VBox position = new VBox(4);
-//		position.getChildren().addAll(face, droite, dessus);
-//		VBox.setMargin(dessus, new Insets(0, 0, 90, 0));
-//		position.setAlignment(Pos.TOP_CENTER);
+		HBox zoomBox = new HBox(5);
+		zoomBox.getChildren().addAll(moins, zoomSlider, plus);
 
-		HBox zoom = new HBox(5);
-		zoom.getChildren().addAll(moins, zoomSlider, plus);
-
-		zoom.setAlignment(Pos.CENTER);
+		zoomBox.setAlignment(Pos.CENTER);
 		outils.setAlignment(Pos.TOP_CENTER);
 		deplacementsButtons.setAlignment(Pos.TOP_CENTER);
 
-		outils.getChildren().addAll(nom /*,position*/, deplacementsButtons, nomZoom, zoom);
+		outils.getChildren().addAll(nom, deplacementsButtons, nomZoom, zoomBox);
 
 		nom.setPadding(new Insets(10, 0, 30, 0));
 		nomZoom.setPadding(new Insets(80, 0, 30, 0));
-
-//		face.setPrefSize(280, 60);
-//		droite.setPrefSize(280, 60);
-//		dessus.setPrefSize(280, 60);
 
 		up.setPrefSize(60, 60);
 		down.setPrefSize(60, 60);
@@ -290,21 +323,19 @@ public class View extends Stage {
 
 		controller.setOnDown(down);
 
-		// TODO
 		plus.setOnAction(e -> {
-			if (this.zoom + zoomIncrement < zoomSlider.maxProperty().doubleValue() * 100) {
-				zoomSlider.setValue(zoomSlider.getValue() + zoomIncrement / 100);
+			if (this.zoom + zoomIncrement < zoomSlider.maxProperty().doubleValue() * maxzoom) {
+				zoomSlider.setValue(zoomSlider.getValue() + zoomIncrement / maxzoom);
 				controller.setZoom(this.zoom + zoomIncrement);
 			} else {
 				zoomSlider.setValue(zoomSlider.maxProperty().doubleValue());
-				controller.setZoom(zoomSlider.maxProperty().doubleValue() * 100);
+				controller.setZoom(zoomSlider.maxProperty().doubleValue() * maxzoom);
 			}
 		});
 
-		// TODO
 		moins.setOnAction(e -> {
 			if (this.zoom - zoomIncrement > 0) {
-				zoomSlider.setValue(zoomSlider.getValue() - zoomIncrement / 100);
+				zoomSlider.setValue(zoomSlider.getValue() - zoomIncrement / maxzoom);
 				controller.setZoom(this.zoom - zoomIncrement);
 			} else {
 				zoomSlider.setValue(0);
@@ -317,12 +348,10 @@ public class View extends Stage {
 
 	private Slider createSlider() {
 		Slider slider = configureSlider();
-		// TODO A voir si c'est necessaire de bouger
 		slider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				controller.setZoom(zoomSlider.getValue() * 100);
-				// drawModel();
+				controller.setZoom(zoomSlider.getValue() * maxzoom);
 			}
 		});
 		return slider;
@@ -342,7 +371,7 @@ public class View extends Stage {
 	private ModelisationCanvas createCanvas(double width, double height) {
 		return createCanvas(width, height, Axis.ZAXIS, DrawingMethod.WIREFRAME);
 	}
-	
+
 	private ModelisationCanvas createCanvas(double width, double height, DrawingMethod method) {
 		return createCanvas(width, height, Axis.ZAXIS, method);
 	}
@@ -353,18 +382,17 @@ public class View extends Stage {
 
 	private ModelisationCanvas createCanvas(double width, double height, Axis axis, DrawingMethod method) {
 		ModelisationCanvas canvas = new ModelisationCanvas(width, height, axis, method);
-		
+
 		canvas.getGraphicsContext2D().setStroke(Color.BLACK);
 		canvas.getGraphicsContext2D().setFill(Color.GREY);
 
 		controller.setMousePressed(canvas);
 		controller.setMouseDragging(canvas);
 		controller.setMouseClicked(canvas);
-		
+
 		return canvas;
 	}
 
-	
 	/**
 	 * Replace the current canvas by a new sized one and call the
 	 * {@link #drawModel()}
@@ -414,6 +442,39 @@ public class View extends Stage {
 		return menuItems;
 	}
 
+	public List<PlyProperties> getModels(String regex) {
+		List<PlyProperties> models = new ArrayList<>();
+		File directory = new File(path);
+		FileFilter filter = new PlyFileFilter();
+		File[] liste = directory.listFiles(filter);
+
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+		Pattern pattern = null;
+		if (regex != null)
+			pattern = Pattern.compile(regex);
+
+		for (File f : liste) {
+			try {
+				if (regex == null || pattern.matcher(f.getName()).find()) {
+					Path filepath = Path.of(f.getPath());
+					FileOwnerAttributeView owner = Files.getFileAttributeView(filepath, FileOwnerAttributeView.class);
+					BasicFileAttributes attributes = Files.readAttributes(filepath, BasicFileAttributes.class);
+					models.add(new PlyProperties(f.getPath(), f.getName(), getSize(attributes.size()),
+							RecuperationPly.getNBFaces(filepath.toString()),
+							RecuperationPly.getNBVertices(filepath.toString()),
+							formatter.format(new Date(attributes.creationTime().toMillis())),
+							owner.getOwner().getName()));
+				}
+			} catch (IOException | FormatPlyException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return models;
+
+	}
+
 	/**
 	 * RecupÃ©ration de l'erreur PLY
 	 */
@@ -459,24 +520,23 @@ public class View extends Stage {
 	}
 
 	public void changeTheme(Theme theme) {
-		if (theme == null) {
-			
-		} else if (theme.equals(Theme.DEFAULT)) {
-			this.getScene().getStylesheets().clear();
-		} else {
-			URL resourcecss = getClass().getResource(theme.getPath());
-			if (resourcecss != null) {
-				this.theme = theme;
-				String css = resourcecss.toExternalForm();
+		if (theme != null) {
+			if (theme.equals(Theme.DEFAULT)) {
 				this.getScene().getStylesheets().clear();
-				this.getScene().getStylesheets().add(css);
+			} else {
+				URL resourcecss = getClass().getResource(theme.getPath());
+				if (resourcecss != null) {
+					String css = resourcecss.toExternalForm();
+					this.getScene().getStylesheets().clear();
+					this.getScene().getStylesheets().add(css);
+				}
 			}
 		}
 	}
 
 	public void setMethod(DrawingMethod m) {
 		for (ModelisationCanvas modelisationCanvas : canvases) {
-		modelisationCanvas.setMethod(m);	
+			modelisationCanvas.setMethod(m);
 		}
 	}
 }

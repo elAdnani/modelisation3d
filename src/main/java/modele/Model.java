@@ -25,7 +25,7 @@ public class Model extends Subject {
 
 	private Axis lastSortedAxis = Axis.ZAXIS;
 	private boolean isAlreadySorted = false;
-	
+
 	public Model() {
 		super();
 		faces = new ArrayList<>();
@@ -85,7 +85,7 @@ public class Model extends Subject {
 
 		Collections.sort(faces, comp);
 		this.isAlreadySorted = true;
-		
+
 		long end = System.nanoTime();
 		System.out
 				.println("Sorting done in " + (end - start) + " nanoseconds (" + (end - start) / 1_000_000.0 + " ms)");
@@ -128,32 +128,6 @@ public class Model extends Subject {
 		System.out.println("zMax : " + zMax + "; zMin : " + zMin + "; MilieuZ : " + centerCoord[2]);
 
 		return new Point(centerCoord[0], centerCoord[1], centerCoord[2]);
-	}
-
-	public double calculateAutoScale(Canvas canvas) {
-		Double calculatedZoom = null;
-
-		System.out.println("Autoscale started...");
-		long start = System.nanoTime();
-
-		double length = Math.pow(center.getX() * 2, 2);
-		double height = Math.pow(center.getY() * 2, 2);
-		double breadth = Math.pow(center.getZ() * 2, 2);
-		double diagonal = Math.sqrt(length + height + breadth);
-
-		Double canvasWidth = canvas.getWidth();
-		Double canvasHeight = canvas.getHeight();
-
-		Double smallestSize = Math.min(canvasWidth, canvasHeight);
-
-		calculatedZoom = smallestSize / (diagonal + 1);
-		System.out.println("Diagonal : " + diagonal);
-		long end = System.nanoTime();
-		System.out.println(
-				"Autoscale done in " + (end - start) + " nanoseconds (" + ((end - start) / 1_000_000.0) + " ms)");
-		System.out.println("Resulted zoom from autoscale is " + calculatedZoom.doubleValue());
-
-		return calculatedZoom;
 	}
 
 	public void rotate(Axis axis, double theta) {
@@ -235,8 +209,6 @@ public class Model extends Subject {
 		this.offsetY = model.offsetY;
 		this.offsetZ = model.offsetZ;
 	}
-	
-	
 
 	/**
 	 * GETTERS AND SETTERS
@@ -287,7 +259,7 @@ public class Model extends Subject {
 	public Axis getLastSortedAxis() {
 		return lastSortedAxis;
 	}
-	
+
 	public boolean isAlreadySorted() {
 		return isAlreadySorted;
 	}
@@ -298,7 +270,6 @@ public class Model extends Subject {
 	 *
 	 */
 
-
 	/**
 	 * Comparator for the X axis of points
 	 *
@@ -308,10 +279,12 @@ public class Model extends Subject {
 		public int compare(Face o1, Face o2) {
 			double av1 = o1.getAverageX();
 			double av2 = o2.getAverageX();
-			if (av2 == av1) {
-				return 0;
+			if (av1 > av2) {
+				return 1;
+			} else if (av1 < av2) {
+				return -1;
 			}
-			return av2 - av1 < 0 ? 1 : -1;
+			return 0;
 		}
 	}
 
@@ -324,10 +297,12 @@ public class Model extends Subject {
 		public int compare(Face o1, Face o2) {
 			double av1 = o1.getAverageY();
 			double av2 = o2.getAverageY();
-			if (av2 == av1) {
-				return 0;
+			if (av1 > av2) {
+				return 1;
+			} else if (av1 < av2) {
+				return -1;
 			}
-			return av2 - av1 < 0 ? 1 : -1;
+			return 0;
 		}
 	}
 
@@ -340,10 +315,12 @@ public class Model extends Subject {
 		public int compare(Face o1, Face o2) {
 			double av1 = o1.getAverageZ();
 			double av2 = o2.getAverageZ();
-			if (av2 == av1) {
-				return 0;
+			if (av1 > av2) {
+				return 1;
+			} else if (av1 < av2) {
+				return -1;
 			}
-			return av2 - av1 < 0 ? 1 : -1;
+			return 0;
 		}
 	}
 
