@@ -2,8 +2,9 @@ package views;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Iterator;
+import java.util.List;
 
-import connectable.ConnectableProperty;
 import connectable.Observer;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -12,6 +13,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.input.KeyCode;
@@ -24,9 +26,8 @@ import modele.Model;
 import ply.exceptions.FormatPlyException;
 import util.Axis;
 import util.DrawingMethod;
-import util.Theme;
 
-public class Controller extends ConnectableProperty {
+public class Controller {
 
 	private Model model = null;
 	private View view = null;
@@ -34,20 +35,9 @@ public class Controller extends ConnectableProperty {
 	private double oldMouseX;
 	private double oldMouseY;
 
-	public double zoom = 0.0;
-	public static double theta = toRadian(1); // Angle de rotation en radian // Calcul
-
-	// private final long[] frameTimes = new long[100]; // Interface
-	// private int frameTimeIndex = 0; // Interface
-	// private boolean arrayFilled = false; // Interface
-
 	public Controller(View view) {
-		this(view, Axis.ZAXIS);
-	}
-
-	public Controller(View view, Axis axis) {
 		this.view = view;
-		this.zoom = 100.0;
+		this.model = new Model();
 	}
 
 	public void loadFile(String path) throws FileNotFoundException, FormatPlyException {
@@ -55,9 +45,9 @@ public class Controller extends ConnectableProperty {
 			model = new Model();
 		if (path != null) {
 			this.model.loadFile(path);
-			this.view.zoomSlider.setValue(zoom / 100);
-			notifyObservers();
-			this.model.attach(getCanvas());
+			for (Observer observer : getCanvases()) {
+				this.model.attach(observer);
+			}
 			this.model.notifyObservers();
 		}
 
@@ -85,13 +75,8 @@ public class Controller extends ConnectableProperty {
 	 * GETTERS AND SETTERS
 	 */
 
-	/**
-	 * Return the canvas of the Affichage
-	 * 
-	 * @return canvas of the Affichage
-	 */
-	public ModelisationCanvas getCanvas() {
-		return this.view.getCanvas();
+	public List<ModelisationCanvas> getCanvases() {
+		return this.view.getCanvases();
 	}
 
 	public Model getModel() {
@@ -102,34 +87,11 @@ public class Controller extends ConnectableProperty {
 		this.model = model;
 	}
 
-	public double getZoom() {
-		return zoom;
-	}
-
 	public void setZoom(double zoom) {
-		if (!propagating) {
-			propagating = true;
-			this.zoom = zoom;
-			this.getCanvas().zoom = zoom;
-			model.notifyObservers();
-			for (Observer obs : attached) {
-				Controller af = (Controller) obs;
-				af.setZoom(zoom);
-				af.view.zoomSlider.setValue(zoom / 100);
-			}
-			propagating = false;
+		for (ModelisationCanvas canvas : getCanvases()) {
+			canvas.zoom = zoom;
 		}
-	}
-
-	public void updateTheme(Theme theme) {
-		if (!propagating) {
-			propagating = true;
-			for (Observer obs : attached) {
-				Controller af = (Controller) obs;
-				af.view.changeTheme(theme);
-			}
-			propagating = false;
-		}
+		model.notifyObservers();
 	}
 
 	/**
@@ -149,29 +111,32 @@ public class Controller extends ConnectableProperty {
 				try {
 					loadFile(path);
 				} catch (FormatPlyException | FileNotFoundException e) {
-					// erreur(e);
+					view.erreur(e);
 				}
 			}
 
 		});
 	}
-	
+
 	/**
 	 * @param down
 	 */
 	public void setOnDown(Button down) {
 		down.setOnAction(e -> {
-			switch (getCanvas().getAxis()) {
-			case XAXIS:
-				rotateModel(Axis.ZAXIS, -4);
-				break;
-			case YAXIS:
-				rotateModel(Axis.ZAXIS, -4);
-				break;
-			case ZAXIS:
-				rotateModel(Axis.XAXIS, -4);
-				break;
+			for (ModelisationCanvas canvas : getCanvases()) {
+				switch (canvas.getAxis()) {
+				case XAXIS:
+					rotateModel(Axis.ZAXIS, -4);
+					break;
+				case YAXIS:
+					rotateModel(Axis.ZAXIS, -4);
+					break;
+				case ZAXIS:
+					rotateModel(Axis.XAXIS, -4);
+					break;
+				}
 			}
+
 			this.model.notifyObservers();
 		});
 	}
@@ -181,17 +146,20 @@ public class Controller extends ConnectableProperty {
 	 */
 	public void setOnUp(Button up) {
 		up.setOnAction(e -> {
-			switch (getCanvas().getAxis()) {
-			case XAXIS:
-				rotateModel(Axis.ZAXIS, 4);
-				break;
-			case YAXIS:
-				rotateModel(Axis.ZAXIS, 4);
-				break;
-			case ZAXIS:
-				rotateModel(Axis.XAXIS, 4);
-				break;
+			for (ModelisationCanvas canvas : getCanvases()) {
+				switch (canvas.getAxis()) {
+				case XAXIS:
+					rotateModel(Axis.ZAXIS, 4);
+					break;
+				case YAXIS:
+					rotateModel(Axis.ZAXIS, 4);
+					break;
+				case ZAXIS:
+					rotateModel(Axis.XAXIS, 4);
+					break;
+				}
 			}
+
 			this.model.notifyObservers();
 		});
 	}
@@ -201,16 +169,18 @@ public class Controller extends ConnectableProperty {
 	 */
 	public void setOnLeft(Button left) {
 		left.setOnAction(e -> {
-			switch (getCanvas().getAxis()) {
-			case XAXIS:
-				rotateModel(Axis.YAXIS, -4);
-				break;
-			case YAXIS:
-				rotateModel(Axis.XAXIS, -4);
-				break;
-			case ZAXIS:
-				rotateModel(Axis.YAXIS, -4);
-				break;
+			for (ModelisationCanvas canvas : getCanvases()) {
+				switch (canvas.getAxis()) {
+				case XAXIS:
+					rotateModel(Axis.YAXIS, -4);
+					break;
+				case YAXIS:
+					rotateModel(Axis.XAXIS, -4);
+					break;
+				case ZAXIS:
+					rotateModel(Axis.YAXIS, -4);
+					break;
+				}
 			}
 
 			this.model.notifyObservers();
@@ -222,44 +192,23 @@ public class Controller extends ConnectableProperty {
 	 */
 	public void setOnRight(Button right) {
 		right.setOnAction(e -> {
-			switch (view.getCanvas().getAxis()) {
-			case XAXIS:
-				rotateModel(Axis.YAXIS, 4);
-				break;
-			case YAXIS:
-				rotateModel(Axis.XAXIS, 4);
-				break;
-			case ZAXIS:
-				rotateModel(Axis.YAXIS, 4);
-				break;
+			for (ModelisationCanvas canvas : getCanvases()) {
+				switch (canvas.getAxis()) {
+				case XAXIS:
+					rotateModel(Axis.YAXIS, 4);
+					break;
+				case YAXIS:
+					rotateModel(Axis.XAXIS, 4);
+					break;
+				case ZAXIS:
+					rotateModel(Axis.YAXIS, 4);
+					break;
+				}
 			}
 			this.model.notifyObservers();
 		});
 	}
 	
-
-	public void setOnDroit(RadioMenuItem droit) {
-		droit.setOnAction(event -> {
-			this.getCanvas().setAxis(Axis.ZAXIS);
-			this.model.notifyObservers();
-		});
-	}
-
-	public void setOnFace(RadioMenuItem face) {
-		face.setOnAction(event -> {
-			this.getCanvas().setAxis(Axis.XAXIS);
-			this.model.notifyObservers();
-		});
-	}
-
-	public void setOnHaut(RadioMenuItem haut) {
-		haut.setOnAction(event -> {
-			this.getCanvas().setAxis(Axis.YAXIS);
-			this.model.notifyObservers();
-		});
-	}
-
-
 	/**
 	 * @param node
 	 */
@@ -267,19 +216,19 @@ public class Controller extends ConnectableProperty {
 		node.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			public void handle(KeyEvent e) {
 				if (e.getCode() == KeyCode.RIGHT) {
-					rotateModel(Axis.YAXIS, toRadian(1));
+					rotateModel(Axis.YAXIS, 1);
 					model.notifyObservers();
 				}
 				if (e.getCode() == KeyCode.LEFT) {
-					rotateModel(Axis.YAXIS, toRadian(-1));
+					rotateModel(Axis.YAXIS, -1);
 					model.notifyObservers();
 				}
 				if (e.getCode() == KeyCode.UP) {
-					rotateModel(Axis.XAXIS, toRadian(1));
+					rotateModel(Axis.XAXIS, 1);
 					model.notifyObservers();
 				}
 				if (e.getCode() == KeyCode.DOWN) {
-					rotateModel(Axis.XAXIS, toRadian(-1));
+					rotateModel(Axis.XAXIS, -1);
 					model.notifyObservers();
 				}
 			}
@@ -328,15 +277,16 @@ public class Controller extends ConnectableProperty {
 			} catch (FileNotFoundException | FormatPlyException e) {
 				e.printStackTrace();
 			}
-			this.view.getCanvas().clearCanvas();
+			for (ModelisationCanvas canvas : getCanvases())
+				canvas.clearCanvas();
 			this.model.notifyObservers();
 		});
 	}
-	
+
 	/**
 	 * 
 	 */
-	public void setMouseDragging(Canvas canvas) {
+	public void setMouseDragging(ModelisationCanvas canvas) {
 		canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {
 				double mouseX = event.getSceneX();
@@ -344,7 +294,7 @@ public class Controller extends ConnectableProperty {
 				double xDistance = mouseX - oldMouseX;
 				double yDistance = mouseY - oldMouseY;
 				if (event.getButton().equals(MouseButton.SECONDARY)) {
-					switch (getCanvas().getAxis()) {
+					switch (canvas.getAxis()) {
 					case XAXIS:
 						model.translate(Axis.ZAXIS, xDistance);
 						model.translate(Axis.YAXIS, yDistance);
@@ -360,7 +310,7 @@ public class Controller extends ConnectableProperty {
 					}
 					model.notifyObservers();
 				} else if (event.getButton().equals(MouseButton.PRIMARY)) {
-					switch (getCanvas().getAxis()) {
+					switch (canvas.getAxis()) {
 					case XAXIS:
 						model.rotate(Axis.ZAXIS, toRadian(yDistance));
 						model.rotate(Axis.YAXIS, toRadian(xDistance));
@@ -382,17 +332,28 @@ public class Controller extends ConnectableProperty {
 
 		});
 	}
-	
-	/**
-	 * 
-	 */
-	public void setMousePressed(Canvas canvas) {
+
+	public void setMousePressed(ModelisationCanvas canvas) {
 		canvas.setOnMousePressed(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {
 				double mouseX = event.getSceneX();
 				double mouseY = event.getSceneY();
 				oldMouseX = mouseX;
 				oldMouseY = mouseY;
+			}
+		});
+	}
+	
+	public void setMouseClicked(ModelisationCanvas canvas) {
+		ContextMenu contextMenu = new ContextMenu();
+		for(DrawingMethod meth : DrawingMethod.values()) {
+			MenuItem item = new MenuItem(meth.name());
+			contextMenu.getItems().add(item);
+		}
+		
+		
+		canvas.setOnMouseClicked(event -> {
+			if(event.getButton().equals(MouseButton.SECONDARY)) {
 			}
 		});
 	}

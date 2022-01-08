@@ -23,6 +23,9 @@ public class Model extends Subject {
 	private double offsetY = 0.0;
 	private double offsetZ = 0.0;
 
+	private Axis lastSortedAxis = Axis.ZAXIS;
+	private boolean isAlreadySorted = false;
+	
 	public Model() {
 		super();
 		faces = new ArrayList<>();
@@ -36,13 +39,12 @@ public class Model extends Subject {
 	 * @throws FileNotFoundException
 	 */
 	public void loadFile(String path) throws FileNotFoundException, FormatPlyException {
-
 		RecuperationPly.recuperationFichier(path);
 		points = RecuperationPly.getPoints();
 		faces = RecuperationPly.getFaces();
 		center = calculateCenter();
 		centerModel();
-		// TODO calculateAutoScale();
+		notifyObservers();
 	}
 
 	/**
@@ -62,6 +64,7 @@ public class Model extends Subject {
 	}
 
 	public void sortPoints(Axis axis) {
+		this.lastSortedAxis = axis;
 		long start = System.nanoTime();
 		System.out.println("Sorting by " + axis.name() + " started...");
 		Comparator<Face> comp = null;
@@ -81,7 +84,8 @@ public class Model extends Subject {
 		}
 
 		Collections.sort(faces, comp);
-
+		this.isAlreadySorted = true;
+		
 		long end = System.nanoTime();
 		System.out
 				.println("Sorting done in " + (end - start) + " nanoseconds (" + (end - start) / 1_000_000.0 + " ms)");
@@ -167,6 +171,7 @@ public class Model extends Subject {
 			rotateX(theta);
 			break;
 		}
+		this.isAlreadySorted = false;
 	}
 
 	// Calcul
@@ -279,11 +284,20 @@ public class Model extends Subject {
 		this.offsetZ = offsetZ;
 	}
 
+	public Axis getLastSortedAxis() {
+		return lastSortedAxis;
+	}
+	
+	public boolean isAlreadySorted() {
+		return isAlreadySorted;
+	}
+
 	/**
 	 * 
 	 * COMPARATORS
 	 *
 	 */
+
 
 	/**
 	 * Comparator for the X axis of points

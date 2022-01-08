@@ -18,7 +18,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -38,7 +37,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import modele.Model;
 import ply.RecuperationPly;
 import ply.exceptions.FormatPlyException;
 import util.Axis;
@@ -49,18 +47,17 @@ import util.Theme;
 @SuppressWarnings("PMD.LawOfDemeter")
 public class View extends Stage {
 
-	private ModelisationCanvas canvas = null;
+	private List<ModelisationCanvas> canvases = null;
 
-	public Slider zoomSlider = null;
-	public double zoomIncrement = 10.0;
-
+	private Slider zoomSlider = null;
+	private double zoomIncrement = 10.0;
+	private double zoom = 100;
+	
 	private double defaultCanvasWidthPercentile = 0.85;
 
-	private String file = null;
 	private static String path = System.getProperty("user.dir") + File.separator + "exemples" + File.separator;
 
 	private Controller controller = null;
-	private DrawingMethod method = null;
 
 	protected double oldMouseX;
 	protected double oldMouseY;
@@ -68,28 +65,22 @@ public class View extends Stage {
 	private Theme theme = Theme.DEFAULT;
 
 	public View() {
-		this(Axis.ZAXIS);
-	}
-
-	public View(Axis axis) {
-		this(axis, DrawingMethod.BOTH);
-	}
-
-	public View(DrawingMethod method) {
-		this(Axis.ZAXIS, method);
-	}
-
-	public View(Axis axis, DrawingMethod method) {
-		this.method = method;
 
 		setTitle("Modélisateur 3D");
 
-		controller = new Controller(this, axis);
+		controller = new Controller(this);
 
 		/* INITIALISATION DU CANVAS */
-		createCanvas(Screen.getPrimary().getBounds().getWidth() * defaultCanvasWidthPercentile,
-				Screen.getPrimary().getBounds().getHeight());
-
+		canvases = new ArrayList<ModelisationCanvas>();
+		canvases.add(createCanvas(Screen.getPrimary().getBounds().getWidth()/2 * defaultCanvasWidthPercentile,
+				Screen.getPrimary().getBounds().getHeight()/2, Axis.ZAXIS));
+		canvases.add(createCanvas(Screen.getPrimary().getBounds().getWidth()/2 * defaultCanvasWidthPercentile,
+				Screen.getPrimary().getBounds().getHeight()/2, Axis.XAXIS));
+		canvases.add(createCanvas(Screen.getPrimary().getBounds().getWidth() * defaultCanvasWidthPercentile,
+				Screen.getPrimary().getBounds().getHeight()/2, Axis.YAXIS));
+		
+		GridPane canvasPane = new GridPane();
+		setupCanvasGridpane(canvasPane, canvases);
 
 		zoomSlider = createSlider();
 
@@ -105,7 +96,7 @@ public class View extends Stage {
 
 		/* INITIALISATION DU BORDERPANE */
 		HBox root = new HBox();
-		root.getChildren().addAll(canvas, outils);
+		root.getChildren().addAll(canvasPane, outils);
 		vBox.getChildren().addAll(root);
 
 		controller.addKeyPressedEvent(vBox);
@@ -118,6 +109,12 @@ public class View extends Stage {
 		setScene(scene);
 		setMaximized(true);
 		show();
+	}
+
+	private void setupCanvasGridpane(GridPane canvasPane, List<ModelisationCanvas> canvases) {
+		canvasPane.add(canvases.get(0), 0, 0);
+		canvasPane.add(canvases.get(1), 1, 0);
+		canvasPane.add(canvases.get(2), 0, 1, 2, 1);
 	}
 
 	private MenuBar createMenuBar() {
@@ -134,19 +131,18 @@ public class View extends Stage {
 		MenuItem exitItem = new MenuItem("Exit");
 		MenuItem helpItem = new MenuItem("Show Help");
 
-		RadioMenuItem haut = new RadioMenuItem("Haut");
-		RadioMenuItem face = new RadioMenuItem("Face");
-		RadioMenuItem droit = new RadioMenuItem("Droit");
+//		RadioMenuItem haut = new RadioMenuItem("Haut");
+//		RadioMenuItem face = new RadioMenuItem("Face");
+//		RadioMenuItem droit = new RadioMenuItem("Droit");
 
 		RadioMenuItem defaultTheme = new RadioMenuItem(Theme.DEFAULT.toString());
 		RadioMenuItem darkTheme = new RadioMenuItem(Theme.DARK.toString());
 		RadioMenuItem solarisTheme = new RadioMenuItem(Theme.SOLARIS.toString());
 
 		SeparatorMenuItem sep = new SeparatorMenuItem();
-		SeparatorMenuItem sepView = new SeparatorMenuItem();
 
 		ToggleGroup grp = new ToggleGroup();
-		ToggleGroup grpView = new ToggleGroup();
+//		ToggleGroup grpView = new ToggleGroup();
 		ToggleGroup themeView = new ToggleGroup();
 
 		fileMenu.getItems().add(openFileItem);
@@ -168,26 +164,27 @@ public class View extends Stage {
 		controller.setExitAction(exitItem);
 
 		controller.setHelpAction(helpItem);
-
+		
 		for (DrawingMethod m : DrawingMethod.values()) {
 			RadioMenuItem radioItem = new RadioMenuItem(m.name());
 			radioItem.setToggleGroup(grp);
 			controller.setOnMethodChangerAction(m, radioItem);
-			if (m.equals(method))
+			ModelisationCanvas firstCanvas = canvases.get(0);
+			if (m.equals(firstCanvas.getMethod()))
 				radioItem.setSelected(true);
 			viewMenu.getItems().add(radioItem);
 		}
 
-		viewMenu.getItems().add(sepView);
 
-		haut.setToggleGroup(grpView);
-		controller.setOnHaut(haut);
 
-		face.setToggleGroup(grpView);
-		controller.setOnFace(face);
-
-		droit.setToggleGroup(grpView);
-		controller.setOnDroit(droit);
+//		haut.setToggleGroup(grpView);
+//		controller.setOnHaut(haut);
+//
+//		face.setToggleGroup(grpView);
+//		controller.setOnFace(face);
+//
+//		droit.setToggleGroup(grpView);
+//		controller.setOnDroit(droit);
 
 		//
 		// if (this.controller.getAxis().equals(Axis.XAXIS))
@@ -197,7 +194,7 @@ public class View extends Stage {
 		// else if (this.controller.getAxis().equals(Axis.ZAXIS))
 		// droit.setSelected(true);
 
-		viewMenu.getItems().addAll(haut, face, droit);
+//		viewMenu.getItems().addAll(haut, face, droit);
 
 		defaultTheme.setToggleGroup(themeView);
 		darkTheme.setToggleGroup(themeView);
@@ -210,7 +207,7 @@ public class View extends Stage {
 		darkTheme.setOnAction(event -> {
 			changeTheme(Theme.DARK);
 		});
-		
+
 		solarisTheme.setOnAction(event -> {
 			changeTheme(Theme.SOLARIS);
 		});
@@ -236,14 +233,15 @@ public class View extends Stage {
 
 		Label nom = new Label("Menu");
 		Label nomZoom = new Label("Zoom");
-		Button face = new Button("Vue de face");
-		Button droite = new Button("Vue de droite");
-		Button dessus = new Button("Vue de haut");
+		
+//		Button face = new Button("Vue de face");
+//		Button droite = new Button("Vue de droite");
+//		Button dessus = new Button("Vue de haut");
 
-		Button up = new Button("↑");
-		Button down = new Button("↓");
-		Button right = new Button("→");
-		Button left = new Button("←");
+		Button up = new Button("â†‘");
+		Button down = new Button("â†“");
+		Button right = new Button("â†’");
+		Button left = new Button("â†�");
 
 		Button plus = new Button("+");
 		Button moins = new Button("-");
@@ -255,27 +253,26 @@ public class View extends Stage {
 		deplacementsButtons.add(down, 1, 2);
 		deplacementsButtons.add(right, 2, 1);
 
-		VBox position = new VBox(4);
-		position.getChildren().addAll(face, droite, dessus);
-
-		VBox.setMargin(dessus, new Insets(0, 0, 90, 0));
+//		VBox position = new VBox(4);
+//		position.getChildren().addAll(face, droite, dessus);
+//		VBox.setMargin(dessus, new Insets(0, 0, 90, 0));
+//		position.setAlignment(Pos.TOP_CENTER);
 
 		HBox zoom = new HBox(5);
 		zoom.getChildren().addAll(moins, zoomSlider, plus);
 
 		zoom.setAlignment(Pos.CENTER);
 		outils.setAlignment(Pos.TOP_CENTER);
-		position.setAlignment(Pos.TOP_CENTER);
 		deplacementsButtons.setAlignment(Pos.TOP_CENTER);
 
-		outils.getChildren().addAll(nom, position, deplacementsButtons, nomZoom, zoom);
+		outils.getChildren().addAll(nom /*,position*/, deplacementsButtons, nomZoom, zoom);
 
 		nom.setPadding(new Insets(10, 0, 30, 0));
 		nomZoom.setPadding(new Insets(80, 0, 30, 0));
 
-		face.setPrefSize(280, 60);
-		droite.setPrefSize(280, 60);
-		dessus.setPrefSize(280, 60);
+//		face.setPrefSize(280, 60);
+//		droite.setPrefSize(280, 60);
+//		dessus.setPrefSize(280, 60);
 
 		up.setPrefSize(60, 60);
 		down.setPrefSize(60, 60);
@@ -293,42 +290,11 @@ public class View extends Stage {
 
 		controller.setOnDown(down);
 
-		// TODO A remplacer par l'ajout d'un nouveau canvas à view
-		face.setOnAction(e -> {
-			View fv = new View(Axis.XAXIS, this.method);
-			fv.controller.setModel(new Model());
-			fv.controller.getModel().copy(this.controller.getModel());
-			fv.controller.setZoom(this.controller.getZoom());
-			fv.controller.biconnectTo(this.controller);
-			// fv.drawModel();
-		});
-
-		// TODO A remplacer par l'ajout d'un nouveau canvas à view
-		dessus.setOnAction(e -> {
-			View dv = new View(Axis.YAXIS, this.method);
-			dv.controller.setModel(new Model());
-			dv.controller.getModel().copy(this.controller.getModel());
-			dv.controller.setZoom(this.controller.getZoom());
-			dv.controller.biconnectTo(this.controller);
-			// dv.drawModel();
-		});
-
-
-		// TODO A remplacer par l'ajout d'un nouveau canvas à view
-		droite.setOnAction(e -> {
-			View drv = new View(Axis.ZAXIS, this.method);
-			drv.controller.setModel(new Model());
-			drv.controller.getModel().copy(this.controller.getModel());
-			drv.controller.setZoom(this.controller.getZoom());
-			drv.controller.biconnectTo(this.controller);
-			// drv.drawModel();
-		});
-
 		// TODO
 		plus.setOnAction(e -> {
-			if (controller.zoom + zoomIncrement < zoomSlider.maxProperty().doubleValue() * 100) {
+			if (this.zoom + zoomIncrement < zoomSlider.maxProperty().doubleValue() * 100) {
 				zoomSlider.setValue(zoomSlider.getValue() + zoomIncrement / 100);
-				controller.setZoom(controller.getZoom() + zoomIncrement);
+				controller.setZoom(this.zoom + zoomIncrement);
 			} else {
 				zoomSlider.setValue(zoomSlider.maxProperty().doubleValue());
 				controller.setZoom(zoomSlider.maxProperty().doubleValue() * 100);
@@ -337,9 +303,9 @@ public class View extends Stage {
 
 		// TODO
 		moins.setOnAction(e -> {
-			if (controller.zoom - zoomIncrement > 0) {
+			if (this.zoom - zoomIncrement > 0) {
 				zoomSlider.setValue(zoomSlider.getValue() - zoomIncrement / 100);
-				controller.setZoom(controller.getZoom() - zoomIncrement);
+				controller.setZoom(this.zoom - zoomIncrement);
 			} else {
 				zoomSlider.setValue(0);
 				controller.setZoom(0);
@@ -369,27 +335,36 @@ public class View extends Stage {
 		slider.setShowTickLabels(true);
 		slider.setShowTickMarks(true);
 		slider.setMajorTickUnit(1);
-		slider.setValue(controller.getZoom());
+		slider.setValue(zoom);
 		return slider;
 	}
 
-	/**
-	 * Create and replace (if already existing) a canvas of given width and height
-	 * 
-	 * @param width
-	 * @param height
-	 */
-	private void createCanvas(double width, double height) {
-		canvas = new ModelisationCanvas(width, height, Axis.ZAXIS, DrawingMethod.BOTH);
+	private ModelisationCanvas createCanvas(double width, double height) {
+		return createCanvas(width, height, Axis.ZAXIS, DrawingMethod.WIREFRAME);
+	}
+	
+	private ModelisationCanvas createCanvas(double width, double height, DrawingMethod method) {
+		return createCanvas(width, height, Axis.ZAXIS, method);
+	}
 
+	private ModelisationCanvas createCanvas(double width, double height, Axis axis) {
+		return createCanvas(width, height, axis, DrawingMethod.WIREFRAME);
+	}
+
+	private ModelisationCanvas createCanvas(double width, double height, Axis axis, DrawingMethod method) {
+		ModelisationCanvas canvas = new ModelisationCanvas(width, height, axis, method);
+		
 		canvas.getGraphicsContext2D().setStroke(Color.BLACK);
 		canvas.getGraphicsContext2D().setFill(Color.GREY);
 
-		/* DEPLACEMENT SOURIS */
 		controller.setMousePressed(canvas);
 		controller.setMouseDragging(canvas);
+		controller.setMouseClicked(canvas);
+		
+		return canvas;
 	}
 
+	
 	/**
 	 * Replace the current canvas by a new sized one and call the
 	 * {@link #drawModel()}
@@ -440,12 +415,12 @@ public class View extends Stage {
 	}
 
 	/**
-	 * Recupération de l'erreur PLY
+	 * RecupÃ©ration de l'erreur PLY
 	 */
 	public void erreur(Exception e) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle(e.getClass().getSimpleName());
-		alert.setHeaderText("Vous avez rencontrez un problème");
+		alert.setHeaderText("Vous avez rencontrez un problÃ¨me");
 		alert.setContentText(e.getMessage());
 		alert.showAndWait();
 
@@ -479,18 +454,14 @@ public class View extends Stage {
 		return s;
 	}
 
-	public ModelisationCanvas getCanvas() {
-		return canvas;
-	}
-
-	public DrawingMethod getDrawMethod() {
-		return method;
+	public List<ModelisationCanvas> getCanvases() {
+		return canvases;
 	}
 
 	public void changeTheme(Theme theme) {
-		if (theme == null)
-			return;
-		else if (theme.equals(Theme.DEFAULT)) {
+		if (theme == null) {
+			
+		} else if (theme.equals(Theme.DEFAULT)) {
 			this.getScene().getStylesheets().clear();
 		} else {
 			URL resourcecss = getClass().getResource(theme.getPath());
@@ -501,10 +472,11 @@ public class View extends Stage {
 				this.getScene().getStylesheets().add(css);
 			}
 		}
-		controller.updateTheme(theme);
 	}
 
 	public void setMethod(DrawingMethod m) {
-		canvas.setMethod(m);
+		for (ModelisationCanvas modelisationCanvas : canvases) {
+		modelisationCanvas.setMethod(m);	
+		}
 	}
 }
