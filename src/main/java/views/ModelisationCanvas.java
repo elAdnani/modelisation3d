@@ -12,6 +12,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import modele.Face;
+import modele.Figure;
 import modele.Model;
 import modele.Point;
 import util.Axis;
@@ -149,11 +150,11 @@ public class ModelisationCanvas extends Canvas implements Observer {
 		}
 
 		try {
-			Method methodGetX = Point.class.getDeclaredMethod(xmethod);
-			Method methodGetY = Point.class.getDeclaredMethod(ymethod);
-			for (Face t : faces) {
-				Iterator<Point> it = t.getPoints().iterator();
-				int nbPoints = t.getPoints().size();
+			Method methodGetX = Figure.class.getDeclaredMethod(xmethod);
+			Method methodGetY = Figure.class.getDeclaredMethod(ymethod);
+			for (Face face : faces) {
+				Iterator<Point> it = face.getPoints().iterator();
+				int nbPoints = face.getPoints().size();
 				xCoord = new double[nbPoints];
 				yCoord = new double[nbPoints];
 				int cpt = 0;
@@ -222,11 +223,11 @@ public class ModelisationCanvas extends Canvas implements Observer {
 		}
 
 		try {
-			Method methodGetX = Point.class.getDeclaredMethod(xmethod);
-			Method methodGetY = Point.class.getDeclaredMethod(ymethod);
-			for (Face t : faces) {
-				Iterator<Point> it = t.getPoints().iterator();
-				int nbPoints = t.getPoints().size();
+			Method methodGetX = Figure.class.getDeclaredMethod(xmethod);
+			Method methodGetY = Figure.class.getDeclaredMethod(ymethod);
+			for (Face face : faces) {
+				Iterator<Point> it = face.getPoints().iterator();
+				int nbPoints = face.getPoints().size();
 				xCoord = new double[nbPoints];
 				yCoord = new double[nbPoints];
 				int cpt = 0;
@@ -241,6 +242,9 @@ public class ModelisationCanvas extends Canvas implements Observer {
 
 					cpt++;
 				}
+				double degree = face.degreDeCouleur();
+				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x", (int) (128 * degree),
+						(int) (10 * degree), (int) (10 * degree))));
 				gc.fillPolygon(xCoord, yCoord, nbPoints);
 			}
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
@@ -295,11 +299,11 @@ public class ModelisationCanvas extends Canvas implements Observer {
 		}
 
 		try {
-			Method methodGetX = Point.class.getDeclaredMethod(xmethod);
-			Method methodGetY = Point.class.getDeclaredMethod(ymethod);
-			for (Face t : faces) {
-				Iterator<Point> it = t.getPoints().iterator();
-				int nbPoints = t.getPoints().size();
+			Method methodGetX = Figure.class.getDeclaredMethod(xmethod);
+			Method methodGetY = Figure.class.getDeclaredMethod(ymethod);
+			for (Face face : faces) {
+				Iterator<Point> it = face.getPoints().iterator();
+				int nbPoints = face.getPoints().size();
 				xCoord = new double[nbPoints];
 				yCoord = new double[nbPoints];
 				int cpt = 0;
@@ -314,6 +318,9 @@ public class ModelisationCanvas extends Canvas implements Observer {
 
 					cpt++;
 				}
+				double degree = face.degreDeCouleur();
+				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x", (int) (128 * degree),
+						(int) (10 * degree), (int) (10 * degree))));
 				gc.fillPolygon(xCoord, yCoord, nbPoints);
 				gc.strokePolygon(xCoord, yCoord, nbPoints);
 			}
@@ -323,7 +330,7 @@ public class ModelisationCanvas extends Canvas implements Observer {
 		}
 
 	}
-
+	
 	public DrawingMethod getMethod() {
 		return method;
 	}

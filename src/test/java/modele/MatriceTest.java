@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 
 import math.Matrice;
 
@@ -40,9 +40,9 @@ public class MatriceTest {
 
 	}
 
-	@BeforeEach
+	@Before
 	public void setUp() {
-
+		
 		double[][] donneesMatriceA = new double[][] { { 1, 2 }, { 1, 1 }, { 0, 3 } };
 		double[][] donneesMatriceB = new double[][] { { -1, 1, 0, 1 }, { 2, 1, 0, 0 } };
 		double[][] donneesMatriceC = new double[][] { { -5, 3 }, { 7, -3 }, { 2, 9 }, { 1, 2 } };
@@ -53,12 +53,8 @@ public class MatriceTest {
 
 	}
 
-	@AfterEach
-	public void afterATest() {
-	}
-
 	@Test
-	void testLecture() {
+	public void testLecture() {
 		double[][] donneesMatriceA = new double[][] { { 1, 2 }, { 1, 1 }, { 0, 3 } };
 
 		assertEquals(A.lire(0, 0), donneesMatriceA[0][0]);
@@ -72,7 +68,7 @@ public class MatriceTest {
 	}
 
 	@Test
-	void testEcriture() {
+	public void testEcriture() {
 		double[][] donneesMatriceD = new double[][] { { 1, 2 }, { 1, 1 }, { 0, 3 } };
 		Matrice D = new Matrice(donneesMatriceD);
 		final double ALTERATION = Double.MIN_NORMAL;
@@ -95,7 +91,7 @@ public class MatriceTest {
 	}
 
 	@Test
-	void testAddition() {
+	public void testAddition() {
 		Matrice neFonctionnePas = null;
 		assertEquals(neFonctionnePas, A.addition(B)); // a et b ne sont pas de même format ainsi ils ne peuvent
 														// s'additionner
@@ -120,7 +116,7 @@ public class MatriceTest {
 	}
 
 	@Test
-	void testSoustraction() {
+	public void testSoustraction() {
 		Matrice matriceD = new Matrice(new double[][] { { 2, 6 }, { 8, -1 }, { -5, 2 } });
 		Matrice AMoinsD = new Matrice(
 				new double[][] { { (1 - 2), (2 - 6) }, { (1 - 8), (1 - (-1)) }, { (0 - (-5)), (3 - 2) } });
@@ -132,7 +128,7 @@ public class MatriceTest {
 	}
 
 	@Test
-	void testMultiplication() {
+	public void testMultiplication() {
 		Matrice AB = new Matrice(new double[][] { { 3, 3, 0, 1 }, { 1, 2, 0, 1 }, { 6, 3, 0, 0 } });
 		Matrice BC = new Matrice(new double[][] { { 13, -4 }, { -3, 3 } });
 		Matrice CB = new Matrice(
@@ -156,7 +152,7 @@ public class MatriceTest {
 	}
 
 	@Test
-	void testMatriceNulle() {
+	public void testMatriceNulle() {
 		double[][] donneesMatriceNulleUne = new double[][] { { 0, 0 }, { 0, 0 }, { 0, 0 } };
 		Matrice matriceNulleUne = new Matrice(donneesMatriceNulleUne);
 		double[][] donneesMatriceNulleDeux = new double[][] { { 0 } };
@@ -169,7 +165,7 @@ public class MatriceTest {
 	}
 
 	@Test
-	void testEstCarre() {
+	public void testEstCarre() {
 		assertTrue(new Matrice(new double[][] { { 0 } }).estCarre());
 		assertTrue(new Matrice(new double[][] { { 0, 0 }, { 0, 0 } }).estCarre());
 		assertTrue(new Matrice(new double[][] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } }).estCarre());
@@ -179,20 +175,27 @@ public class MatriceTest {
 		assertFalse(C.estCarre());
 
 	}
+	
 	/*
-	 * @Test void testInverse() { Matrice matriceIdentite = new Matrice( new
-	 * double[][] { {1,0}, {0,1} }); Matrice m = new Matrice(new double[][] {
-	 * {1,3,3}, {1,4,3}, {1,3,4} }); Matrice mInverse = new Matrice(new double[][] {
-	 * {7,-3,-3}, {-1,1,0}, {-1,0,1} });
-	 * 
-	 * assertEquals(matriceIdentite,matriceIdentite.getInverse());
-	 * assertEquals(matriceIdentite, Matrice.getMatriceInverse(2));
-	 * 
-	 * 
-	 * assertNull(A.getInverse()); assertNull(B.getInverse());
-	 * assertNull(C.getInverse());
-	 * 
-	 * }
+	  @Test 
+	  public void testInverse() { 
+		  Matrice matriceIdentite = new Matrice( new
+	  double[][] { {1,0}, {0,1} }); 
+		  Matrice m = new Matrice(new double[][] {
+	  {1,3,3}, {1,4,3}, {1,3,4} }); 
+		  Matrice mInverse = new Matrice(new double[][] {
+	  {7,-3,-3}, {-1,1,0}, {-1,0,1} });
+	  
+	  assertEquals(matriceIdentite,matriceIdentite.getInverse());
+	  assertEquals(matriceIdentite, Matrice.getMatriceInverse(2));
+	  assertEquals(m,mInverse);
+	  
+	  
+	  
+	  assertNull(A.getInverse()); assertNull(B.getInverse());
+	  assertNull(C.getInverse());
+	  
+	  }
 	 */
 
 }
