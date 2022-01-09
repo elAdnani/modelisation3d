@@ -108,12 +108,18 @@ public class Model extends Subject {
 			double currX = point.getX();
 			double currY = point.getY();
 			double currZ = point.getZ();
-			xMin = Math.min(xMin, currX);
-			xMax = Math.min(xMax, currX);
-			yMin = Math.min(yMin, currY);
-			yMax = Math.min(yMax, currY);
-			zMin = Math.min(zMin, currZ);
-			zMax = Math.min(zMax, currZ);
+			if (xMin == null || currX < xMin)
+				xMin = currX;
+			if (xMax == null || currX > xMax)
+				xMax = currX;
+			if (yMin == null || currY < yMin)
+				yMin = currY;
+			if (yMax == null || currY < yMax)
+				yMax = currY;
+			if (zMin == null || currZ < zMin)
+				zMin = currZ;
+			if (zMax == null || currZ > zMax)
+				zMax = currZ;
 		}
 
 		centerCoord[0] = (xMax + xMin) / 2;
