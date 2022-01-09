@@ -331,6 +331,7 @@ public class View extends Stage {
 				zoomSlider.setValue(zoomSlider.maxProperty().doubleValue());
 				controller.setZoom(zoomSlider.maxProperty().doubleValue() * maxzoom);
 			}
+			this.zoom = canvases.get(0).getZoom();
 		});
 
 		moins.setOnAction(e -> {
@@ -341,6 +342,7 @@ public class View extends Stage {
 				zoomSlider.setValue(0);
 				controller.setZoom(0);
 			}
+			this.zoom = canvases.get(0).getZoom();
 		});
 		outils.getStyleClass().add("outils");
 		return outils;
@@ -352,6 +354,7 @@ public class View extends Stage {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				controller.setZoom(zoomSlider.getValue() * maxzoom);
+				zoom = zoomSlider.getValue() * maxzoom;
 			}
 		});
 		return slider;
@@ -391,18 +394,6 @@ public class View extends Stage {
 		controller.setMouseClicked(canvas);
 
 		return canvas;
-	}
-
-	/**
-	 * Replace the current canvas by a new sized one and call the
-	 * {@link #drawModel()}
-	 * 
-	 * @param width  Width of the new canvas
-	 * @param height Height of the new canvas
-	 */
-	private void resizeCanvas(double width, double height) {
-		createCanvas(width, height);
-		// drawModel();
 	}
 
 	/**

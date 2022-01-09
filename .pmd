@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd>
-    <workingSet>Aggregate:Java Main Sources:Java Test Sources:</workingSet>
+    <workingSet>Java Main Sources</workingSet>
     <useProjectRuleSet>true</useProjectRuleSet>
-    <ruleSetFile>/home/infoetu/leo.benhatat.etu/git/projetmodeh3/prod-appli/pmd-rules.xml</ruleSetFile>
+    <ruleSetFile>C:\Users\Virco\git\projetmodeh3\prod-appli_pmd-rules.xml</ruleSetFile>
     <includeDerivedFiles>false</includeDerivedFiles>
-    <violationsAsErrors>false</violationsAsErrors>
+    <violationsAsErrors>true</violationsAsErrors>
     <fullBuildEnabled>true</fullBuildEnabled>
 </pmd>

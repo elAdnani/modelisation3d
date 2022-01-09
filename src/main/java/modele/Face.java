@@ -19,7 +19,6 @@ public class Face {
 
 	private List<Point> points;
 	private static final Vecteur SOURCELUMINEUSE = new Vecteur(0, 0, 1);
-	private Vecteur normalUnitaire;
 	private List<Face> division;
 
 	public Face() {
@@ -46,27 +45,12 @@ public class Face {
 		Point milieuAC = new Point((a.getX() + c.getX()) / 2, (a.getY() + c.getY()) / 2, (a.getZ() + c.getZ()) / 2);
 		Point milieuBC = new Point((b.getX() + c.getX()) / 2, (b.getY() + c.getY()) / 2, (b.getZ() + c.getZ()) / 2);
 
-		this.division = new ArrayList<>();// Face(points);
-		division.add(new Face(new ArrayList<Point>(Arrays.asList(milieuAB, milieuAC, milieuBC))));
-		division.add(new Face(new ArrayList<Point>(Arrays.asList(a, milieuAB, c))));
-		division.add(new Face(new ArrayList<Point>(Arrays.asList(b, milieuAB, milieuBC))));
-		division.add(new Face(new ArrayList<Point>(Arrays.asList(c, milieuBC, milieuAC))));
+		this.division = new ArrayList<>();
+		division.add(new Face(Arrays.asList(milieuAB, milieuAC, milieuBC)));
+		division.add(new Face(Arrays.asList(a, milieuAB, milieuAC)));
+		division.add(new Face(Arrays.asList(b, milieuAB, milieuBC)));
+		division.add(new Face(Arrays.asList(c, milieuBC, milieuAC)));
 	}
-
-	/*
-	 * TEST division triangulaire en 2 public void divisionTriangulaire() { Point a
-	 * = this.points.get(0); Point b = this.points.get(1); Point c =
-	 * this.points.get(2); Point milieuAB = new
-	 * Point((a.getX()+b.getX())/2,(a.getY()+b.getY())/2,(a.getZ()+b.getZ())/2);
-	 * Point milieuAC=new
-	 * Point((a.getX()+c.getX())/2,(a.getY()+c.getY())/2,(a.getZ()+c.getZ())/2);
-	 * Point milieuBC=new
-	 * Point((b.getX()+c.getX())/2,(b.getY()+c.getY())/2,(b.getZ()+c.getZ())/2);
-	 * 
-	 * this.division = new ArrayList<>();//Face(points); division.add(new Face(new
-	 * ArrayList<>(Arrays.asList(a, milieuBC, b)))); division.add(new Face(new
-	 * ArrayList<>(Arrays.asList(a, milieuBC, c)))); }
-	 */
 
 	/**
 	 * Permet de diviser la face actuel en nombre de fois spécifié en parametre.
@@ -83,33 +67,16 @@ public class Face {
 	}
 
 	/**
-	 * Récupère les divisions d'une face actuel
-	 * 
-	 * @return
-	 */
-	private List<Face> getFace() {
-		List<Face> res = new ArrayList<>();
-		res.add(this);
-
-		for (Face e : this.division) {
-			res.add(e);
-			if (!e.division.isEmpty()) {
-				res.addAll(e.getFace());
-			}
-		}
-
-		return res;
-	}
-
-	/**
 	 * Récupère l'entièreté des divisions de la face actuel
 	 * 
 	 * @return
 	 */
 	public List<Face> getFaces() {
 		List<Face> res = new ArrayList<>();
+		if(this.division.isEmpty())
+			res.add(this);
 		for (Face e : this.division) {
-			res.addAll(e.getFace());
+			res.addAll(e.getFaces());
 		}
 		return res;
 	}
@@ -179,11 +146,12 @@ public class Face {
 	 */
 	public double degreDeCouleur() {
 		double degreDeCouleur = -1;
+		Vecteur normalUnitaire;
 		if (this.points.size() >= 3) {
-			this.normalUnitaire = Vecteur.normalUnitaire(this.points.get(0), this.points.get(1), this.points.get(2));
-			degreDeCouleur = (this.normalUnitaire.getX() * SOURCELUMINEUSE.getX())
-					+ (this.normalUnitaire.getY() * SOURCELUMINEUSE.getY())
-					+ (this.normalUnitaire.getZ() * SOURCELUMINEUSE.getZ());
+			normalUnitaire = Vecteur.normalUnitaire(this.points.get(0), this.points.get(1), this.points.get(2));
+			degreDeCouleur = (normalUnitaire.getX() * SOURCELUMINEUSE.getX())
+					+ (normalUnitaire.getY() * SOURCELUMINEUSE.getY())
+					+ (normalUnitaire.getZ() * SOURCELUMINEUSE.getZ());
 			degreDeCouleur = Math.abs(degreDeCouleur);
 			if (degreDeCouleur > 255) {
 				degreDeCouleur = 255;

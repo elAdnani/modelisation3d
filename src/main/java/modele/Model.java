@@ -44,6 +44,11 @@ public class Model extends Subject {
 		faces = RecuperationPly.getFaces();
 		center = calculateCenter();
 		centerModel();
+//		for (Face f : faces) {
+//			f.divisionTriangulaireX(3);
+//		}
+//		checkForMissingPoints();
+		
 		notifyObservers();
 	}
 
@@ -128,6 +133,16 @@ public class Model extends Subject {
 		System.out.println("zMax : " + zMax + "; zMin : " + zMin + "; MilieuZ : " + centerCoord[2]);
 
 		return new Point(centerCoord[0], centerCoord[1], centerCoord[2]);
+	}
+	
+	public void checkForMissingPoints() {
+		for (Face face : getFaces()) {
+			for (Point point : face.getPoints()) {
+				if(!this.points.contains(point)) {
+					this.points.add(point);
+				}
+			}
+		}
 	}
 
 	public void rotate(Axis axis, double theta) {
@@ -229,6 +244,10 @@ public class Model extends Subject {
 	 * @return list of faces of the model
 	 */
 	public List<Face> getFaces() {
+		List<Face> faces = new ArrayList<>();
+		for (Face face : this.faces) {
+			faces.addAll(face.getFaces());
+		}
 		return faces;
 	}
 

@@ -22,7 +22,9 @@ public class ModelisationCanvas extends Canvas implements Observer {
 
 	private Axis axis;
 	private DrawingMethod method;
+	
 	double zoom;
+	
 	private Model lastDrawnModel;
 
 	public ModelisationCanvas(double width, double height) {
@@ -49,7 +51,7 @@ public class ModelisationCanvas extends Canvas implements Observer {
 		if (model == null)
 			return;
 		clearCanvas();
-		if(!model.getLastSortedAxis().equals(axis) || !model.isAlreadySorted())
+		if (!model.getLastSortedAxis().equals(axis) || !model.isAlreadySorted())
 			model.sortPoints(this.axis);
 		draw(model);
 	}
@@ -243,8 +245,8 @@ public class ModelisationCanvas extends Canvas implements Observer {
 					cpt++;
 				}
 				double degree = face.degreDeCouleur();
-				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x", (int) (128 * degree),
-						(int) (10 * degree), (int) (10 * degree))));
+				gc.setFill(Color.valueOf(String.format("#%02x%02x%02x", (int) (128 * degree), (int) (10 * degree),
+						(int) (10 * degree))));
 				gc.fillPolygon(xCoord, yCoord, nbPoints);
 			}
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
@@ -319,8 +321,8 @@ public class ModelisationCanvas extends Canvas implements Observer {
 					cpt++;
 				}
 				double degree = face.degreDeCouleur();
-				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x", (int) (128 * degree),
-						(int) (10 * degree), (int) (10 * degree))));
+				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x", (int) (128 * degree), (int) (10 * degree),
+						(int) (10 * degree))));
 				gc.fillPolygon(xCoord, yCoord, nbPoints);
 				gc.strokePolygon(xCoord, yCoord, nbPoints);
 			}

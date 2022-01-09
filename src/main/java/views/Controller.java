@@ -51,7 +51,6 @@ public class Controller {
 			this.model.notifyObservers();
 		}
 
-		// this.zoom = this.model.calculateAutoScale(canvas);
 	}
 
 	public void rotateModel(Axis axis, double theta) {

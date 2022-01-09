@@ -27,7 +27,7 @@ public class RecuperationPly {
 	private static int nbFace;
 	private static List<Point> points;
 	private static List<Face> faces;
-	
+
 	private RecuperationPly() {
 	}
 
@@ -40,9 +40,11 @@ public class RecuperationPly {
 	}
 
 	/**
-	 * Attribue les informations que contient un fichier ply aux attribues de la classe
+	 * Attribue les informations que contient un fichier ply aux attribues de la
+	 * classe
+	 * 
 	 * @param fichier
-	 * @throws FormatPlyException	Si le fichier n'est pas du format PLY
+	 * @throws FormatPlyException    Si le fichier n'est pas du format PLY
 	 * @throws FileNotFoundException Si le fichier n'existe pas
 	 */
 	public static void recuperationFichier(String fichier) throws FormatPlyException, FileNotFoundException {
@@ -60,9 +62,10 @@ public class RecuperationPly {
 
 	/**
 	 * Vérifie le format du fichier voulant être lu
+	 * 
 	 * @param Nom du fichier
 	 * @return Un flux d'entrée permettant la lecture du fichier
-	 * @throws FormatPlyException	Si le fichier n'est pas du format PLY
+	 * @throws FormatPlyException    Si le fichier n'est pas du format PLY
 	 * @throws FileNotFoundException Si le fichier n'existe pas
 	 */
 	private static BufferedReader verifierFichier(String fichier) throws FormatPlyException, FileNotFoundException {
@@ -73,11 +76,12 @@ public class RecuperationPly {
 
 	}
 
-	  /**
-	   * Récupère la liste des points du fichier
-	   * @param reader Lecteur du fichier
-	   * @throws IOException une opération d'entrée du fichier échoue
-	   */
+	/**
+	 * Récupère la liste des points du fichier
+	 * 
+	 * @param reader Lecteur du fichier
+	 * @throws IOException une opération d'entrée du fichier échoue
+	 */
 	protected static void recuperationPoints(BufferedReader reader) throws IOException {
 
 		List<Point> res = new ArrayList<>();
@@ -90,11 +94,8 @@ public class RecuperationPly {
 			ligne = reader.readLine();
 
 			if (ligne != null && !ligne.isEmpty()) {
-
 				tab = ligne.split(" ");
 				res.add(new Point(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
-				System.out.println("Point " + i + " : [" + Double.valueOf(tab[0]) + "]" + "[" + Double.valueOf(tab[1])
-						+ "]" + "[" + Double.valueOf(tab[2]) + "]");
 			} else {
 				i--;
 			}
@@ -107,6 +108,7 @@ public class RecuperationPly {
 
 	/**
 	 * Recupere la liste des faces dans un fichier PLY donné en paramètre
+	 * 
 	 * @param points Liste des points du fichier
 	 * @param reader Lecteur du fichier
 	 * @throws IOException une opération d'entrée du fichier échoue
@@ -124,7 +126,7 @@ public class RecuperationPly {
 
 			tab = ligne.split(" ");
 
-			List<Point> pointsDeLaFace = new ArrayList<Point>();
+			List<Point> pointsDeLaFace = new ArrayList<>();
 			for (int i = 1; i < tab.length; i++) {
 				pointsDeLaFace.add(points.get(Integer.valueOf(tab[i])));
 			}
@@ -141,9 +143,10 @@ public class RecuperationPly {
 	/**
 	 * Lis la l'entête du fichier. <br>
 	 * Permet à partir de cela d'obtenir le nombre de vertex et le nombre de face
+	 * 
 	 * @param raf - RandomAccessFile Le flux d'entrée représentant le fichier à lire
-	 * @throws FormatPlyException	Si le fichier n'est pas du format PLY
-	 * @throws IOException une opération d'entrée du fichier échoue
+	 * @throws FormatPlyException Si le fichier n'est pas du format PLY
+	 * @throws IOException        une opération d'entrée du fichier échoue
 	 */
 	protected static void lectureEnteteDuFichier(BufferedReader raf) throws FormatPlyException, IOException {
 
@@ -181,15 +184,16 @@ public class RecuperationPly {
 	 * @throws FormatPlyException
 	 */
 	public static void checkFormat(String file) throws FormatPlyException {
-		if (file != null && !file.endsWith(".ply")) {
-			throw new FormatPlyException(file + " (Fichier invalide. Le fichier n'est pas au format ply.)");
+		if (file == null || !file.endsWith(".ply")) {
+			throw new FormatPlyException("(Fichier \"" + file + "\" invalide. Le fichier n'est pas au format ply.)");
 		}
 	}
-	
+
 	/**
 	 * Récupère le nombre de point que contient un fichier en parcourant son entête
+	 * 
 	 * @param fichier
-	 * @return	le nombre de point
+	 * @return le nombre de point
 	 * @throws FormatPlyException
 	 * @throws IOException
 	 */
@@ -202,6 +206,7 @@ public class RecuperationPly {
 
 	/**
 	 * Récupérer le nombre de face que contient un fichier en parcourant son entête
+	 * 
 	 * @param fichier
 	 * @return le nombre de face
 	 * @throws FormatPlyException
