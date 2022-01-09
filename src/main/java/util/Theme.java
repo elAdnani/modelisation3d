@@ -1,5 +1,10 @@
 package util;
-
+/**
+ * 
+ * Cette classe permet d'énumérer les thèmes existant sur la plateforme.<br>
+ * Elle est définie par le chemin dans lequel il est placé.
+ *
+ */
 public enum Theme {
 	DEFAULT(""), SOLARIS("../styles/solaris.css"), DARK("../styles/darkmode.css");
 	

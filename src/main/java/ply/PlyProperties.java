@@ -1,23 +1,25 @@
 package ply;
 
 public class PlyProperties {
-	private String name, author, created, size;
-	private int faces, points;
+	private String author;
+	private String created;
+	private String size;
+	private int faces;
+	private int points;
 	private String path;
 
 	public PlyProperties(String path, String name, String size, int faces, int points, String created, String author) {
 		this.path = path;
-		this.name = name;
 		this.size = size;
 		this.author = author;
 		this.faces = faces;
 		this.points = points;
 		this.created = created;
 	}
-
-	public String getName() {
-		return name;
+	public PlyProperties(String path) {
+		this.path = path;
 	}
+
 
 	public String getPath() {
 		return path;
@@ -26,11 +28,7 @@ public class PlyProperties {
 	public void setPath(String path) {
 		this.path = path;
 	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
+	
 	public String getAuthor() {
 		return author;
 	}

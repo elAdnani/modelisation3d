@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import modele.Face;
-import modele.Point;
+import math.Face;
+import modele.geometrique.FigureFabrique;
+import modele.geometrique.Point;
 import ply.exceptions.FormatPlyException;
 
 /**
@@ -22,7 +23,7 @@ import ply.exceptions.FormatPlyException;
  * @date 28 sept. 2021
  */
 public class RecuperationPly {
-
+	
 	private static int nbVertex;
 	private static int nbFace;
 	private static List<Point> points;
@@ -51,7 +52,7 @@ public class RecuperationPly {
 		BufferedReader reader = verifierFichier(fichier);
 		resetDonnnee();
 		try {
-			lectureEnteteDuFichier(reader);
+			readHeadFile(reader);
 			recuperationPoints(reader);
 			recuperationFaces(points, reader);
 		} catch (IOException e) {
@@ -83,24 +84,24 @@ public class RecuperationPly {
 	 * @throws IOException une opération d'entrée du fichier échoue
 	 */
 	protected static void recuperationPoints(BufferedReader reader) throws IOException {
-
+		FigureFabrique fabriquePoint = FigureFabrique.getInstance();
 		List<Point> res = new ArrayList<>();
 
-		String ligne;
+		String line;
 		String[] tab;
 
-		int i = 0;
-		while (i < nbVertex) {
-			ligne = reader.readLine();
+		int idx = 0;
+		while (idx < nbVertex) {
+			line = reader.readLine();
 
-			if (ligne != null && !ligne.isEmpty()) {
-				tab = ligne.split(" ");
-				res.add(new Point(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
+			if (line != null && !line.isEmpty()) {
+				tab = line.split(" ");
+				res.add(fabriquePoint.point(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
 			} else {
-				i--;
+				idx--;
 			}
 
-			i++;
+			idx++;
 		}
 		points = res;
 
@@ -115,24 +116,23 @@ public class RecuperationPly {
 	 */
 	protected static void recuperationFaces(List<Point> points, BufferedReader reader) throws IOException {
 
-		List<Face> res = null;
-		res = new ArrayList<>();
+		List<Face> res = new ArrayList<>();
 
-		String ligne;
+		String line;
 		String[] tab;
 
-		for (int j = 0; j < nbFace; j++) {
-			ligne = reader.readLine();
+		Face pointsDeLaFace;
+		for (int idx = 0; idx < nbFace; idx++) {
+			line = reader.readLine();
 
-			tab = ligne.split(" ");
+			tab = line.split(" ");
 
-			List<Point> pointsDeLaFace = new ArrayList<>();
-			for (int i = 1; i < tab.length; i++) {
-				pointsDeLaFace.add(points.get(Integer.valueOf(tab[i])));
+			pointsDeLaFace = new Face();
+			for (int jdx = 1; jdx < tab.length; jdx++) {
+				pointsDeLaFace.add(points.get(Integer.valueOf(tab[jdx])));
 			}
-			Face face = new Face(pointsDeLaFace);
 
-			res.add(face);
+			res.add(pointsDeLaFace);
 		}
 
 		reader.close();
@@ -148,27 +148,26 @@ public class RecuperationPly {
 	 * @throws FormatPlyException Si le fichier n'est pas du format PLY
 	 * @throws IOException        une opération d'entrée du fichier échoue
 	 */
-	protected static void lectureEnteteDuFichier(BufferedReader raf) throws FormatPlyException, IOException {
+	protected static void readHeadFile(BufferedReader raf) throws FormatPlyException, IOException {
 
-		String ligne;
-		ligne = raf.readLine();
+		String line = raf.readLine();
 
-		if (!ligne.toLowerCase().contains("ply")) {
+		if (!line.toLowerCase().contains("ply")) {
 			throw new FormatPlyException("Fichier invalide. Le fichier n'est pas au format ply.");
 		}
 
-		while (!ligne.contains("end_header")) {
+		while (!line.contains("end_header")) {
 
-			if (ligne.contains("element vertex")) {
-				String[] lineV = ligne.split(" ");
+			if (line.contains("element vertex")) {
+				String[] lineV = line.split(" ");
 				nbVertex = Integer.parseInt(lineV[lineV.length - 1]);
 			}
-			if (ligne.contains("element face")) {
-				String[] lineF = ligne.split(" ");
+			if (line.contains("element face")) {
+				String[] lineF = line.split(" ");
 				nbFace = Integer.parseInt(lineF[lineF.length - 1]);
 			}
 
-			ligne = raf.readLine();
+			line = raf.readLine();
 		}
 		if (nbVertex == -1 || nbFace == -1) {
 			throw new FormatPlyException("Le fichier ne respecte pas la convention PLY");
@@ -197,9 +196,9 @@ public class RecuperationPly {
 	 * @throws FormatPlyException
 	 * @throws IOException
 	 */
-	public static int getNBVertices(String fichier) throws FormatPlyException, IOException {
+	public static int getNbVertices(String fichier) throws FormatPlyException, IOException {
 		BufferedReader reader = verifierFichier(fichier);
-		lectureEnteteDuFichier(reader);
+		readHeadFile(reader);
 
 		return nbVertex;
 	}
@@ -212,9 +211,9 @@ public class RecuperationPly {
 	 * @throws FormatPlyException
 	 * @throws IOException
 	 */
-	public static int getNBFaces(String fichier) throws FormatPlyException, IOException {
+	public static int getNbFaces(String fichier) throws FormatPlyException, IOException {
 		BufferedReader reader = verifierFichier(fichier);
-		lectureEnteteDuFichier(reader);
+		readHeadFile(reader);
 
 		return nbFace;
 	}

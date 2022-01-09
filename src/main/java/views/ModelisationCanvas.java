@@ -11,13 +11,14 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import modele.Face;
-import modele.Figure;
+import math.Face;
 import modele.Model;
-import modele.Point;
+import modele.geometrique.Figure;
+import modele.geometrique.Point;
 import util.Axis;
 import util.DrawingMethod;
 
+@SuppressWarnings("PMD.LawOfDemeter")
 public class ModelisationCanvas extends Canvas implements Observer {
 
 	private Axis axis;

@@ -9,6 +9,11 @@ import java.util.List;
 
 import connectable.Subject;
 import javafx.scene.canvas.Canvas;
+import math.Face;
+import math.Matrice;
+import math.OutilMatriciel;
+import modele.geometrique.FigureFabrique;
+import modele.geometrique.Point;
 import ply.RecuperationPly;
 import ply.exceptions.FormatPlyException;
 import util.Axis;
@@ -44,11 +49,6 @@ public class Model extends Subject {
 		faces = RecuperationPly.getFaces();
 		center = calculateCenter();
 		centerModel();
-//		for (Face f : faces) {
-//			f.divisionTriangulaireX(3);
-//		}
-//		checkForMissingPoints();
-		
 		notifyObservers();
 	}
 
@@ -71,32 +71,17 @@ public class Model extends Subject {
 	public void sortPoints(Axis axis) {
 		this.lastSortedAxis = axis;
 		long start = System.nanoTime();
-		System.out.println("Sorting by " + axis.name() + " started...");
-		Comparator<Face> comp = null;
-		switch (axis) {
-		case XAXIS:
-			comp = new XAxisComparator();
-			break;
-		case YAXIS:
-			comp = new YAxisComparator();
-			break;
-		case ZAXIS:
-			comp = new ZAxisComparator();
-			break;
-		default:
-			comp = new XAxisComparator();
-			break;
-		}
+		Comparator<Face> comp = new AxisComparator(axis);
 
 		Collections.sort(faces, comp);
 		this.isAlreadySorted = true;
 
 		long end = System.nanoTime();
-		System.out
-				.println("Sorting done in " + (end - start) + " nanoseconds (" + (end - start) / 1_000_000.0 + " ms)");
+		System.out.println("Sorting done in " + (end - start) + " nanoseconds (" + (end - start) / 1_000_000.0 + " ms)");
 	}
 
 	private Point calculateCenter() {
+		FigureFabrique fabriquePoint = FigureFabrique.getInstance();
 		double[] centerCoord = new double[3];
 		Double xMin = null;
 		Double xMax = null;
@@ -131,76 +116,35 @@ public class Model extends Subject {
 		System.out.println("xMax : " + xMax + "; xMin : " + xMin + "; MilieuX : " + centerCoord[0]);
 		System.out.println("yMax : " + yMax + "; yMin : " + yMin + "; MilieuY : " + centerCoord[1]);
 		System.out.println("zMax : " + zMax + "; zMin : " + zMin + "; MilieuZ : " + centerCoord[2]);
-
-		return new Point(centerCoord[0], centerCoord[1], centerCoord[2]);
-	}
-	
-	public void checkForMissingPoints() {
-		for (Face face : getFaces()) {
-			for (Point point : face.getPoints()) {
-				if(!this.points.contains(point)) {
-					this.points.add(point);
-				}
-			}
-		}
+		
+		return fabriquePoint.point(centerCoord[0], centerCoord[1], centerCoord[2]);
 	}
 
-	public void rotate(Axis axis, double theta) {
+	public Model rotate(Axis axis, double theta) {
+		System.out.println("AU SECOURS ROTATE");
 		switch (axis) {
-		case XAXIS:
-			rotateX(theta);
-			break;
 		case YAXIS:
-			rotateY(theta);
+			rotateEach(OutilMatriciel.getRotationY(theta));
 			break;
 		case ZAXIS:
-			rotateZ(theta);
+			rotateEach(OutilMatriciel.getRotationZ(theta));
 			break;
 		default:
-			rotateX(theta);
+			rotateEach(OutilMatriciel.getRotationX(theta));
 			break;
 		}
 		this.isAlreadySorted = false;
+		return this;
 	}
-
-	// Calcul
-	private void rotateX(double tetha) {
-		double sinTheta = Math.sin(tetha);
-		double cosTheta = Math.cos(tetha);
+	
+	private void rotateEach(Matrice rotation) {
 		for (Point p : points) {
-			double newY = (p.getY() * cosTheta) - (p.getZ() * sinTheta);
-			double newZ = (p.getY() * sinTheta) + (p.getZ() * cosTheta);
-			p.setY(newY);
-			p.setZ(newZ);
+			p.modifyCoordonnee(rotation);
 		}
 	}
 
-	// Calcul
-	private void rotateY(double tetha) {
-		double sinTheta = Math.sin(tetha);
-		double cosTheta = Math.cos(tetha);
-		for (Point p : points) {
-			double newX = (p.getX() * cosTheta) + (p.getZ() * sinTheta);
-			double newZ = (p.getZ() * cosTheta) - (p.getX() * sinTheta);
-			p.setX(newX);
-			p.setZ(newZ);
-		}
 
-	}
-
-	// Calcul
-	private void rotateZ(double tetha) {
-		double sinTheta = Math.sin(tetha);
-		double cosTheta = Math.cos(tetha);
-		for (Point p : points) {
-			double newX = (p.getX() * cosTheta) - (p.getY() * sinTheta);
-			double newY = (p.getX() * sinTheta) + (p.getY() * cosTheta);
-			p.setX(newX);
-			p.setY(newY);
-		}
-	}
-
-	public void translate(Axis axis, double distance) {
+	public Model translate(Axis axis, double distance) {
 		switch (axis) {
 		case XAXIS:
 			this.offsetX += distance;
@@ -212,20 +156,10 @@ public class Model extends Subject {
 			this.offsetZ += distance;
 			break;
 		}
+		return this;
 	}
 
-	public void copy(Model model) {
-		if (model == null)
-			return;
-		this.center = model.center;
-		this.faces = model.faces;
-		this.points = model.points;
-		this.offsetX = model.offsetX;
-		this.offsetY = model.offsetY;
-		this.offsetZ = model.offsetZ;
-	}
-
-	/**
+	/*
 	 * GETTERS AND SETTERS
 	 */
 
@@ -244,9 +178,9 @@ public class Model extends Subject {
 	 * @return list of faces of the model
 	 */
 	public List<Face> getFaces() {
-		List<Face> faces = new ArrayList<>();
+		List<Face> facesDivision = new ArrayList<>();
 		for (Face face : this.faces) {
-			faces.addAll(face.getFaces());
+			facesDivision.addAll(face.getFaces());
 		}
 		return faces;
 	}
@@ -255,24 +189,12 @@ public class Model extends Subject {
 		return offsetX;
 	}
 
-	public void setOffsetX(double offsetX) {
-		this.offsetX = offsetX;
-	}
-
 	public double getOffsetY() {
 		return offsetY;
 	}
 
-	public void setOffsetY(double offsetY) {
-		this.offsetY = offsetY;
-	}
-
 	public double getOffsetZ() {
 		return offsetZ;
-	}
-
-	public void setOffsetZ(double offsetZ) {
-		this.offsetZ = offsetZ;
 	}
 
 	public Axis getLastSortedAxis() {
@@ -284,20 +206,32 @@ public class Model extends Subject {
 	}
 
 	/**
-	 * 
-	 * COMPARATORS
-	 *
-	 */
-
-	/**
 	 * Comparator for the X axis of points
 	 *
 	 */
-	private class XAxisComparator implements Comparator<Face> {
+	private class AxisComparator implements Comparator<Face> {
+		Axis axis;
+		public AxisComparator(Axis axis) {
+			this.axis=axis;
+		}
 		@Override
 		public int compare(Face o1, Face o2) {
-			double av1 = o1.getAverageX();
-			double av2 = o2.getAverageX();
+			double av1;
+			double av2;
+			switch (this.axis) {
+			case YAXIS:
+				av1 = o1.getAverageY();
+				av2 = o2.getAverageY();
+				break;
+			case ZAXIS:
+				av1 = o1.getAverageZ();
+				av2 = o2.getAverageZ();
+				break;
+			default:
+				av1 = o1.getAverageX();
+				av2 = o2.getAverageX();
+				break;
+			}
 			if (av1 > av2) {
 				return 1;
 			} else if (av1 < av2) {
@@ -307,40 +241,5 @@ public class Model extends Subject {
 		}
 	}
 
-	/**
-	 * Comparator for the Y axis of points
-	 *
-	 */
-	private class YAxisComparator implements Comparator<Face> {
-		@Override
-		public int compare(Face o1, Face o2) {
-			double av1 = o1.getAverageY();
-			double av2 = o2.getAverageY();
-			if (av1 > av2) {
-				return 1;
-			} else if (av1 < av2) {
-				return -1;
-			}
-			return 0;
-		}
-	}
-
-	/**
-	 * Comparator for the Z axis of points
-	 *
-	 */
-	private class ZAxisComparator implements Comparator<Face> {
-		@Override
-		public int compare(Face o1, Face o2) {
-			double av1 = o1.getAverageZ();
-			double av2 = o2.getAverageZ();
-			if (av1 > av2) {
-				return 1;
-			} else if (av1 < av2) {
-				return -1;
-			}
-			return 0;
-		}
-	}
 
 }
