@@ -33,9 +33,9 @@ public class FormulesTest {
 	public void setUp() {
 		FigureFabrique fb = FigureFabrique.getInstance();
 		
-		a = fb.point(1, 2, 3);
-		b = fb.point(2, 3, 3);
-		c = fb.point(2, 2, 5);
+		a = fb.vertex(1, 2, 3);
+		b = fb.vertex(2, 3, 3);
+		c = fb.vertex(2, 2, 5);
 	}
 	
 	/**
@@ -44,13 +44,13 @@ public class FormulesTest {
 	@Test
 	public void testPointEnVecteur() {
 		
-		Vecteur vecteurAB = VecteurOutil.pointEnVecteur(a, b);
+		Vecteur vecteurAB = VecteurOutil.vertexToVector(a, b);
 
 		assertEquals(2-1, vecteurAB.getX());
 		assertEquals(3-2, vecteurAB.getY());
 		assertEquals(3-3,vecteurAB.getZ());
 		
-		Vecteur vecteurAC = VecteurOutil.pointEnVecteur(a, c);
+		Vecteur vecteurAC = VecteurOutil.vertexToVector(a, c);
 		
 		assertEquals(2-1, vecteurAC.getX());
 		assertEquals(2-2, vecteurAC.getY());
@@ -66,7 +66,7 @@ public class FormulesTest {
 	public void testProduitVectoriel() {
 		
 		
-		Vecteur vec = VecteurOutil.produitVectoriel(VecteurOutil.pointEnVecteur(a, b), VecteurOutil.pointEnVecteur(a, c));
+		Vecteur vec = VecteurOutil.vectorialProduct(VecteurOutil.vertexToVector(a, b), VecteurOutil.vertexToVector(a, c));
 				
 		assertEquals(1*1,vec.getX());
 		assertEquals(1*0,vec.getY());
@@ -79,11 +79,11 @@ public class FormulesTest {
 	@Test
 	public void testNormalUnitaire() {
 		
-		Vecteur abvac = VecteurOutil.produitVectoriel(VecteurOutil.pointEnVecteur(a, b), VecteurOutil.pointEnVecteur(a, c));
+		Vecteur abvac = VecteurOutil.vectorialProduct(VecteurOutil.vertexToVector(a, b), VecteurOutil.vertexToVector(a, c));
 		
 		double normeAbvac = 3.0;
 		
-		Vecteur vec = VecteurOutil.normalUnitaire(a, b, c);
+		Vecteur vec = VecteurOutil.unitNormal(a, b, c);
 		
 		assertEquals(vec.getX(), abvac.getX()/normeAbvac);
 		assertEquals(vec.getY(), abvac.getY()/normeAbvac);

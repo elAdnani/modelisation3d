@@ -37,12 +37,14 @@ import util.Conversion;
 import util.DrawingMethod;
 import util.PlyFileFilter;
 import util.Theme;
+
 /**
  * 
- * Cette classe est un menu d'outil. Il permet d'obtenir les onglets de la fenetre principale.
+ * Cette classe est un menu d'outil. Il permet d'obtenir les onglets de la
+ * fenetre principale.
  *
  * @author <a href="mailto:adnan.kouakoua@univ-lille1.fr">Adnân KOUAKOUA</a>
- * IUT-A Informatique, Universite de Lille.
+ *         IUT-A Informatique, Universite de Lille.
  */
 public class ToolView {
 
@@ -55,7 +57,6 @@ public class ToolView {
 	 * @return
 	 */
 	public static  MenuBar createMenuBar(Controller controller, List<ModelisationCanvas> canvases, View view, String path) {
-
 		MenuBar menuBar = new MenuBar();
 
 		Menu fileMenu = new Menu("Fichier");
@@ -75,10 +76,9 @@ public class ToolView {
 		ToggleGroup grp = new ToggleGroup();
 		ToggleGroup themeView = new ToggleGroup();
 
-		fileMenu.getItems().addAll(openFileItem,ressourceMenu,new SeparatorMenuItem(),exitItem);
-		menuBar.getMenus().addAll(fileMenu,viewMenu,themeMenu,helpMenu);
+		fileMenu.getItems().addAll(openFileItem, ressourceMenu, new SeparatorMenuItem(), exitItem);
+		menuBar.getMenus().addAll(fileMenu, viewMenu, themeMenu, helpMenu);
 		helpMenu.getItems().add(helpItem);
-
 
 		controller.setFileChooserEvent(openFileItem);
 		controller.setExitAction(exitItem);
@@ -90,13 +90,13 @@ public class ToolView {
 			radioItem = new RadioMenuItem(m.name());
 			radioItem.setToggleGroup(grp);
 			controller.setOnMethodChangerAction(m, radioItem);
-			
+
 			if (m.equals(firstCanvas.getMethod())) {
 				radioItem.setSelected(true);
 			}
 			viewMenu.getItems().add(radioItem);
 		}
-		ressourceMenu.getItems().addAll(createRessourcePlyMenu(path,controller));
+		ressourceMenu.getItems().addAll(createRessourcePlyMenu(path, controller));
 		defaultTheme.setToggleGroup(themeView);
 		darkTheme.setToggleGroup(themeView);
 		solarisTheme.setToggleGroup(themeView);
@@ -113,6 +113,7 @@ public class ToolView {
 
 		return menuBar;
 	}
+
 	/**
 	 * 
 	 * @param controller
@@ -128,14 +129,11 @@ public class ToolView {
 			row.setOnMouseClicked(event -> {
 				if (event.getClickCount() == 2 && !row.isEmpty()) {
 					PlyProperties rowData = row.getItem();
-						try
-						{
-							controller.loadFile(rowData.getPath());
-						} catch (FileNotFoundException | FormatPlyException error)
-						{
-							view.erreur(error);
-						}
-
+					try {
+						controller.loadFile(rowData.getPath());
+					} catch (FileNotFoundException | FormatPlyException error) {
+						view.error(error);
+					}
 
 				}
 			});
@@ -162,6 +160,7 @@ public class ToolView {
 		VBox.setVgrow(tabpane, Priority.ALWAYS);
 		return tabpane;
 	}
+
 	/**
 	 * Réalise le tableau des fichiers ply de plusieurs colonnes
 	 * @return le tableau
@@ -186,10 +185,10 @@ public class ToolView {
 
 		columns.getColumns().addAll(nameColumn, pathColumn, sizeColumn, facesColumn, pointsColumn, createdColumn,
 				authorColumn);
-		
+
 		return columns;
 	}
-	
+
 	/**
 	 * Réalise le menu ressource dans lequel il est possible de selectionner les fichiers ply que l'on souhaite modéliser
 	 * @param path chemin du dossier
@@ -211,10 +210,10 @@ public class ToolView {
 				System.out.println(Files.getFileAttributeView(filepath, PosixFileAttributeView.class));
 				AclFileAttributeView att = Files.getFileAttributeView(filepath, AclFileAttributeView.class);
 				BasicFileAttributes attributes = Files.readAttributes(filepath, BasicFileAttributes.class);
-				item = new MenuItem(
-						f.getName() + "\nAuthor: " + att.getOwner().getName() + " (" + Conversion.getSize(attributes.size()) + ")"
-								+ "\nfaces:" + RecuperationPly.getNbFaces(filepath.toString()) + "; points:"
-								+ RecuperationPly.getNbVertices(filepath.toString()));
+				item = new MenuItem(f.getName() + "\nAuthor: " + att.getOwner().getName() + " ("
+						+ Conversion.getSize(attributes.size()) + ")" + "\nfaces:"
+						+ RecuperationPly.getNbFaces(filepath.toString()) + "; points:"
+						+ RecuperationPly.getNbVertices(filepath.toString()));
 
 				controller.setLoadFileItem(f, item);
 				menuItems.add(item);
@@ -228,5 +227,5 @@ public class ToolView {
 
 		return menuItems;
 	}
-	
+
 }

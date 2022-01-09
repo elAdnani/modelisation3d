@@ -276,7 +276,7 @@ public class View extends Stage {
 	/**
 	 * RecupÃ©ration de l'erreur PLY
 	 */
-	public void erreur(Exception  exception) {
+	public void error(Exception  exception) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle(exception.getClass().getSimpleName());
 		alert.setHeaderText("Vous avez rencontrez un problème");

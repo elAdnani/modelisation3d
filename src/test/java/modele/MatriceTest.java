@@ -57,13 +57,13 @@ public class MatriceTest {
 	public void testLecture() {
 		double[][] donneesMatriceA = new double[][] { { 1, 2 }, { 1, 1 }, { 0, 3 } };
 
-		assertEquals(A.lire(0, 0), donneesMatriceA[0][0]);
-		assertEquals(A.lire(0, 1), donneesMatriceA[0][1]);
-		assertEquals(A.lire(1, 0), donneesMatriceA[1][0]);
-		assertEquals(A.lire(1, 1), donneesMatriceA[1][1]);
+		assertEquals(A.read(0, 0), donneesMatriceA[0][0]);
+		assertEquals(A.read(0, 1), donneesMatriceA[0][1]);
+		assertEquals(A.read(1, 0), donneesMatriceA[1][0]);
+		assertEquals(A.read(1, 1), donneesMatriceA[1][1]);
 
-		assertTrue(Double.isNaN(A.lire(100, 100)));
-		assertTrue(Double.isNaN(A.lire(-10, -10)));
+		assertTrue(Double.isNaN(A.read(100, 100)));
+		assertTrue(Double.isNaN(A.read(-10, -10)));
 
 	}
 
@@ -73,20 +73,20 @@ public class MatriceTest {
 		Matrice D = new Matrice(donneesMatriceD);
 		final double ALTERATION = Double.MIN_NORMAL;
 
-		assertEquals(D.lire(0, 0), donneesMatriceD[0][0]);
-		D.ecrire(0, 0, ALTERATION);
-		assertEquals(D.lire(0, 0), ALTERATION);
+		assertEquals(D.read(0, 0), donneesMatriceD[0][0]);
+		D.write(0, 0, ALTERATION);
+		assertEquals(D.read(0, 0), ALTERATION);
 
-		assertEquals(D.lire(0, 1), donneesMatriceD[0][1]);
-		D.ecrire(0, 0, ALTERATION);
-		assertEquals(D.lire(0, 0), ALTERATION);
+		assertEquals(D.read(0, 1), donneesMatriceD[0][1]);
+		D.write(0, 0, ALTERATION);
+		assertEquals(D.read(0, 0), ALTERATION);
 
-		assertEquals(D.lire(1, 0), donneesMatriceD[1][0]);
-		D.ecrire(1, 0, ALTERATION);
-		assertEquals(D.lire(1, 0), ALTERATION);
+		assertEquals(D.read(1, 0), donneesMatriceD[1][0]);
+		D.write(1, 0, ALTERATION);
+		assertEquals(D.read(1, 0), ALTERATION);
 
-		assertTrue(Double.isNaN(A.lire(100, 100)));
-		assertTrue(Double.isNaN(A.lire(-10, -10)));
+		assertTrue(Double.isNaN(A.read(100, 100)));
+		assertTrue(Double.isNaN(A.read(-10, -10)));
 
 	}
 
@@ -121,9 +121,9 @@ public class MatriceTest {
 		Matrice AMoinsD = new Matrice(
 				new double[][] { { (1 - 2), (2 - 6) }, { (1 - 8), (1 - (-1)) }, { (0 - (-5)), (3 - 2) } });
 
-		assertEquals(null, A.soustraction(B)); // pas le même format
-		assertEquals(null, B.soustraction(A));
-		assertEquals(AMoinsD, A.soustraction(matriceD));
+		assertEquals(null, A.substraction(B)); // pas le même format
+		assertEquals(null, B.substraction(A));
+		assertEquals(AMoinsD, A.substraction(matriceD));
 
 	}
 
@@ -158,21 +158,21 @@ public class MatriceTest {
 		double[][] donneesMatriceNulleDeux = new double[][] { { 0 } };
 		Matrice matriceNulleDeux = new Matrice(donneesMatriceNulleDeux);
 
-		assertTrue(matriceNulleUne.estNulle());
-		assertTrue(matriceNulleDeux.estNulle());
-		assertFalse(A.estNulle());
-		assertFalse(B.estNulle());
+		assertTrue(matriceNulleUne.isNull());
+		assertTrue(matriceNulleDeux.isNull());
+		assertFalse(A.isNull());
+		assertFalse(B.isNull());
 	}
 
 	@Test
 	public void testEstCarre() {
-		assertTrue(new Matrice(new double[][] { { 0 } }).estCarre());
-		assertTrue(new Matrice(new double[][] { { 0, 0 }, { 0, 0 } }).estCarre());
-		assertTrue(new Matrice(new double[][] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } }).estCarre());
+		assertTrue(new Matrice(new double[][] { { 0 } }).isSquare());
+		assertTrue(new Matrice(new double[][] { { 0, 0 }, { 0, 0 } }).isSquare());
+		assertTrue(new Matrice(new double[][] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } }).isSquare());
 
-		assertFalse(A.estCarre());
-		assertFalse(B.estCarre());
-		assertFalse(C.estCarre());
+		assertFalse(A.isSquare());
+		assertFalse(B.isSquare());
+		assertFalse(C.isSquare());
 
 	}
 	
