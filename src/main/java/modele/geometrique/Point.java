@@ -37,6 +37,21 @@ public class Point extends Figure {
 	public Matrice getCoordonnee() {
 		return super.getCoordonnee();
 	}
+	
+	@Override
+	public double getX() {
+		return super.getX();
+	}
+	
+	@Override
+	public double getY() {
+		return super.getY();
+	}
+	
+	@Override
+	public double getZ() {
+		return super.getZ();
+	}
 	/**
 	 * Permet de faire une transformation géométrique du point
 	 * @param newCoo

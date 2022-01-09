@@ -39,7 +39,7 @@ import util.PlyFileFilter;
 import util.Theme;
 /**
  * 
- * Cette classe est un menu d'outil. Il permet d'obetenir les onglets de la fenetre principale.
+ * Cette classe est un menu d'outil. Il permet d'obtenir les onglets de la fenetre principale.
  *
  * @author <a href="mailto:adnan.kouakoua@univ-lille1.fr">Adnân KOUAKOUA</a>
  * IUT-A Informatique, Universite de Lille.
@@ -153,7 +153,6 @@ public class ToolView {
 	
 	private static TableView<PlyProperties> columnsView() {
 		TableView<PlyProperties> columns = new TableView<>();
-		columns.setEditable(true);
 
 		TableColumn<PlyProperties, String> nameColumn = new TableColumn<>("name");
 		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));

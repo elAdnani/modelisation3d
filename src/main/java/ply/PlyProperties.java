@@ -7,9 +7,11 @@ public class PlyProperties {
 	private int faces;
 	private int points;
 	private String path;
+	private String name;
 
 	public PlyProperties(String path, String name, String size, int faces, int points, String created, String author) {
 		this.path = path;
+		this.name=name;
 		this.size = size;
 		this.author = author;
 		this.faces = faces;
@@ -25,6 +27,20 @@ public class PlyProperties {
 		return path;
 	}
 
+	/**
+	 * 
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+	/**
+	 * 
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
 	public void setPath(String path) {
 		this.path = path;
 	}

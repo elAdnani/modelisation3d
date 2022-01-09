@@ -14,6 +14,7 @@ import javafx.scene.paint.Paint;
 import math.Face;
 import modele.Model;
 import modele.geometrique.Figure;
+import modele.geometrique.FigureFabrique;
 import modele.geometrique.Point;
 import util.Axis;
 import util.DrawingMethod;
@@ -21,12 +22,13 @@ import util.DrawingMethod;
 @SuppressWarnings("PMD.LawOfDemeter")
 public class ModelisationCanvas extends Canvas implements Observer {
 
-	private Axis axis;
+	private Axis          axis;
 	private DrawingMethod method;
-	
-	double zoom;
-	
-	private Model lastDrawnModel;
+	private Color figure = Color.rgb(128, 30, 30);
+
+	double                zoom;
+
+	private Model         lastDrawnModel;
 
 	public ModelisationCanvas(double width, double height) {
 		this(width, height, Axis.ZAXIS, DrawingMethod.WIREFRAME);
@@ -57,11 +59,6 @@ public class ModelisationCanvas extends Canvas implements Observer {
 		draw(model);
 	}
 
-	public void drawModelAndAxisName(Model model) {
-		drawModel(model);
-		drawAxisName();
-	}
-
 	public void drawAxisName() {
 		Paint previousFill = getGraphicsContext2D().getFill();
 		getGraphicsContext2D().setFill(Color.DARKGRAY);
@@ -82,22 +79,21 @@ public class ModelisationCanvas extends Canvas implements Observer {
 		this.lastDrawnModel = model;
 		System.out.println("Drawing started...");
 		long start = System.nanoTime();
-		if (model != null) {
+		if (model != null)
+		{
 			switch (method) {
-			case WIREFRAME:
-				drawWireframe(model, axis, zoom);
-				break;
 			case SOLID:
-				drawSolid(model, axis, zoom);
+				DrawCanvas.drawSolid(model, this, zoom);
 				break;
 			case BOTH:
-				drawBoth(model, axis, zoom);
+				DrawCanvas.drawBoth(model, this, zoom);
 				break;
 			default:
-				drawWireframe(model, axis, zoom);
+				DrawCanvas.drawWireframe(model, this, zoom);
 				break;
 			}
-		} else {
+		} else
+		{
 			System.err.println("Canvas null");
 		}
 
@@ -107,233 +103,22 @@ public class ModelisationCanvas extends Canvas implements Observer {
 
 	}
 
-	private void drawWireframe(Model model, Axis axis, double zoom) {
-		double middlescreenx = this.getWidth() / 2;
-		double middlescreeny = this.getHeight() / 2;
 
-		double x = 0;
-		double y = 0;
-
-		double[] xCoord = null;
-		double[] yCoord = null;
-
-		double offSetX = 0;
-		double offSetY = 0;
-
-		double offsetX = model.getOffsetX();
-		double offsetY = model.getOffsetY();
-		double offsetZ = model.getOffsetZ();
-
-		String xmethod = "";
-		String ymethod = "";
-
-		List<Face> faces = model.getFaces();
-
+	public void fillPolygon(double[] xCoord, double[] yCoord, int nbPoints, double degree) {
+		
 		GraphicsContext gc = this.getGraphicsContext2D();
-
-		switch (axis) {
-		case XAXIS:
-			offSetX = middlescreenx + offsetZ;
-			offSetY = middlescreeny + offsetY;
-			xmethod = "getZ";
-			ymethod = "getY";
-			break;
-		case YAXIS:
-			offSetX = middlescreenx + offsetX;
-			offSetY = middlescreeny + offsetZ;
-			xmethod = "getX";
-			ymethod = "getZ";
-			break;
-		case ZAXIS:
-			offSetX = middlescreenx + offsetX;
-			offSetY = middlescreeny + offsetY;
-			xmethod = "getX";
-			ymethod = "getY";
-			break;
-		}
-
-		try {
-			Method methodGetX = Figure.class.getDeclaredMethod(xmethod);
-			Method methodGetY = Figure.class.getDeclaredMethod(ymethod);
-			for (Face face : faces) {
-				Iterator<Point> it = face.getPoints().iterator();
-				int nbPoints = face.getPoints().size();
-				xCoord = new double[nbPoints];
-				yCoord = new double[nbPoints];
-				int cpt = 0;
-				while (it.hasNext()) {
-					Point pt = it.next();
-
-					x = ((Double) methodGetX.invoke(pt) * zoom) + offSetX;
-					y = ((Double) methodGetY.invoke(pt) * zoom) + offSetY;
-
-					xCoord[cpt] = x;
-					yCoord[cpt] = y;
-
-					cpt++;
-				}
-				gc.strokePolygon(xCoord, yCoord, nbPoints);
-			}
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void drawSolid(Model model, Axis axis, double zoom) {
-		double middlescreenx = this.getWidth() / 2;
-		double middlescreeny = this.getHeight() / 2;
-
-		double x = 0;
-		double y = 0;
-
-		double[] xCoord = null;
-		double[] yCoord = null;
-
-		double offSetX = 0;
-		double offSetY = 0;
-
-		double offsetX = model.getOffsetX();
-		double offsetY = model.getOffsetY();
-		double offsetZ = model.getOffsetZ();
-
-		String xmethod = "";
-		String ymethod = "";
-
-		List<Face> faces = model.getFaces();
-
-		GraphicsContext gc = this.getGraphicsContext2D();
-
-		switch (axis) {
-		case XAXIS:
-			offSetX = middlescreenx + offsetZ;
-			offSetY = middlescreeny + offsetY;
-			xmethod = "getZ";
-			ymethod = "getY";
-			break;
-		case YAXIS:
-			offSetX = middlescreenx + offsetX;
-			offSetY = middlescreeny + offsetZ;
-			xmethod = "getX";
-			ymethod = "getZ";
-			break;
-		case ZAXIS:
-			offSetX = middlescreenx + offsetX;
-			offSetY = middlescreeny + offsetY;
-			xmethod = "getX";
-			ymethod = "getY";
-			break;
-		}
-
-		try {
-			Method methodGetX = Figure.class.getDeclaredMethod(xmethod);
-			Method methodGetY = Figure.class.getDeclaredMethod(ymethod);
-			for (Face face : faces) {
-				Iterator<Point> it = face.getPoints().iterator();
-				int nbPoints = face.getPoints().size();
-				xCoord = new double[nbPoints];
-				yCoord = new double[nbPoints];
-				int cpt = 0;
-				while (it.hasNext()) {
-					Point pt = it.next();
-
-					x = ((Double) methodGetX.invoke(pt) * zoom) + offSetX;
-					y = ((Double) methodGetY.invoke(pt) * zoom) + offSetY;
-
-					xCoord[cpt] = x;
-					yCoord[cpt] = y;
-
-					cpt++;
-				}
-				double degree = face.degreDeCouleur();
-				gc.setFill(Color.valueOf(String.format("#%02x%02x%02x", (int) (128 * degree), (int) (10 * degree),
-						(int) (10 * degree))));
-				gc.fillPolygon(xCoord, yCoord, nbPoints);
-			}
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void drawBoth(Model model, Axis axis, double zoom) {
-		double middlescreenx = this.getWidth() / 2;
-		double middlescreeny = this.getHeight() / 2;
-
-		double x = 0;
-		double y = 0;
-
-		double[] xCoord = null;
-		double[] yCoord = null;
-
-		double offSetX = 0;
-		double offSetY = 0;
-
-		double offsetX = model.getOffsetX();
-		double offsetY = model.getOffsetY();
-		double offsetZ = model.getOffsetZ();
-
-		String xmethod = "";
-		String ymethod = "";
-
-		List<Face> faces = model.getFaces();
-
-		GraphicsContext gc = this.getGraphicsContext2D();
-
-		switch (axis) {
-		case XAXIS:
-			offSetX = middlescreenx + offsetZ;
-			offSetY = middlescreeny + offsetY;
-			xmethod = "getZ";
-			ymethod = "getY";
-			break;
-		case YAXIS:
-			offSetX = middlescreenx + offsetX;
-			offSetY = middlescreeny + offsetZ;
-			xmethod = "getX";
-			ymethod = "getZ";
-			break;
-		case ZAXIS:
-			offSetX = middlescreenx + offsetX;
-			offSetY = middlescreeny + offsetY;
-			xmethod = "getX";
-			ymethod = "getY";
-			break;
-		}
-
-		try {
-			Method methodGetX = Figure.class.getDeclaredMethod(xmethod);
-			Method methodGetY = Figure.class.getDeclaredMethod(ymethod);
-			for (Face face : faces) {
-				Iterator<Point> it = face.getPoints().iterator();
-				int nbPoints = face.getPoints().size();
-				xCoord = new double[nbPoints];
-				yCoord = new double[nbPoints];
-				int cpt = 0;
-				while (it.hasNext()) {
-					Point pt = it.next();
-
-					x = ((Double) methodGetX.invoke(pt) * zoom) + offSetX;
-					y = ((Double) methodGetY.invoke(pt) * zoom) + offSetY;
-
-					xCoord[cpt] = x;
-					yCoord[cpt] = y;
-
-					cpt++;
-				}
-				double degree = face.degreDeCouleur();
-				gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x", (int) (128 * degree), (int) (10 * degree),
-						(int) (10 * degree))));
-				gc.fillPolygon(xCoord, yCoord, nbPoints);
-				gc.strokePolygon(xCoord, yCoord, nbPoints);
-			}
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
-			e.printStackTrace();
-		}
-
+		int maxColor =255;
+		gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x", 
+				(int) (this.figure.getRed()*maxColor * degree),
+				(int) (this.figure.getGreen()*maxColor * degree), 
+				(int) (this.figure.getBlue()*maxColor * degree))));
+		gc.fillPolygon(xCoord, yCoord, nbPoints);
 	}
 	
+	public void strokePolygon(double[] xCoord, double[] yCoord, int nbPoints) {
+		this.getGraphicsContext2D().strokePolygon(xCoord, yCoord, nbPoints);
+	}
+
 	public DrawingMethod getMethod() {
 		return method;
 	}
@@ -361,7 +146,8 @@ public class ModelisationCanvas extends Canvas implements Observer {
 
 	@Override
 	public void update(Subject subj) {
-		drawModelAndAxisName((Model) subj);
+		drawModel((Model) subj);
+		drawAxisName();
 	}
 
 	@Override
