@@ -17,7 +17,15 @@ import modele.geometrique.Point;
 import ply.RecuperationPly;
 import ply.exceptions.FormatPlyException;
 import util.Axis;
-
+/**
+ * 
+ * Cette classe est la représentation du 
+ *
+ * @author <a href="mailto:adnan.kouakoua@univ-lille1.fr">Adnân KOUAKOUA</a>
+ * IUT-A Informatique, Universite de Lille.
+ * @date 9 janv. 2022
+ * 
+ */
 public class Model extends Subject {
 
 	private List<Face> faces;

@@ -235,7 +235,6 @@ public class View extends Stage {
 
 		controller.setMousePressed(canvas);
 		controller.setMouseDragging(canvas);
-		controller.setMouseClicked();
 
 		return canvas;
 	}

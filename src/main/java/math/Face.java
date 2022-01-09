@@ -28,7 +28,6 @@ public class Face {
 	}
 
 	/**
-	 * 
 	 * @param points Liste de point que compose la face
 	 */
 	public Face(List<Point> points) {
@@ -88,9 +87,6 @@ public class Face {
 		return this.division.isEmpty();
 	}
 
-	public List<Point> getPoints() {
-		return points;
-	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder("[Face");
@@ -139,6 +135,10 @@ public class Face {
 			sum += p.getX();
 		}
 		return sum / points.size();
+	}
+	
+	public List<Point> getPoints() {
+		return points;
 	}
 
 	/**

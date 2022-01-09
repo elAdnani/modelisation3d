@@ -27,11 +27,17 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import modele.Model;
 import ply.exceptions.FormatPlyException;
 import util.Axis;
+import util.Conversion;
 import util.DrawingMethod;
 import util.Theme;
 import views.ModelisationCanvas;
 import views.View;
-
+/**
+ * 
+ * Cette classe sert à gérer les évenements utilisant le {@link Model}. Il réalise les changements 
+ *
+ * 
+ */
 public class Controller {
 
 	private Model model = null;
@@ -44,7 +50,12 @@ public class Controller {
 		this.view = view;
 		this.model = new Model();
 	}
-
+	/**
+	 * Charge un fichier qui devrait être au format "ply" et ceci à partir du chemin de fichier
+	 * @param path chemin vers le ficheir
+	 * @throws FileNotFoundException Le fichier n'existe pas
+	 * @throws FormatPlyException Le format n'est pas celui accepté (ply)
+	 */
 	public void loadFile(String path) throws FileNotFoundException, FormatPlyException {
 		if (this.model == null)
 			model = new Model();
@@ -58,27 +69,33 @@ public class Controller {
 
 	}
 
+	/**
+	 * Réalise une rotation du model en fonction d'un axe 
+	 * @param axis axe de rotation
+	 * @param theta 
+	 */
 	public void rotateModel(Axis axis, double theta) {
 		if (this.model == null)
 			return;
-		this.model.rotate(axis, toRadian(theta));
+		this.model.rotate(axis, Conversion.toRadian(theta));
 	}
 
+	/**
+	 * Réalise une rotation du model en fonction d'un axe 
+	 * @param axis axe de rotation
+	 * @param distance 
+	 */
 	public void translateModel(Axis axis, double distance) {
 		if (this.model == null)
 			return;
 		this.model.translate(axis, distance);
 	}
 
-	// Calcul
-	private static double toRadian(double degree) {
-		return degree * Math.PI / 180;
-	}
 
-	/**
+	/*
 	 * GETTERS AND SETTERS
 	 */
-
+	
 	public List<ModelisationCanvas> getCanvases() {
 		return this.view.getCanvases();
 	}
@@ -97,8 +114,10 @@ public class Controller {
 		}
 		model.notifyObservers();
 	}
+	
 
 	/**
+	 * Est l'évènement qui permet à l'utilisateur de choisir un fichier parmi toute une selection
 	 * @param openFileItem
 	 */
 	public void setFileChooserEvent(MenuItem openFileItem) {
@@ -123,6 +142,7 @@ public class Controller {
 	}
 
 	/**
+	 * Est l'évènement qui permet de faire une rotation  vers le bas du modele visiualisé par l'utilisateur
 	 * @param down
 	 */
 	public void setOnDown(Button down) {
@@ -135,6 +155,7 @@ public class Controller {
 	}
 
 	/**
+	 * Est l'évènement qui permet de faire une rotation vers le haut du modele visiualisé par l'utilisateur
 	 * @param up
 	 */
 	public void setOnUp(Button up) {
@@ -147,6 +168,7 @@ public class Controller {
 	}
 
 	/**
+	 * Est l'évènement qui permet de faire une rotation vers la gauche du modele visiualisé par l'utilisateur
 	 * @param left
 	 */
 	public void setOnLeft(Button left) {
@@ -159,6 +181,7 @@ public class Controller {
 	}
 
 	/**
+	 * Est l'évènement qui permet de faire une rotation vers la droite du modele visiualisé par l'utilisateur
 	 * @param right
 	 */
 	public void setOnRight(Button right) {
@@ -169,6 +192,11 @@ public class Controller {
 		});
 	}
 	
+	/**
+	 * Permet la rotation vers la droite et la gauche de l'utilisateur
+	 * @param theta
+	 * TODO mettre en private + observeur/observé
+	 */
 	public void setOnRightAndLeft(double theta) {
 		for (ModelisationCanvas canvas : getCanvases()) {
 			switch (canvas.getAxis()) {
@@ -185,6 +213,10 @@ public class Controller {
 		}
 	}
 	
+	/**
+	 * Permet la rotation vers le haut et le bas de l'utilisateur
+	 * @param theta
+	 */
 	public void setOnDownAndUp(double theta) {
 		for (ModelisationCanvas canvas : getCanvases()) {
 			switch (canvas.getAxis()) {
@@ -203,6 +235,7 @@ public class Controller {
 	
 	
 	/**
+	 * Fait une rotation du modèle lorsqu'on 
 	 * @param node
 	 */
 	public void addKeyPressedEvent(Node node) {
@@ -230,6 +263,7 @@ public class Controller {
 	}
 
 	/**
+	 * Quitte l'application lorsque le bouton "exit" est cliqué
 	 * @param exitItem
 	 */
 	public void setExitAction(MenuItem exitItem) {
@@ -237,6 +271,7 @@ public class Controller {
 	}
 
 	/**
+	 * Fait apparaitre un menu dans lequel il y a une explication de comment fonctionne l'application
 	 * @param helpItem
 	 */
 	public void setHelpAction(MenuItem helpItem) {
@@ -250,6 +285,7 @@ public class Controller {
 	}
 
 	/**
+	 * Permet de changer la méthode de dessin lorsque l'utilisateur le demande
 	 * @param method
 	 * @param radioItem
 	 */
@@ -261,8 +297,10 @@ public class Controller {
 	}
 
 	/**
+	 * Permet de changer la charger un fichier/modele ply lorsque l'utilisateur le demande
 	 * @param f
 	 * @param item
+	 * TODO erreur ply récupéré ?
 	 */
 	public void setLoadFileItem(File f, MenuItem item) {
 		item.setOnAction(event -> {
@@ -278,7 +316,7 @@ public class Controller {
 	}
 
 	/**
-	 * 
+	 * Réalise le déplacement du modèle lorsque l'utilisateur fait un mouvement de "glissement"
 	 */
 	public void setMouseDragging(ModelisationCanvas canvas) {
 		canvas.setOnMouseDragged(event ->{
@@ -302,13 +340,13 @@ public class Controller {
 				} else if (event.getButton().equals(MouseButton.PRIMARY)) {
 					switch (canvas.getAxis()) {
 					case XAXIS:
-						model.rotate(Axis.ZAXIS, toRadian(yDistance)).rotate(Axis.YAXIS, toRadian(xDistance));
+						model.rotate(Axis.ZAXIS, Conversion.toRadian(yDistance)).rotate(Axis.YAXIS, Conversion.toRadian(xDistance));
 						break;
 					case YAXIS:
-						model.rotate(Axis.XAXIS, toRadian(yDistance)).rotate(Axis.ZAXIS, toRadian(xDistance));
+						model.rotate(Axis.XAXIS, Conversion.toRadian(yDistance)).rotate(Axis.ZAXIS, Conversion.toRadian(xDistance));
 						break;
 					case ZAXIS:
-						model.rotate(Axis.XAXIS, toRadian(yDistance)).rotate(Axis.YAXIS, toRadian(xDistance));
+						model.rotate(Axis.XAXIS, Conversion.toRadian(yDistance)).rotate(Axis.YAXIS, Conversion.toRadian(xDistance));
 						break;
 					}
 					model.notifyObservers();
@@ -321,7 +359,7 @@ public class Controller {
 	}
 
 	/**
-	 * Met à jour les coordonnées de la souri, lorsque celle-ci est pressée
+	 * Met à jour les coordonnées de la souris, lorsque celle-ci est pressée
 	 * @param canvas
 	 */
 	public void setMousePressed(ModelisationCanvas canvas) {
@@ -329,14 +367,6 @@ public class Controller {
 				oldMouseX = event.getSceneX();
 				oldMouseY = event.getSceneY();
 		});
-	}
-	
-	public void setMouseClicked() {
-		ContextMenu contextMenu = new ContextMenu();
-		for(DrawingMethod meth : DrawingMethod.values()) {
-			MenuItem item = new MenuItem(meth.name());
-			contextMenu.getItems().add(item);
-		}
 	}
 
 }

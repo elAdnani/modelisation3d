@@ -6,12 +6,12 @@ import modele.geometrique.Vecteur;
 
 /**
  * 
- * Cette classe sert à .........
+ * Cette classe sert d'intermédiaire entre les classes points et vecteurs avec les classes extérieurs au package
  *
  * @author <a href="mailto:adnan.kouakoua@univ-lille1.fr">Adnân KOUAKOUA</a>
  * IUT-A Informatique, Universite de Lille.
- * @date 9 janv. 2022
- * @version XX
+ * @date 7 janv. 2022
+ * 
  */
 public class VecteurOutil {
 	private static FigureFabrique fabriqueVecteur = FigureFabrique.getInstance();

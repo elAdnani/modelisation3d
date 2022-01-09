@@ -31,4 +31,13 @@ public class Conversion {
 
 		return res;
 	}
+	
+	/**
+	 * 
+	 * @param degree
+	 * @return
+	 */
+	public static double toRadian(double degree) {
+		return degree * Math.PI / 180;
+	}
 }
