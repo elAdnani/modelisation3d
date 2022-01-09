@@ -8,7 +8,7 @@ import java.util.List;
 import math.Face;
 import modele.Model;
 import modele.geometrique.Figure;
-import modele.geometrique.Point;
+import modele.geometrique.Vertex;
 
 /**
  * 
@@ -30,17 +30,17 @@ public class DrawCanvas {
 		List<Face> faces = model.getFaces();
 
 		try {
-			Method methodGetX = Point.class.getDeclaredMethod(xmethod);
-			Method methodGetY = Point.class.getDeclaredMethod(ymethod);
+			Method methodGetX = Vertex.class.getDeclaredMethod(xmethod);
+			Method methodGetY = Vertex.class.getDeclaredMethod(ymethod);
 			for (Face face : faces) {
-				List<Point> points = face.getPoints();
-				Iterator<Point> iterator = points.iterator();
+				List<Vertex> points = face.getPoints();
+				Iterator<Vertex> iterator = points.iterator();
 				int nbPoints = points.size();
 				double[] xCoord = new double[nbPoints];
 				double[] yCoord = new double[nbPoints];
 				int cpt = 0;
 				while (iterator.hasNext()) {
-					Point point = iterator.next();
+					Vertex point = iterator.next();
 
 					double xCoordinate = ((Double) methodGetX.invoke(point) * zoom) + offSetX;
 					double yCoordinate = ((Double) methodGetY.invoke(point) * zoom) + offSetY;
@@ -67,14 +67,14 @@ public class DrawCanvas {
 			Method methodGetX = Figure.class.getDeclaredMethod(xmethod);
 			Method methodGetY = Figure.class.getDeclaredMethod(ymethod);
 			for (Face face : faces) {
-				List<Point> points = face.getPoints();
-				Iterator<Point> iterator = points.iterator();
+				List<Vertex> points = face.getPoints();
+				Iterator<Vertex> iterator = points.iterator();
 				int nbPoints = points.size();
 				double[] xCoord = new double[nbPoints];
 				double[] yCoord = new double[nbPoints];
 				int cpt = 0;
 				while (iterator.hasNext()) {
-					Point point = iterator.next();
+					Vertex point = iterator.next();
 
 					double xCoordinate = ((Double) methodGetX.invoke(point) * zoom) + offSetX;
 					double yCoordinate = ((Double) methodGetY.invoke(point) * zoom) + offSetY;
@@ -101,14 +101,14 @@ public class DrawCanvas {
 			Method methodGetX = Figure.class.getDeclaredMethod(xmethod);
 			Method methodGetY = Figure.class.getDeclaredMethod(ymethod);
 			for (Face face : faces) {
-				List<Point> points = face.getPoints();
-				Iterator<Point> iterator = points.iterator();
+				List<Vertex> points = face.getPoints();
+				Iterator<Vertex> iterator = points.iterator();
 				int nbPoints = points.size();
 				double[] xCoord = new double[nbPoints];
 				double[] yCoord = new double[nbPoints];
 				int cpt = 0;
 				while (iterator.hasNext()) {
-					Point point = iterator.next();
+					Vertex point = iterator.next();
 
 					double xCoordinate = ((Double) methodGetX.invoke(point) * zoom) + offSetX;
 					double yCoordinate = ((Double) methodGetY.invoke(point) * zoom) + offSetY;

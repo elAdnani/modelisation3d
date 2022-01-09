@@ -1,8 +1,8 @@
 package math;
 
-import modele.geometrique.FigureFabrique;
-import modele.geometrique.Point;
-import modele.geometrique.Vecteur;
+import modele.geometrique.FigureFabric;
+import modele.geometrique.Vertex;
+import modele.geometrique.Vector;
 
 /**
  * 
@@ -14,10 +14,10 @@ import modele.geometrique.Vecteur;
  * @date 7 janv. 2022
  * 
  */
-public class VecteurOutil {
-	private static FigureFabrique vectorFabric = FigureFabrique.getInstance();
+public class VectorTool {
+	private static FigureFabric vectorFabric = FigureFabric.getInstance();
 
-	private VecteurOutil() {
+	private VectorTool() {
 	}
 
 	/**
@@ -28,9 +28,9 @@ public class VecteurOutil {
 	 * @param pointC
 	 * @return la normal unitaire
 	 */
-	public static Vecteur unitNormal(final Point pointA, final Point pointB, final Point pointC) {
-		Vecteur abVac = VecteurOutil.vectorialProduct(VecteurOutil.vertexToVector(pointA, pointB),
-				VecteurOutil.vertexToVector(pointA, pointC));
+	public static Vector unitNormal(final Vertex pointA, final Vertex pointB, final Vertex pointC) {
+		Vector abVac = VectorTool.vectorialProduct(VectorTool.vertexToVector(pointA, pointB),
+				VectorTool.vertexToVector(pointA, pointC));
 
 		double normeABvAC = Math
 				.sqrt(abVac.getX() * abVac.getX() + abVac.getY() * abVac.getY() + abVac.getZ() * abVac.getZ());
@@ -45,7 +45,7 @@ public class VecteurOutil {
 	 * @param vectAc
 	 * @return
 	 */
-	public static Vecteur vectorialProduct(Vecteur vectAb, Vecteur vectAc) {
+	public static Vector vectorialProduct(Vector vectAb, Vector vectAc) {
 
 		return vectorFabric.vector(vectAb.getY() * vectAc.getZ() - vectAc.getY() * vectAb.getZ(),
 				vectAb.getZ() * vectAc.getX() - vectAc.getZ() * vectAb.getX(),
@@ -59,7 +59,7 @@ public class VecteurOutil {
 	 * @param un point B
 	 * @return le vecteur AB
 	 */
-	public static Vecteur vertexToVector(Point pointA, Point pointB) {
+	public static Vector vertexToVector(Vertex pointA, Vertex pointB) {
 
 		return vectorFabric.vector(pointB.getX() - pointA.getX(), pointB.getY() - pointA.getY(),
 				pointB.getZ() - pointA.getZ());

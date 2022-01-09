@@ -17,9 +17,9 @@ package math;
  * @date 9 nov. 2021
  * 
  */
-public class OutilMatriciel {
+public class MatricialTool {
 
-	private OutilMatriciel() {
+	private MatricialTool() {
 
 	}
 
@@ -28,9 +28,9 @@ public class OutilMatriciel {
 	 * C'est une transformation géométrique permettant la modification ou
 	 * d'altération de la taille d'un objet.
 	 */
-	public static Matrice getCadrage(final double coefK1, final double coefK2, final double coefK3) {
+	public static Matrix getCadrage(final double coefK1, final double coefK2, final double coefK3) {
 
-		return new Matrice(
+		return new Matrix(
 				new double[][] { { coefK1, 0, 0, 0 }, { 0, coefK2, 0, 0 }, { 0, 0, coefK3, 0 }, { 0, 0, 0, 1 }, });
 	}
 
@@ -41,10 +41,10 @@ public class OutilMatriciel {
 	 * 
 	 * @param delta angle de rotation
 	 */
-	public static Matrice getXRotation(final double delta) {
+	public static Matrix getXRotation(final double delta) {
 		double cosDelta = Math.cos(delta);
 		double sinDelta = Math.sin(delta);
-		return new Matrice(new double[][] { { 1, 0, 0, 0 }, { 0, cosDelta, -sinDelta, 0 }, { 0, sinDelta, cosDelta, 0 },
+		return new Matrix(new double[][] { { 1, 0, 0, 0 }, { 0, cosDelta, -sinDelta, 0 }, { 0, sinDelta, cosDelta, 0 },
 				{ 0, 0, 0, 1 }, });
 	}
 
@@ -55,10 +55,10 @@ public class OutilMatriciel {
 	 * 
 	 * @param delta angle de rotation
 	 */
-	public static Matrice getYRotation(final double delta) {
+	public static Matrix getYRotation(final double delta) {
 		double cosDelta = Math.cos(delta);
 		double sinDelta = Math.sin(delta);
-		return new Matrice(new double[][] { { cosDelta, 0, -sinDelta, 0 }, { 0, 1, 0, 0 }, { sinDelta, 0, cosDelta, 0 },
+		return new Matrix(new double[][] { { cosDelta, 0, -sinDelta, 0 }, { 0, 1, 0, 0 }, { sinDelta, 0, cosDelta, 0 },
 				{ 0, 0, 0, 1 }, });
 	}
 
@@ -69,10 +69,10 @@ public class OutilMatriciel {
 	 * 
 	 * @param delta angle de rotation
 	 */
-	public static Matrice getZRotation(final double delta) {
+	public static Matrix getZRotation(final double delta) {
 		double cosDelta = Math.cos(delta);
 		double sinDelta = Math.sin(delta);
-		return new Matrice(new double[][] { { cosDelta, -sinDelta, 0, 0 }, { sinDelta, cosDelta, 0, 0 }, { 0, 0, 1, 0 },
+		return new Matrix(new double[][] { { cosDelta, -sinDelta, 0, 0 }, { sinDelta, cosDelta, 0, 0 }, { 0, 0, 1, 0 },
 				{ 0, 0, 0, 1 }, });
 	}
 
@@ -84,9 +84,9 @@ public class OutilMatriciel {
 	 * 
 	 * @param coefK rapport
 	 */
-	public static Matrice getHomothety(final double coefK) {
+	public static Matrix getHomothety(final double coefK) {
 
-		return new Matrice(
+		return new Matrix(
 				new double[][] { { coefK, 0, 0, 0 }, { 0, coefK, 0, 0 }, { 0, 0, coefK, 0 }, { 0, 0, 0, 1 }, });
 	}
 
@@ -100,9 +100,9 @@ public class OutilMatriciel {
 	 * @param cooY
 	 * @param cooZ
 	 */
-	public static Matrice getTranslation(final double cooX, final double cooY, final double cooZ) {
+	public static Matrix getTranslation(final double cooX, final double cooY, final double cooZ) {
 
-		return new Matrice(new double[][] { { 1, 0, 0, cooX }, { 0, 1, 0, cooY }, { 0, 0, 1, cooZ }, { 0, 0, 0, 1 }, });
+		return new Matrix(new double[][] { { 1, 0, 0, cooX }, { 0, 1, 0, cooY }, { 0, 0, 1, cooZ }, { 0, 0, 0, 1 }, });
 	}
 
 }

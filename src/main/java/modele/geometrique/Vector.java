@@ -10,13 +10,13 @@ package modele.geometrique;
  * @author <a href="mailto:adnan.kouakoua.etu@univ-lille.fr">Adnân KOUAKOUA</a>
  *         IUT-A Informatique, Universite de Lille.
  */
-public class Vecteur extends Figure{
+public class Vector extends Figure{
 
-		public Vecteur() {
+		public Vector() {
 			this(0.0, 0.0, 0.0);
 		}
 
-		public Vecteur(double cooX, double cooY, double cooZ) {
+		public Vector(double cooX, double cooY, double cooZ) {
 			super(cooX,cooY,cooZ,1);
 		}
 		

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import modele.geometrique.FigureFabrique;
-import modele.geometrique.Point;
-import modele.geometrique.Vecteur;
+import modele.geometrique.FigureFabric;
+import modele.geometrique.Vertex;
+import modele.geometrique.Vector;
 
 /**
  * Cette classe sert à générer les faces qui sont un ensemble de points. <br>
@@ -19,8 +19,8 @@ import modele.geometrique.Vecteur;
  */
 public class Face {
 
-	private List<Point> vertices;
-	private static final Vecteur LIGHTSOURCE = FigureFabrique.getInstance().vector(0, 0, 1);;
+	private List<Vertex> vertices;
+	private static final Vector LIGHTSOURCE = FigureFabric.getInstance().vector(0, 0, 1);;
 	private List<Face> division;
 
 	public Face() {
@@ -30,7 +30,7 @@ public class Face {
 	/**
 	 * @param points Liste de point que compose la face
 	 */
-	public Face(List<Point> vertices) {
+	public Face(List<Vertex> vertices) {
 		this.vertices = vertices;
 		division = new ArrayList<>();
 	}
@@ -39,13 +39,13 @@ public class Face {
 	 * Permet de diviser la face actuel en 4 faces
 	 */
 	public void triangularDivision() {
-		FigureFabrique fabric = FigureFabrique.getInstance();
-		Point pointA = this.vertices.get(0);
-		Point pointB = this.vertices.get(1);
-		Point pointC = this.vertices.get(2);
-		Point middleAB = fabric.vertex((pointA.getX() + pointB.getX()) / 2, (pointA.getY() + pointB.getY()) / 2, (pointA.getZ() + pointB.getZ()) / 2);
-		Point middleAC = fabric.vertex((pointA.getX() + pointC.getX()) / 2, (pointA.getY() + pointC.getY()) / 2, (pointA.getZ() + pointC.getZ()) / 2);
-		Point middleBC = fabric.vertex((pointB.getX() + pointC.getX()) / 2, (pointB.getY() + pointC.getY()) / 2, (pointB.getZ() + pointC.getZ()) / 2);
+		FigureFabric fabric = FigureFabric.getInstance();
+		Vertex pointA = this.vertices.get(0);
+		Vertex pointB = this.vertices.get(1);
+		Vertex pointC = this.vertices.get(2);
+		Vertex middleAB = fabric.vertex((pointA.getX() + pointB.getX()) / 2, (pointA.getY() + pointB.getY()) / 2, (pointA.getZ() + pointB.getZ()) / 2);
+		Vertex middleAC = fabric.vertex((pointA.getX() + pointC.getX()) / 2, (pointA.getY() + pointC.getY()) / 2, (pointA.getZ() + pointC.getZ()) / 2);
+		Vertex middleBC = fabric.vertex((pointB.getX() + pointC.getX()) / 2, (pointB.getY() + pointC.getY()) / 2, (pointB.getZ() + pointC.getZ()) / 2);
 
 		this.division = new ArrayList<>();
 		division.add(new Face(Arrays.asList(middleAB, middleAC, middleBC)));
@@ -89,7 +89,7 @@ public class Face {
 
 	public String toString() {
 		StringBuilder builder = new StringBuilder("[Face");
-		for (Point p : vertices) {
+		for (Vertex p : vertices) {
 			builder.append(p + "---");
 		}
 		builder.append("]");
@@ -103,7 +103,7 @@ public class Face {
 	 */
 	public double getAverageZ() {
 		double sum = 0;
-		for (Point p : vertices) {
+		for (Vertex p : vertices) {
 			sum += p.getZ();
 		}
 		return sum / vertices.size();
@@ -116,7 +116,7 @@ public class Face {
 	 */
 	public double getAverageY() {
 		double sum = 0;
-		for (Point p : vertices) {
+		for (Vertex p : vertices) {
 			sum += p.getY();
 		}
 
@@ -130,13 +130,13 @@ public class Face {
 	 */
 	public double getAverageX() {
 		double sum = 0;
-		for (Point p : vertices) {
+		for (Vertex p : vertices) {
 			sum += p.getX();
 		}
 		return sum / vertices.size();
 	}
 
-	public List<Point> getPoints() {
+	public List<Vertex> getPoints() {
 		return vertices;
 	}
 
@@ -151,7 +151,7 @@ public class Face {
 		double nbVertices = 3;
 		double maxColor = 255;
 		if (this.vertices.size() >= nbVertices) {
-			Vecteur normalUnitaire = VecteurOutil.unitNormal(this.vertices.get(0), this.vertices.get(1),
+			Vector normalUnitaire = VectorTool.unitNormal(this.vertices.get(0), this.vertices.get(1),
 					this.vertices.get(2));
 			colorDegree = (normalUnitaire.getX() * LIGHTSOURCE.getX()) + (normalUnitaire.getY() * LIGHTSOURCE.getY())
 					+ (normalUnitaire.getZ() * LIGHTSOURCE.getZ());
@@ -164,7 +164,7 @@ public class Face {
 
 	}
 
-	public void add(Point point) {
+	public void add(Vertex point) {
 		this.vertices.add(point);
 	}
 

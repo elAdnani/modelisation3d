@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import math.VecteurOutil;
-import modele.geometrique.FigureFabrique;
-import modele.geometrique.Point;
-import modele.geometrique.Vecteur;
+import math.VectorTool;
+import modele.geometrique.FigureFabric;
+import modele.geometrique.Vertex;
+import modele.geometrique.Vector;
 
 
 /**
@@ -23,15 +23,15 @@ import modele.geometrique.Vecteur;
  * 
  */
 public class FormulesTest {
-	public Point a;
-	public Point b;
-	public Point c;
+	public Vertex a;
+	public Vertex b;
+	public Vertex c;
 	
 	
 	
 	@Before
 	public void setUp() {
-		FigureFabrique fb = FigureFabrique.getInstance();
+		FigureFabric fb = FigureFabric.getInstance();
 		
 		a = fb.vertex(1, 2, 3);
 		b = fb.vertex(2, 3, 3);
@@ -44,13 +44,13 @@ public class FormulesTest {
 	@Test
 	public void testPointEnVecteur() {
 		
-		Vecteur vecteurAB = VecteurOutil.vertexToVector(a, b);
+		Vector vecteurAB = VectorTool.vertexToVector(a, b);
 
 		assertEquals(2-1, vecteurAB.getX());
 		assertEquals(3-2, vecteurAB.getY());
 		assertEquals(3-3,vecteurAB.getZ());
 		
-		Vecteur vecteurAC = VecteurOutil.vertexToVector(a, c);
+		Vector vecteurAC = VectorTool.vertexToVector(a, c);
 		
 		assertEquals(2-1, vecteurAC.getX());
 		assertEquals(2-2, vecteurAC.getY());
@@ -66,7 +66,7 @@ public class FormulesTest {
 	public void testProduitVectoriel() {
 		
 		
-		Vecteur vec = VecteurOutil.vectorialProduct(VecteurOutil.vertexToVector(a, b), VecteurOutil.vertexToVector(a, c));
+		Vector vec = VectorTool.vectorialProduct(VectorTool.vertexToVector(a, b), VectorTool.vertexToVector(a, c));
 				
 		assertEquals(1*1,vec.getX());
 		assertEquals(1*0,vec.getY());
@@ -79,11 +79,11 @@ public class FormulesTest {
 	@Test
 	public void testNormalUnitaire() {
 		
-		Vecteur abvac = VecteurOutil.vectorialProduct(VecteurOutil.vertexToVector(a, b), VecteurOutil.vertexToVector(a, c));
+		Vector abvac = VectorTool.vectorialProduct(VectorTool.vertexToVector(a, b), VectorTool.vertexToVector(a, c));
 		
 		double normeAbvac = 3.0;
 		
-		Vecteur vec = VecteurOutil.unitNormal(a, b, c);
+		Vector vec = VectorTool.unitNormal(a, b, c);
 		
 		assertEquals(vec.getX(), abvac.getX()/normeAbvac);
 		assertEquals(vec.getY(), abvac.getY()/normeAbvac);

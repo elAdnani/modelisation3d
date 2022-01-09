@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import math.Face;
-import modele.geometrique.FigureFabrique;
-import modele.geometrique.Point;
+import modele.geometrique.FigureFabric;
+import modele.geometrique.Vertex;
 import ply.exceptions.FormatPlyException;
 import util.PlyFileFilter;
 
@@ -27,7 +27,7 @@ public class RecuperationPly {
 	
 	private static int nbVertex;
 	private static int nbFace;
-	private static List<Point> points;
+	private static List<Vertex> points;
 	private static List<Face> faces;
 
 	private RecuperationPly() {
@@ -85,8 +85,8 @@ public class RecuperationPly {
 	 * @throws IOException une opération d'entrée du fichier échoue
 	 */
 	protected static void recuperationPoints(BufferedReader reader) throws IOException {
-		FigureFabrique fabriquePoint = FigureFabrique.getInstance();
-		List<Point> res = new ArrayList<>();
+		FigureFabric fabriquePoint = FigureFabric.getInstance();
+		List<Vertex> res = new ArrayList<>();
 
 		String line;
 		String[] tab;
@@ -115,7 +115,7 @@ public class RecuperationPly {
 	 * @param reader Lecteur du fichier
 	 * @throws IOException une opération d'entrée du fichier échoue
 	 */
-	protected static void recuperationFaces(List<Point> points, BufferedReader reader) throws IOException {
+	protected static void recuperationFaces(List<Vertex> points, BufferedReader reader) throws IOException {
 
 		List<Face> res = new ArrayList<>();
 
@@ -222,7 +222,7 @@ public class RecuperationPly {
 	 * 
 	 * @return the points
 	 */
-	public static List<Point> getPoints() {
+	public static List<Vertex> getPoints() {
 		return points;
 	}
 

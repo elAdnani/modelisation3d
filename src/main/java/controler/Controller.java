@@ -178,6 +178,13 @@ public class Controller {
 		});
 	}
 	
+	public void setZoom(double zoom) {
+		for (ModelisationCanvas canvas : getCanvases()) {
+			canvas.setZoom(zoom);
+		}
+		model.notifyObservers();
+	}
+	
 	
 	/**
 	 * Fait une rotation du modèle lorsqu'on 

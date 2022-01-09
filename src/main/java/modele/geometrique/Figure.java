@@ -1,6 +1,6 @@
 package modele.geometrique;
 
-import math.Matrice;
+import math.Matrix;
 
 /**
  * 
@@ -12,7 +12,7 @@ import math.Matrice;
  */
 public abstract class Figure {
 
-	private Matrice coordinates;
+	private Matrix coordinates;
 
 	/**
 	 * Attribue en coordonnée une colonne d'une matrice.<br>
@@ -27,7 +27,7 @@ public abstract class Figure {
 	 */
 	protected Figure(double cooX, double cooY, double cooZ, double element) {
 
-		this.coordinates = new Matrice(new double[][] { { cooX }, { cooY }, { cooZ }, { element } });
+		this.coordinates = new Matrix(new double[][] { { cooX }, { cooY }, { cooZ }, { element } });
 
 	}
 
@@ -55,11 +55,11 @@ public abstract class Figure {
 		this.coordinates.write(2, 0, cooZ);
 	}
 
-	protected void setCoordinates(Matrice newCoordonnee) {
+	protected void setCoordinates(Matrix newCoordonnee) {
 		this.coordinates = newCoordonnee;
 	}
 
-	protected Matrice getCoordinates() {
+	protected Matrix getCoordinates() {
 		return this.coordinates;
 	}
 

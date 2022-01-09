@@ -9,10 +9,10 @@ import java.util.List;
 
 import connectable.Subject;
 import math.Face;
-import math.Matrice;
-import math.OutilMatriciel;
-import modele.geometrique.FigureFabrique;
-import modele.geometrique.Point;
+import math.Matrix;
+import math.MatricialTool;
+import modele.geometrique.FigureFabric;
+import modele.geometrique.Vertex;
 import ply.RecuperationPly;
 import ply.exceptions.FormatPlyException;
 import util.Axis;
@@ -33,8 +33,8 @@ import util.Axis;
 public class Model extends Subject {
 
 	private List<Face> faces;
-	private List<Point> points;
-	private Point center;
+	private List<Vertex> points;
+	private Vertex center;
 
 	private double offsetX = 0.0;
 	private double offsetY = 0.0;
@@ -73,7 +73,7 @@ public class Model extends Subject {
 		double height = Math.pow(center.getY() * 2, 2);
 		double breadth = Math.pow(center.getZ() * 2, 2);
 		double diagonal = Math.sqrt(length + height + breadth);
-		for (Point p : points) {
+		for (Vertex p : points) {
 			p.setX((p.getX() - center.getX()) / diagonal);
 			p.setY((p.getY() - center.getY()) / diagonal);
 			p.setZ((p.getZ() - center.getZ()) / diagonal);
@@ -93,8 +93,8 @@ public class Model extends Subject {
 				.println("Sorting done in " + (end - start) + " nanoseconds (" + (end - start) / 1_000_000.0 + " ms)");
 	}
 
-	private Point calculateCenter() {
-		FigureFabrique fabriquePoint = FigureFabrique.getInstance();
+	private Vertex calculateCenter() {
+		FigureFabric fabriquePoint = FigureFabric.getInstance();
 		double[] centerCoord = new double[3];
 		Double xMin = null;
 		Double xMax = null;
@@ -103,8 +103,8 @@ public class Model extends Subject {
 		Double zMin = null;
 		Double zMax = null;
 
-		for (Iterator<Point> iterator = points.iterator(); iterator.hasNext();) {
-			Point point = iterator.next();
+		for (Iterator<Vertex> iterator = points.iterator(); iterator.hasNext();) {
+			Vertex point = iterator.next();
 			double currX = point.getX();
 			double currY = point.getY();
 			double currZ = point.getZ();
@@ -114,7 +114,7 @@ public class Model extends Subject {
 				xMax = currX;
 			if (yMin == null || currY < yMin)
 				yMin = currY;
-			if (yMax == null || currY < yMax)
+			if (yMax == null || currY > yMax)
 				yMax = currY;
 			if (zMin == null || currZ < zMin)
 				zMin = currZ;
@@ -132,21 +132,21 @@ public class Model extends Subject {
 	public Model rotate(Axis axis, double theta) {
 		switch (axis) {
 		case YAXIS:
-			rotateEach(OutilMatriciel.getYRotation(theta));
+			rotateEach(MatricialTool.getYRotation(theta));
 			break;
 		case ZAXIS:
-			rotateEach(OutilMatriciel.getZRotation(theta));
+			rotateEach(MatricialTool.getZRotation(theta));
 			break;
 		default:
-			rotateEach(OutilMatriciel.getXRotation(theta));
+			rotateEach(MatricialTool.getXRotation(theta));
 			break;
 		}
 		this.sorted = false;
 		return this;
 	}
 
-	private void rotateEach(Matrice rotation) {
-		for (Point p : points) {
+	private void rotateEach(Matrix rotation) {
+		for (Vertex p : points) {
 			p.modifyCoordinates(rotation);
 		}
 	}
@@ -175,7 +175,7 @@ public class Model extends Subject {
 	 * 
 	 * @return center of the model
 	 */
-	public Point getCenter() {
+	public Vertex getCenter() {
 		return center;
 	}
 

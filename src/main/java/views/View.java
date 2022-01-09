@@ -238,7 +238,7 @@ public class View extends Stage {
 				zoom = zoomSlider.getValue() * maxzoom;
 			}
 		});
-		this.setZoom(slider.getValue()*maxzoom);
+		this.setZoom(slider.getValue() * maxzoom);
 		return slider;
 	}
 	/**
@@ -370,8 +370,6 @@ public class View extends Stage {
 	 * @param m
 	 */
 	public void setZoom(double zoom) {
-		for (ModelisationCanvas modelCanvas : canvases) {
-			modelCanvas.setZoom(zoom);
-		}
+		controller.setZoom(zoom);
 	}
 }

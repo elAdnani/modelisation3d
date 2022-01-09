@@ -18,7 +18,7 @@ import java.util.Arrays;
  *         IUT-A Informatique, Universite de Lille.
  * @date 11 nov. 2021
  */
-public class Matrice {
+public class Matrix {
 
 	/* ATTRIBUTS ______________________________ */
 
@@ -47,7 +47,7 @@ public class Matrice {
 	 * @param matrix Un tableau de nombres contenant les valeurs de la future
 	 *               matrice.
 	 */
-	public Matrice(double[][] matrix) {
+	public Matrix(double[][] matrix) {
 		this.matrixCoordinates = matrix;
 		if (!this.isSquare()) {
 			this.matrixCoordinates = new double[matrix.length][matrix.length];
@@ -64,7 +64,7 @@ public class Matrice {
 	 * @param nbLignes   Le nombre de lignes de la future matrice
 	 * @param nbColonnes Le nombre de colonnes de la future matrice
 	 */
-	public Matrice(int nbLignes, int nbColonnes) {
+	public Matrix(int nbLignes, int nbColonnes) {
 		// On évite les valeurs négatives ou nulles !
 		if (nbLignes <= 0) {
 			nbLignes = 1;
@@ -82,7 +82,7 @@ public class Matrice {
 	 * 
 	 * @param nbLine Le nombre de lignes et de colonnes de la future matrice.
 	 */
-	public Matrice(int nbLine) {
+	public Matrix(int nbLine) {
 		this(nbLine, nbLine);
 	}
 
@@ -91,7 +91,7 @@ public class Matrice {
 	 * 
 	 * @param matrix Le nombre de lignes et de colonnes de la future matrice.
 	 */
-	public Matrice(Matrice matrix) {
+	public Matrix(Matrix matrix) {
 		this(matrix.matrixCoordinates);
 	}
 
@@ -224,11 +224,11 @@ public class Matrice {
 	 * 
 	 * @return Le résultat de l'addition.
 	 */
-	public Matrice addition(Matrice plus) {
-		Matrice result = null;
+	public Matrix addition(Matrix plus) {
+		Matrix result = null;
 
 		if (this.isSameFormat(plus)) {
-			result = new Matrice(this);
+			result = new Matrix(this);
 
 			// alors, pour chaque case, ajouter à notre matrice la valeur de la deuxième.
 			for (int ligne = 0; ligne < this.getNbLines(); ligne++) {
@@ -248,12 +248,12 @@ public class Matrice {
 	 * 
 	 * @return Le résultat de la soustraction.
 	 */
-	public Matrice substraction(Matrice moins) {
-		Matrice result = null;
+	public Matrix substraction(Matrix moins) {
+		Matrix result = null;
 		// additionne l'opposé du deuxième terme au premier terme, ce qui revient à
 		// soustraire au premier terme le second.
 		if (this.isSameFormat(moins)) {
-			result = new Matrice(this);
+			result = new Matrix(this);
 
 			// alors, pour chaque case, ajouter à notre matrice la valeur de la deuxième.
 			for (int line = 0; line < this.getNbLines(); line++) {
@@ -273,8 +273,8 @@ public class Matrice {
 	 * 
 	 * @return Le résultat de la multiplication
 	 */
-	public Matrice multiplication(double facteur) {
-		Matrice result = new Matrice(this);
+	public Matrix multiplication(double facteur) {
+		Matrix result = new Matrix(this);
 		// on multiplie chaque case par l'entier passé en paramètre
 		for (int line = 0; line < this.getNbLines(); line++) {
 			for (int column = 0; column < this.getNbColumn(); column++) {
@@ -292,12 +292,12 @@ public class Matrice {
 	 * 
 	 * @return Le résultat de la multiplication.
 	 */
-	public Matrice multiplication(Matrice matriceMultiplic) {
-		Matrice resultat = null;
+	public Matrix multiplication(Matrix matriceMultiplic) {
+		Matrix resultat = null;
 
 		// si la matrice passée en paramètres peut être multipliée avec notre matrice
 		if (this.getNbColumn() == matriceMultiplic.getNbLines()) {
-			resultat = new Matrice(this.getNbLines(), matriceMultiplic.getNbColumn());
+			resultat = new Matrix(this.getNbLines(), matriceMultiplic.getNbColumn());
 
 			// pour chaque case de la matrice résultat
 			for (int ligneResultat = 0; ligneResultat < resultat.getNbLines(); ligneResultat++) {
@@ -353,7 +353,7 @@ public class Matrice {
 	 * @return - true si la matrice a le même nombre de ligne et de colonne <br>
 	 *         - false sinon
 	 */
-	public boolean isSameFormat(Matrice matrix) {
+	public boolean isSameFormat(Matrix matrix) {
 		return matrix.getNbLines() == this.nbLine && matrix.getNbColumn() == this.nbColumn;
 	}
 
@@ -378,7 +378,7 @@ public class Matrice {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		Matrice other = (Matrice) obj;
+		Matrix other = (Matrix) obj;
 		if (this.getNbColumn() != other.getNbColumn()) {
 			return false;
 		}

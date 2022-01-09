@@ -1,6 +1,6 @@
 package modele.geometrique;
 
-import math.Matrice;
+import math.Matrix;
 
 /**
  * 
@@ -12,16 +12,16 @@ import math.Matrice;
  * @author <a href="mailto:adnan.kouakoua@univ-lille1.fr">Adnân KOUAKOUA</a>
  *         IUT-A Informatique, Universite de Lille.
  */
-public class Point extends Figure {
+public class Vertex extends Figure {
 
 	/**
 	 * Par défaut le point est de coordonnée (0,0,0)
 	 */
-	public Point() {
+	public Vertex() {
 		this(0.0, 0.0, 0.0);
 	}
 
-	public Point(double cooX, double cooY, double cooZ) {
+	public Vertex(double cooX, double cooY, double cooZ) {
 
 		super(cooX, cooY, cooZ, 0);
 
@@ -34,7 +34,7 @@ public class Point extends Figure {
 	}
 	
 	@Override
-	public Matrice getCoordinates() {
+	public Matrix getCoordinates() {
 		return super.getCoordinates();
 	}
 	
@@ -56,7 +56,7 @@ public class Point extends Figure {
 	 * Permet de faire une transformation géométrique du point
 	 * @param newCoo
 	 */
-	public void modifyCoordinates(Matrice outilMatrice) {
+	public void modifyCoordinates(Matrix outilMatrice) {
 		super.setCoordinates(outilMatrice.multiplication(this.getCoordinates()));
 	}
 
