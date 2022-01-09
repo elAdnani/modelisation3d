@@ -205,7 +205,6 @@ public class ToolView {
 		for (File f : liste) {
 			try {
 				Path filepath = Path.of(f.getPath());
-				System.out.println(Files.getFileAttributeView(filepath, PosixFileAttributeView.class));
 				AclFileAttributeView att = Files.getFileAttributeView(filepath, AclFileAttributeView.class);
 				BasicFileAttributes attributes = Files.readAttributes(filepath, BasicFileAttributes.class);
 				MenuItem item = new MenuItem(f.getName() + "\nAuthor: " + att.getOwner().getName() + " ("

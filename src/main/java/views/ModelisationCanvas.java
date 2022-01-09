@@ -93,29 +93,13 @@ public class ModelisationCanvas extends Canvas implements Observer {
 	 */
 	public void draw(Model model) {
 		this.lastDrawnModel = model;
-		System.out.println("Drawing started...");
-		long start = System.nanoTime();
 		if (model != null)
 		{
-			switch (method) {
-			case SOLID:
-				DrawCanvas.drawSolid(model, this, zoom);
-				break;
-			case BOTH:
-				DrawCanvas.drawBoth(model, this, zoom);
-				break;
-			default:
-				DrawCanvas.drawWireframe(model, this, zoom);
-				break;
-			}
+			DrawCanvas.draw(model, this, zoom, method);
 		} else
 		{
 			System.err.println("Canvas null");
 		}
-
-		long end = System.nanoTime();
-		System.out
-				.println("Drawing done in " + (end - start) + " nanosecondes (" + (end - start) / 1_000_000.0 + " ms)");
 
 	}
 

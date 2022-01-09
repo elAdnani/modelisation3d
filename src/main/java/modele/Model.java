@@ -82,15 +82,10 @@ public class Model extends Subject {
 
 	public void sortPoints(Axis axis) {
 		this.lastSortedAxis = axis;
-		long start = System.nanoTime();
 		Comparator<Face> comp = new AxisComparator(axis);
 
 		Collections.sort(faces, comp);
 		this.sorted = true;
-
-		long end = System.nanoTime();
-		System.out
-				.println("Sorting done in " + (end - start) + " nanoseconds (" + (end - start) / 1_000_000.0 + " ms)");
 	}
 
 	private Vertex calculateCenter() {

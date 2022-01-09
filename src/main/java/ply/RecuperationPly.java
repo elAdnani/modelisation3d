@@ -157,7 +157,7 @@ public class RecuperationPly {
 			throw new FormatPlyException("Fichier invalide. Le fichier n'est pas au format ply.");
 		}
 
-		while (!line.contains("end_header")) {
+		while (line!=null && !line.contains("end_header") ) {
 
 			if (line.contains("element vertex")) {
 				String[] lineV = line.split(" ");

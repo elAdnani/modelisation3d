@@ -1,7 +1,7 @@
 package modele;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
@@ -33,10 +33,8 @@ import modele.*;
 	public class RecuperationPlyTest {
 
 		/**
-		 * Chemin pour arriver jusqu'au dossier de .ply
+		 * Chemin pour arriver jusqu'au dossier pour les .ply
 		 */
-		private final static String myPath= System.getProperty("user.dir") + File.separator + "src" + File.separator + "main"
-				+ File.separator + "resources" + File.separator + "models" + File.separator;
 		private final static String myPathRessource= System.getProperty("user.dir") + File.separator + "src" + File.separator + "test"
 				+ File.separator + "resources" + File.separator;
 		
@@ -52,11 +50,7 @@ import modele.*;
 		private final String fichier="chopper.ply";
 		private final int VERTEX = 1066;
 		private final int FACE = 2094;
-		/**
-		 * 	Liste des points et faces qui sera calculés
-		 */
-		private Model modele;
-		private Matrice vertexMatriciel;
+
 		
 		
 		// TESTS
@@ -75,9 +69,6 @@ import modele.*;
 		
 		@BeforeEach
 		public void setUp() {
-			modele = new Model();
-			vertexMatriciel=null;
-
 			this.repetition=100;
 				
 		}
@@ -89,7 +80,23 @@ import modele.*;
 			
 			assertEquals(RecuperationPly.getNbVertices(myPathRessource+"header.ply"), points);
 			assertEquals(RecuperationPly.getNbFaces(myPathRessource+"header.ply"), faces);
-			assertEquals(RecuperationPly.getNbVertices(myPathRessource+"headerWithoutFormatPly.ply"),throw new FormatPlyException());
+			
+			assertEquals(VERTEX,RecuperationPly.getNbVertices(myPathRessource+fichier));
+			assertEquals(FACE,RecuperationPly.getNbFaces(myPathRessource+fichier));
+			
+		
+		}
+		
+		@Test
+		public void testErreurLectureHeader() {
+			assertThrows(FormatPlyException.class, () -> RecuperationPly.readFile(myPathRessource+"headerWithoutFormatPly.ply"));
+			assertThrows(FormatPlyException.class, () -> RecuperationPly.readFile(myPathRessource+"nullPointeur"));
+			assertThrows(FormatPlyException.class, () -> RecuperationPly.readFile(myPathRessource+"nullPointeurAvecFormatPly.ply"));
+			assertThrows(FormatPlyException.class, () -> RecuperationPly.readFile(myPathRessource+"headerWithoutPlyLine.ply"));
+			
+			assertThrows(FormatPlyException.class, () -> RecuperationPly.checkFormat(myPathRessource+"headerWithoutFormatPly"));
+			assertThrows(FormatPlyException.class, () -> RecuperationPly.checkFormat(myPathRessource+"nullPointeur"));
+			assertThrows(FormatPlyException.class, () -> RecuperationPly.checkFormat(myPathRessource+"nullPointeurAvecFormatPly.ply"));
 			
 		}
 		
