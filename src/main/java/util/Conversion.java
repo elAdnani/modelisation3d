@@ -51,4 +51,24 @@ public class Conversion {
 	public static double toRadian(double degree) {
 		return degree * Math.PI / 180;
 	}
+	
+	/**
+	 * Réalise la moyenne des nanosecondes et réalise sa conversion en milliseconde.<br>
+	 * 
+	 * @param repetition moyenne
+	 * @param nanoTime (temps en nanoTime)
+	 * @return temps en milliseconds
+	 */
+	public double nanotimeToMiliseconds(int repetition, double nanoTime) {
+		 return nanoTime / repetition / 1000 / 1000;
+	}
+	/**
+	 * Réalise la transformation de nanoseconde en milliseconde.
+	 * 
+	 * @param nanoTime (temps en nanoTime)
+	 * @return temps en milliseconds
+	 */
+	public double nanotimeToMiliseconds(double nanoTime) {
+		 return nanotimeToMiliseconds(1,nanoTime);
+	}
 }
