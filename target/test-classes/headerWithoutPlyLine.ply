@@ -1,0 +1,25 @@
+
+
+format ascii 1.0
+
+comment Created By NextEngine ScanStudio
+
+element vertex 133009
+
+property float x
+
+property float y
+
+property float z
+
+property uchar red
+
+property uchar green
+
+property uchar blue
+
+element face 248999
+
+property list uchar int vertex_indices
+
+end_header

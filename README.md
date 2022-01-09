@@ -1,6 +1,7 @@
 # Membres de l'équipe
 # Hugo Sene, Leo Ben Hatat, Virgil Hazebroucq, Adnan Kouakoua
 
+# JAVA 11
 # Livrable 1
 
 ## Fonctionnalités implémentées
@@ -58,31 +59,54 @@
 ## Fonctionnalités implémentées
 
 
-- [ ] Affichage faces seulement / segments seulement
-- [ ] Affichage avancé de la bibliothèque de modèles
-- [ ] Recherche dans la bibliothèque de modèles
+- [#] Affichage faces seulement / segments seulement
+- [#] Affichage avancé de la bibliothèque de modèles
+- [#] Recherche dans la bibliothèque de modèles
 - [ ] Éditer les informations sur un modèle
-- [ ] Modèle centré
-- [ ] Éclairage
-- [ ] Lissage
+- [#] Modèle centré
+- [#] Éclairage
+- [#] Lissage
 - [ ] Ombre portée
 - [ ] Vue en tranches
-- [ ] Controleur horloge
+- [#] Controleur horloge
 - [ ] Autres, préciser
 
 ## Autres exigences
 
-- [ ] Tests unitaires
-- [ ] Diagramme de classes UML
-- [ ] Javadoc
-- [ ] Captures d'écran
-- [ ] Vidéo de présentation
-- [ ] Respect du format de rendu
+- [#] Tests unitaires
+- [#] Diagramme de classes UML
+- [#] Javadoc
+- [#] Captures d'écran
+- [#] Vidéo de présentation
+- [#] Respect du format de rendu
 
 ## Distribution du travail (qui a fait quoi)
+### Hugo Sene :
+##### Controleur horloge
+##### Recherche model
+##### Posibilité de voir les dates des fichiers
+
+### Leo Ben Hatat :
+##### Formules mathématiques (test)
+##### Trois vues sur une même fenêtre
+##### Eclairage
+##### Arrangement des fonctionnements graphiques (synchronisation)
+
+### Virgil Hazebroucq :
+##### Modele MVC
+##### Observeur/Observé
+##### Aide au Lissage
+##### Aide au controleur horloge
+
+#### Adnan Kouakoua :
+##### Eclairage
+##### Fabrique + Singleton
+##### Lissage
+##### Exception et Remodification de la lecture PLY
+##### Aide à la conception
 
 
 ## Difficultés rencontrées
-
-
-
+#### Réaliser le modèle MVC 
+#### Des malades dans le groupe qui ont très retardé le travail
+#### Clean code, diminuer le nombre de ligne de code sur les classes
