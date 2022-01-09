@@ -141,7 +141,7 @@ public class Controller {
 	public void setOnDown(Button down) {
 		down.setOnAction(e -> {
 			double theta = -4.0;
-			setOnDownAndUp(theta);
+			rotateModel(Axis.XAXIS, theta);
 
 			this.model.notifyObservers();
 		});
@@ -154,7 +154,7 @@ public class Controller {
 	public void setOnUp(Button up) {
 		up.setOnAction(e -> {
 			double theta = 4.0;
-			setOnDownAndUp(theta);
+			rotateModel(Axis.XAXIS, theta);
 
 			this.model.notifyObservers();
 		});
@@ -167,7 +167,7 @@ public class Controller {
 	public void setOnLeft(Button left) {
 		left.setOnAction(e -> {
 			double theta = -4.0;
-			setOnRightAndLeft(theta);
+			rotateModel(Axis.YAXIS, theta);
 
 			this.model.notifyObservers();
 		});
@@ -180,50 +180,10 @@ public class Controller {
 	public void setOnRight(Button right) {
 		right.setOnAction(e -> {
 			double theta = 4.0;
-			setOnRightAndLeft(theta);
+			rotateModel(Axis.YAXIS, theta);
+			
 			this.model.notifyObservers();
 		});
-	}
-	
-	/**
-	 * Permet la rotation vers la droite et la gauche de l'utilisateur
-	 * @param theta
-	 * TODO mettre en private + observeur/observé
-	 */
-	public void setOnRightAndLeft(double theta) {
-		for (ModelisationCanvas canvas : getCanvases()) {
-			switch (canvas.getAxis()) {
-			case XAXIS:
-				rotateModel(Axis.YAXIS, theta);
-				break;
-			case YAXIS:
-				rotateModel(Axis.XAXIS, theta);
-				break;
-			case ZAXIS:
-				rotateModel(Axis.YAXIS, theta);
-				break;
-			}
-		}
-	}
-	
-	/**
-	 * Permet la rotation vers le haut et le bas de l'utilisateur
-	 * @param theta
-	 */
-	public void setOnDownAndUp(double theta) {
-		for (ModelisationCanvas canvas : getCanvases()) {
-			switch (canvas.getAxis()) {
-			case XAXIS:
-				rotateModel(Axis.ZAXIS, theta);
-				break;
-			case YAXIS:
-				rotateModel(Axis.ZAXIS, theta);
-				break;
-			case ZAXIS:
-				rotateModel(Axis.XAXIS, theta);
-				break;
-			}
-		}
 	}
 	
 	

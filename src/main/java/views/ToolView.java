@@ -49,14 +49,14 @@ import util.Theme;
 public class ToolView {
 
 	/**
-	 * 
+	 * Réalise la barre d'outil de la fenêtre
 	 * @param controller
-	 * @param canvases
+	 * @param canvases 
 	 * @param view
 	 * @param path
 	 * @return
 	 */
-	public static  MenuBar createMenuBar(Controller controller, List<ModelisationCanvas> canvases, View view, String path) {
+	public static  MenuBar createMenuBar(Controller controller, ModelisationCanvas firstCanva, View view, String path) {
 		MenuBar menuBar = new MenuBar();
 
 		Menu fileMenu = new Menu("Fichier");
@@ -85,13 +85,13 @@ public class ToolView {
 		controller.setHelpAction(helpItem);
 
 		RadioMenuItem radioItem;
-		ModelisationCanvas firstCanvas = canvases.get(0);
+
 		for (DrawingMethod m : DrawingMethod.values()) {
 			radioItem = new RadioMenuItem(m.name());
 			radioItem.setToggleGroup(grp);
 			controller.setOnMethodChangerAction(m, radioItem);
 
-			if (m.equals(firstCanvas.getMethod())) {
+			if (m.equals(firstCanva.getMethod())) {
 				radioItem.setSelected(true);
 			}
 			viewMenu.getItems().add(radioItem);
@@ -115,7 +115,7 @@ public class ToolView {
 	}
 
 	/**
-	 * 
+	 * Donne les informations des fichiers ply dans un tableau et permet de réaliser une recherche
 	 * @param controller
 	 * @param view
 	 * @return

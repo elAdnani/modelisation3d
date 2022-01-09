@@ -1,9 +1,19 @@
 package util;
-
+/**
+ * 
+ * Cette classe permet d'obtenir des conversions utiles à nos différents calcules ou affichages
+ *
+ */
 public class Conversion {
 	
 	private Conversion() {
 	}
+	/**
+	 * à partir d'un nombre en octet permet d'obtenir la conversion textuel de ce nombre.</br>
+	 * Il peut être sous forme de: les octets, les kilos octets, les mega octets, les giga octets et les tera octets
+	 * @param size taille en octet
+	 * @return conversion textuel abrégé du nombre
+	 */
 	public static String getSize(long size) {
 		String res = "";
 
@@ -33,9 +43,9 @@ public class Conversion {
 	}
 	
 	/**
-	 * 
-	 * @param degree
-	 * @return
+	 * Réalise la transformation de degré en radian
+	 * @param degree nombre en dégré
+	 * @return nombre équivalent en radian
 	 */
 	public static double toRadian(double degree) {
 		return degree * Math.PI / 180;

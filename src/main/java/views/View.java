@@ -20,6 +20,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -43,7 +44,15 @@ import util.Conversion;
 import util.DrawingMethod;
 import util.PlyFileFilter;
 import util.Theme;
-
+/**
+ * 
+ * Cette classe sert est l'affichage de la fenêtre du projet de modélisation.</br>
+ * Elle est composé : </br>
+ * - D'une barre d'outil pour divers option </br>
+ * - Une liste d'image dans laquelle sont affichées la géométrie d'un modele </br>
+ * - D'une liste de proposition de fichier pouvant être affiché sur les images </br>
+ * - Des boutons et un glisseur pour modifier la structure géométrique du modele </br>
+ */
 @SuppressWarnings("PMD.LawOfDemeter")
 public class View extends Stage {
 
@@ -51,13 +60,16 @@ public class View extends Stage {
 	private Slider zoomSlider = null;
 
 	private double zoom = 10;
-	private double maxzoom = 100;
+	
 	private double defaultWidthPerc = 0.80;
 
 	private static String path = System.getProperty("user.dir") + File.separator + "exemples" + File.separator;
 
 	private Controller controller = null;
 
+	/**
+	 * Réalise l'interface
+	 */
 	public View() {
 		super();
 		setTitle("Modélisateur 3D");
@@ -82,7 +94,7 @@ public class View extends Stage {
 		VBox vBox = new VBox();
 		Scene scene = new Scene(vBox);
 
-		MenuBar menuBar = ToolView.createMenuBar(controller, canvases, this,path);
+		MenuBar menuBar = ToolView.createMenuBar(controller, canvases.get(0), this,path);
 		vBox.getChildren().add(menuBar);
 
 		/* CREATION DES OUTILS */
@@ -106,18 +118,29 @@ public class View extends Stage {
 				.setStyle("-fx-background-color: transparent;");
 	}
 
-
+	/**
+	 * Réalise la barre de menu affichant les fichiers lisibles dans un dossier défini
+	 * @return
+	 */
 	private TabPane createSearchModel() {
 		return  ToolView.createSearchModel(controller, this);
 	}
-
+	/**
+	 * Positionne les images ({@link Canvas}) dans une grille fléxible ({@link GridPane})
+	 * @param canvasPane 
+	 * @param canvases
+	 */
 	private void setupCanvasGridpane(GridPane canvasPane, List<ModelisationCanvas> canvases) {
 		canvasPane.add(canvases.get(0), 0, 0);
 		canvasPane.add(canvases.get(1), 1, 0);
 		canvasPane.add(canvases.get(2), 0, 1, 2, 1);
 	}
 
-
+	/**
+	 * Réalise la barre d'outil permettant le control des images {@link Canvas}
+	 * 
+	 * @return
+	 */
 	private VBox createToolBox() {
 		VBox outils = new VBox();
 
@@ -175,6 +198,7 @@ public class View extends Stage {
 
 		controller.setOnDown(downButton);
 		double zoomIncrement = 10.0;
+		double maxzoom = 100;
 		plusButton.setOnAction(e -> {
 			if (this.zoom + zoomIncrement < zoomSlider.maxProperty().doubleValue() * maxzoom) {
 				zoomSlider.setValue(zoomSlider.getValue() + zoomIncrement / maxzoom);
@@ -199,8 +223,12 @@ public class View extends Stage {
 		outils.getStyleClass().add("outils");
 		return outils;
 	}
-
+	/**
+	 * Réalise le slider modifiant la taille du modèle
+	 * @return le slider
+	 */
 	private Slider createSlider() {
+		double maxzoom = 100;
 		Slider slider = configureSlider();
 		slider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
@@ -209,9 +237,13 @@ public class View extends Stage {
 				zoom = zoomSlider.getValue() * maxzoom;
 			}
 		});
+		this.setZoom(slider.getValue()*maxzoom);
 		return slider;
 	}
-
+	/**
+	 * Définie un slider
+	 * @return
+	 */
 	private Slider configureSlider() {
 		Slider slider = new Slider();
 		slider.setMin(0);
@@ -222,11 +254,20 @@ public class View extends Stage {
 		slider.setValue(zoom);
 		return slider;
 	}
-
+	
+	
 	private ModelisationCanvas createCanvas(double width, double height, Axis axis) {
 		return createCanvas(width, height, axis, DrawingMethod.WIREFRAME);
 	}
 
+	/**
+	 * Créer un canvas {@link ModelisationCanvas} 
+	 * @param width
+	 * @param height
+	 * @param axis
+	 * @param method
+	 * @return
+	 */
 	private ModelisationCanvas createCanvas(double width, double height, Axis axis, DrawingMethod method) {
 		ModelisationCanvas canvas = new ModelisationCanvas(width, height, axis, method);
 
@@ -240,6 +281,11 @@ public class View extends Stage {
 	}
 
 
+	/**
+	 * Récupère une liste d'information sur les fichiers ply dans un dossier défini
+	 * @param regex lien vers le dossier
+	 * @return une liste de {@link PlyProperties}
+	 */
 	public List<PlyProperties> getModels(String regex) {
 		List<PlyProperties> models = new ArrayList<>();
 		File directory = new File(path);
@@ -274,7 +320,7 @@ public class View extends Stage {
 	}
 
 	/**
-	 * RecupÃ©ration de l'erreur PLY
+	 * Affiche une fenêtre informant l'utilisateur qu'une erreur s'est produite
 	 */
 	public void error(Exception  exception) {
 		Alert alert = new Alert(AlertType.ERROR);
@@ -289,6 +335,10 @@ public class View extends Stage {
 		return canvases;
 	}
 
+	/**
+	 * Change le {@link Theme} de la fenêtre
+	 * @param theme thème de la fenêtre
+	 */
 	public void changeTheme(Theme theme) {
 		if (theme != null) {
 			if (theme.equals(Theme.DEFAULT)) {
@@ -304,9 +354,23 @@ public class View extends Stage {
 		}
 	}
 
+	/**
+	 * Modifie la manière de dessiner sur le canvas
+	 * @param m
+	 */
 	public void setMethod(DrawingMethod m) {
 		for (ModelisationCanvas modelCanvas : canvases) {
 			modelCanvas.setMethod(m);
+		}
+	}
+	
+	/**
+	 * Modifie la manière de dessiner sur le canvas
+	 * @param m
+	 */
+	public void setZoom(double zoom) {
+		for (ModelisationCanvas modelCanvas : canvases) {
+			modelCanvas.setZoom(zoom);
 		}
 	}
 }

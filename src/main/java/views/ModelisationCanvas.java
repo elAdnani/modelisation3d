@@ -45,10 +45,6 @@ public class ModelisationCanvas extends Canvas implements Observer {
 	 * @param width longueur
 	 * @param height largeur
 	 */
-	public ModelisationCanvas(double width, double height) {
-		this(width, height, Axis.ZAXIS, DrawingMethod.WIREFRAME);
-	}
-
 	public ModelisationCanvas(double width, double height, Axis axis) {
 		this(width, height, axis, DrawingMethod.WIREFRAME);
 	}
@@ -56,12 +52,19 @@ public class ModelisationCanvas extends Canvas implements Observer {
 	public ModelisationCanvas(double width, double height, DrawingMethod method) {
 		this(width, height, Axis.ZAXIS, method);
 	}
-
 	public ModelisationCanvas(double width, double height, Axis axis, DrawingMethod method) {
 		super(width, height);
 		this.axis = axis;
 		this.method = method;
-		this.zoom = 1;
+		this.zoom = 10;
+
+	}
+
+	public ModelisationCanvas(double width, double height, Axis axis, DrawingMethod method, double zoom) {
+		super(width, height);
+		this.axis = axis;
+		this.method = method;
+		this.zoom = zoom;
 
 	}
 

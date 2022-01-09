@@ -1,6 +1,7 @@
 package ply;
 
 import java.io.BufferedReader;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import math.Face;
 import modele.geometrique.FigureFabrique;
 import modele.geometrique.Point;
 import ply.exceptions.FormatPlyException;
+import util.PlyFileFilter;
 
 /**
  * 
@@ -183,7 +185,8 @@ public class RecuperationPly {
 	 * @throws FormatPlyException
 	 */
 	public static void checkFormat(String file) throws FormatPlyException {
-		if (file == null || !file.endsWith(".ply")) {
+		PlyFileFilter filter = new PlyFileFilter();
+		if (!filter.accept(file)) {
 			throw new FormatPlyException("(Fichier \"" + file + "\" invalide. Le fichier n'est pas au format ply.)");
 		}
 	}

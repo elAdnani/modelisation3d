@@ -1,7 +1,7 @@
 package ply;
 /**
  * 
- * Cette classe sert à réaliser la liste 
+ * Cette classe sert permet de stocker les informations d'affichages des fichiers ply.
  *
  */
 public class PlyProperties {
@@ -28,64 +28,46 @@ public class PlyProperties {
 	}
 
 
+	
 	public String getPath() {
 		return path;
 	}
-
-	/**
-	 * 
-	 * @return the name
-	 */
 	public String getName() {
 		return name;
 	}
-	/**
-	 * 
-	 * @param name the name to set
-	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 	public void setPath(String path) {
 		this.path = path;
 	}
-	
 	public String getAuthor() {
 		return author;
 	}
-
 	public void setAuthor(String author) {
 		this.author = author;
 	}
-
 	public String getCreated() {
 		return created;
 	}
-
 	public void setCreated(String created) {
 		this.created = created;
 	}
-
 	public String getSize() {
 		return size;
 	}
-
 	public void setSize(String size) {
 		this.size = size;
 	}
-
 	public int getFaces() {
 		return faces;
 	}
-
 	public void setFaces(int faces) {
 		this.faces = faces;
 	}
-
 	public int getPoints() {
 		return points;
 	}
-
 	public void setPoints(int points) {
 		this.points = points;
 	}
