@@ -1,21 +1,12 @@
 package views;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Iterator;
-import java.util.List;
-
 import connectable.Observer;
 import connectable.Subject;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import math.Face;
 import modele.Model;
-import modele.geometrique.Figure;
-import modele.geometrique.FigureFabrique;
-import modele.geometrique.Point;
 import util.Axis;
 import util.DrawingMethod;
 /**
@@ -76,7 +67,7 @@ public class ModelisationCanvas extends Canvas implements Observer {
 		if (model == null)
 			return;
 		clearCanvas();
-		if (!model.getLastSortedAxis().equals(axis) || !model.isAlreadySorted())
+		if (!model.getLastSortedAxis().equals(axis) || !model.isSorted())
 			model.sortPoints(this.axis);
 		draw(model);
 	}
@@ -136,13 +127,13 @@ public class ModelisationCanvas extends Canvas implements Observer {
 	 * @param degree degré de couleur définie entre 0 et 1
 	 */
 	public void fillPolygon(double[] xCoord, double[] yCoord, int nbPoints, double degree) {
-		GraphicsContext gc = this.getGraphicsContext2D();
+		GraphicsContext context = this.getGraphicsContext2D();
 		int maxColor =255;
-		gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x", 
+		context.setFill(Paint.valueOf(String.format("#%02x%02x%02x", 
 				(int) (this.figure.getRed()*maxColor * degree),
 				(int) (this.figure.getGreen()*maxColor * degree), 
 				(int) (this.figure.getBlue()*maxColor * degree))));
-		gc.fillPolygon(xCoord, yCoord, nbPoints);
+		context.fillPolygon(xCoord, yCoord, nbPoints);
 	}
 	
 	/**

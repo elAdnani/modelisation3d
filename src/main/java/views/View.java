@@ -202,10 +202,10 @@ public class View extends Stage {
 		plusButton.setOnAction(e -> {
 			if (this.zoom + zoomIncrement < zoomSlider.maxProperty().doubleValue() * maxzoom) {
 				zoomSlider.setValue(zoomSlider.getValue() + zoomIncrement / maxzoom);
-				controller.setZoom(this.zoom + zoomIncrement);
+				setZoom(this.zoom + zoomIncrement);
 			} else {
 				zoomSlider.setValue(zoomSlider.maxProperty().doubleValue());
-				controller.setZoom(zoomSlider.maxProperty().doubleValue() * maxzoom);
+				setZoom(zoomSlider.maxProperty().doubleValue() * maxzoom);
 			}
 			this.zoom = canvases.get(0).getZoom();
 		});
@@ -213,10 +213,10 @@ public class View extends Stage {
 		minusButton.setOnAction(e -> {
 			if (this.zoom - zoomIncrement > 0) {
 				zoomSlider.setValue(zoomSlider.getValue() - zoomIncrement / maxzoom);
-				controller.setZoom(this.zoom - zoomIncrement);
+				setZoom(this.zoom - zoomIncrement);
 			} else {
 				zoomSlider.setValue(0);
-				controller.setZoom(0);
+				setZoom(0);
 			}
 			this.zoom = canvases.get(0).getZoom();
 		});
@@ -233,7 +233,7 @@ public class View extends Stage {
 		slider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				controller.setZoom(zoomSlider.getValue() * maxzoom);
+				setZoom(zoomSlider.getValue() * maxzoom);
 				zoom = zoomSlider.getValue() * maxzoom;
 			}
 		});
@@ -358,9 +358,9 @@ public class View extends Stage {
 	 * Modifie la manière de dessiner sur le canvas
 	 * @param m
 	 */
-	public void setMethod(DrawingMethod m) {
+	public void setMethod(DrawingMethod method) {
 		for (ModelisationCanvas modelCanvas : canvases) {
-			modelCanvas.setMethod(m);
+			modelCanvas.setMethod(method);
 		}
 	}
 	

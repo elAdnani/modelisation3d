@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import connectable.Subject;
-import javafx.scene.canvas.Canvas;
 import math.Face;
 import math.Matrice;
 import math.OutilMatriciel;
@@ -17,19 +16,18 @@ import modele.geometrique.Point;
 import ply.RecuperationPly;
 import ply.exceptions.FormatPlyException;
 import util.Axis;
+
 /**
  * 
- * Cette classe est la représentation du modele de la structure géométrique d'un fichier PLY. </br>
- * Elle permet de représenter de modifier et de récupérer cette structure géométrique. </br>
- * Elle a la possibilité de :
- * - Ordonnée les points
- * - Centrer le modele
- * - Faire une rotation
- * - Faire une translation
- * - Récupérer les 
+ * Cette classe est la représentation du modele de la structure géométrique d'un
+ * fichier PLY. </br>
+ * Elle permet de représenter de modifier et de récupérer cette structure
+ * géométrique. </br>
+ * Elle a la possibilité de : - Ordonnée les points - Centrer le modele - Faire
+ * une rotation - Faire une translation - Récupérer les
  *
  * @author <a href="mailto:adnan.kouakoua@univ-lille1.fr">Adnân KOUAKOUA</a>
- * IUT-A Informatique, Universite de Lille.
+ *         IUT-A Informatique, Universite de Lille.
  * 
  */
 public class Model extends Subject {
@@ -43,7 +41,7 @@ public class Model extends Subject {
 	private double offsetZ = 0.0;
 
 	private Axis lastSortedAxis = Axis.ZAXIS;
-	private boolean isAlreadySorted = false;
+	private boolean sorted = false;
 
 	public Model() {
 		super();
@@ -52,8 +50,7 @@ public class Model extends Subject {
 	}
 
 	/**
-	 * Chage un fichier PLY
-	 * Load .ply file for current Model
+	 * Chage un fichier PLY Load .ply file for current Model
 	 * 
 	 * @throws FormatPlyException
 	 * @throws FileNotFoundException
@@ -89,10 +86,11 @@ public class Model extends Subject {
 		Comparator<Face> comp = new AxisComparator(axis);
 
 		Collections.sort(faces, comp);
-		this.isAlreadySorted = true;
+		this.sorted = true;
 
 		long end = System.nanoTime();
-		System.out.println("Sorting done in " + (end - start) + " nanoseconds (" + (end - start) / 1_000_000.0 + " ms)");
+		System.out
+				.println("Sorting done in " + (end - start) + " nanoseconds (" + (end - start) / 1_000_000.0 + " ms)");
 	}
 
 	private Point calculateCenter() {
@@ -110,28 +108,18 @@ public class Model extends Subject {
 			double currX = point.getX();
 			double currY = point.getY();
 			double currZ = point.getZ();
-			if (xMin == null || currX < xMin)
-				xMin = currX;
-			if (xMax == null || currX > xMax)
-				xMax = currX;
-			if (yMin == null || currY < yMin)
-				yMin = currY;
-			if (yMax == null || currY > yMax)
-				yMax = currY;
-			if (zMin == null || currZ < zMin)
-				zMin = currZ;
-			if (zMax == null || currZ > zMax)
-				zMax = currZ;
+			xMin = Math.min(xMin, currX);
+			xMax = Math.min(xMax, currX);
+			yMin = Math.min(yMin, currY);
+			yMax = Math.min(yMax, currY);
+			zMin = Math.min(zMin, currZ);
+			zMax = Math.min(zMax, currZ);
 		}
 
 		centerCoord[0] = (xMax + xMin) / 2;
 		centerCoord[1] = (yMax + yMin) / 2;
 		centerCoord[2] = (zMax + zMin) / 2;
 
-		System.out.println("xMax : " + xMax + "; xMin : " + xMin + "; MilieuX : " + centerCoord[0]);
-		System.out.println("yMax : " + yMax + "; yMin : " + yMin + "; MilieuY : " + centerCoord[1]);
-		System.out.println("zMax : " + zMax + "; zMin : " + zMin + "; MilieuZ : " + centerCoord[2]);
-		
 		return fabriquePoint.vertex(centerCoord[0], centerCoord[1], centerCoord[2]);
 	}
 
@@ -147,16 +135,15 @@ public class Model extends Subject {
 			rotateEach(OutilMatriciel.getXRotation(theta));
 			break;
 		}
-		this.isAlreadySorted = false;
+		this.sorted = false;
 		return this;
 	}
-	
+
 	private void rotateEach(Matrice rotation) {
 		for (Point p : points) {
 			p.modifyCoordinates(rotation);
 		}
 	}
-
 
 	public Model translate(Axis axis, double distance) {
 		switch (axis) {
@@ -215,8 +202,8 @@ public class Model extends Subject {
 		return lastSortedAxis;
 	}
 
-	public boolean isAlreadySorted() {
-		return isAlreadySorted;
+	public boolean isSorted() {
+		return sorted;
 	}
 
 	/**
@@ -225,27 +212,30 @@ public class Model extends Subject {
 	 */
 	private class AxisComparator implements Comparator<Face> {
 		Axis axis;
+
 		public AxisComparator(Axis axis) {
-			this.axis=axis;
+			this.axis = axis;
 		}
+
 		@Override
-		public int compare(Face o1, Face o2) {
+		public int compare(Face face1, Face face2) {
 			double av1;
 			double av2;
 			switch (this.axis) {
 			case YAXIS:
-				av1 = o1.getAverageY();
-				av2 = o2.getAverageY();
+				av1 = face1.getAverageY();
+				av2 = face2.getAverageY();
 				break;
 			case ZAXIS:
-				av1 = o1.getAverageZ();
-				av2 = o2.getAverageZ();
+				av1 = face1.getAverageZ();
+				av2 = face2.getAverageZ();
 				break;
 			default:
-				av1 = o1.getAverageX();
-				av2 = o2.getAverageX();
+				av1 = face1.getAverageX();
+				av2 = face2.getAverageX();
 				break;
 			}
+
 			if (av1 > av2) {
 				return 1;
 			} else if (av1 < av2) {
@@ -254,6 +244,5 @@ public class Model extends Subject {
 			return 0;
 		}
 	}
-
 
 }

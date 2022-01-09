@@ -1,7 +1,6 @@
 package modele.geometrique;
 
 import math.Matrice;
-import math.OutilMatriciel;
 
 /**
  * 

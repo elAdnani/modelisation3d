@@ -9,106 +9,126 @@ import math.Face;
 import modele.Model;
 import modele.geometrique.Figure;
 import modele.geometrique.Point;
+
 /**
  * 
- * Cette classe sert à définir les différentes manières de dessin appartenant à {@link Axis}
+ * Cette classe sert à définir les différentes manières de dessin appartenant à
+ * {@link Axis}
  *
  */
 public class DrawCanvas {
-	private static String xmethod ;
+	private static String xmethod;
 	private static String ymethod;
 	private static double offSetX;
 	private static double offSetY;
 	
-	
+	private DrawCanvas() {}
 
 	public static void drawWireframe(Model model, ModelisationCanvas canvas, double zoom) {
-		findMethod( model, canvas);
-
-		double x = 0;
-		double y = 0;
-
-		double[] xCoord = null;
-		double[] yCoord = null;
+		findMethod(model, canvas);
 
 		List<Face> faces = model.getFaces();
 
-
-		try
-		{
+		try {
 			Method methodGetX = Point.class.getDeclaredMethod(xmethod);
 			Method methodGetY = Point.class.getDeclaredMethod(ymethod);
-			for (Face face : faces)
-			{
-				Iterator<Point> it = face.getPoints().iterator();
-				int nbPoints = face.getPoints().size();
-				xCoord = new double[nbPoints];
-				yCoord = new double[nbPoints];
+			for (Face face : faces) {
+				List<Point> points = face.getPoints();
+				Iterator<Point> iterator = points.iterator();
+				int nbPoints = points.size();
+				double[] xCoord = new double[nbPoints];
+				double[] yCoord = new double[nbPoints];
 				int cpt = 0;
-				while (it.hasNext())
-				{
-					Point pt = it.next();
+				while (iterator.hasNext()) {
+					Point point = iterator.next();
 
-					x = ((Double) methodGetX.invoke(pt) * zoom) + offSetX;
-					y = ((Double) methodGetY.invoke(pt) * zoom) + offSetY;
+					double xCoordinate = ((Double) methodGetX.invoke(point) * zoom) + offSetX;
+					double yCoordinate = ((Double) methodGetY.invoke(point) * zoom) + offSetY;
 
-					xCoord[cpt] = x;
-					yCoord[cpt] = y;
+					xCoord[cpt] = xCoordinate;
+					yCoord[cpt] = yCoordinate;
 
 					cpt++;
 				}
 				canvas.strokePolygon(xCoord, yCoord, nbPoints);
 			}
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e)
-		{
+				| InvocationTargetException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public static void drawSolid(Model model, ModelisationCanvas canvas, double zoom) {
-		findMethod( model, canvas);
-		double x = 0;
-		double y = 0;
-
-		double[] xCoord = null;
-		double[] yCoord = null;
-
+		findMethod(model, canvas);
 		
 		List<Face> faces = model.getFaces();
 
-
-		try
-		{
+		try {
 			Method methodGetX = Figure.class.getDeclaredMethod(xmethod);
 			Method methodGetY = Figure.class.getDeclaredMethod(ymethod);
-			for (Face face : faces)
-			{
-				Iterator<Point> it = face.getPoints().iterator();
-				int nbPoints = face.getPoints().size();
-				xCoord = new double[nbPoints];
-				yCoord = new double[nbPoints];
+			for (Face face : faces) {
+				List<Point> points = face.getPoints();
+				Iterator<Point> iterator = points.iterator();
+				int nbPoints = points.size();
+				double[] xCoord = new double[nbPoints];
+				double[] yCoord = new double[nbPoints];
 				int cpt = 0;
-				while (it.hasNext())
-				{
-					Point pt = it.next();
+				while (iterator.hasNext()) {
+					Point point = iterator.next();
 
-					x = ((Double) methodGetX.invoke(pt) * zoom) + offSetX;
-					y = ((Double) methodGetY.invoke(pt) * zoom) + offSetY;
+					double xCoordinate = ((Double) methodGetX.invoke(point) * zoom) + offSetX;
+					double yCoordinate = ((Double) methodGetY.invoke(point) * zoom) + offSetY;
 
-					xCoord[cpt] = x;
-					yCoord[cpt] = y;
+					xCoord[cpt] = xCoordinate;
+					yCoord[cpt] = yCoordinate;
 
 					cpt++;
 				}
 				canvas.fillPolygon(xCoord, yCoord, nbPoints, face.colorDegree());
 			}
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e)
-		{
+				| InvocationTargetException e) {
 			e.printStackTrace();
 		}
 	}
+
+
+	public static void drawBoth(Model model, ModelisationCanvas canvas, double zoom) {
+		findMethod(model, canvas);
+
+		List<Face> faces = model.getFaces();
+		try {
+			Method methodGetX = Figure.class.getDeclaredMethod(xmethod);
+			Method methodGetY = Figure.class.getDeclaredMethod(ymethod);
+			for (Face face : faces) {
+				List<Point> points = face.getPoints();
+				Iterator<Point> iterator = points.iterator();
+				int nbPoints = points.size();
+				double[] xCoord = new double[nbPoints];
+				double[] yCoord = new double[nbPoints];
+				int cpt = 0;
+				while (iterator.hasNext()) {
+					Point point = iterator.next();
+
+					double xCoordinate = ((Double) methodGetX.invoke(point) * zoom) + offSetX;
+					double yCoordinate = ((Double) methodGetY.invoke(point) * zoom) + offSetY;
+
+					xCoord[cpt] = xCoordinate;
+					yCoord[cpt] = yCoordinate;
+
+					cpt++;
+				}
+
+				canvas.fillPolygon(xCoord, yCoord, nbPoints, face.colorDegree());
+				canvas.strokePolygon(xCoord, yCoord, nbPoints);
+			}
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	private static void findMethod(Model model, ModelisationCanvas canvas) {
 		double middlescreenx = canvas.getWidth() / 2;
 		double middlescreeny = canvas.getHeight() / 2;
@@ -134,49 +154,5 @@ public class DrawCanvas {
 			break;
 		}
 		
-	}
-	public static void drawBoth(Model model, ModelisationCanvas canvas, double zoom) {
-		findMethod( model, canvas);
-
-		double x = 0;
-		double y = 0;
-
-		double[] xCoord = null;
-		double[] yCoord = null;
-
-		List<Face> faces = model.getFaces();
-		try
-		{
-			Method methodGetX = Figure.class.getDeclaredMethod(xmethod);
-			Method methodGetY = Figure.class.getDeclaredMethod(ymethod);
-			for (Face face : faces)
-			{
-				Iterator<Point> it = face.getPoints().iterator();
-				int nbPoints = face.getPoints().size();
-				xCoord = new double[nbPoints];
-				yCoord = new double[nbPoints];
-				int cpt = 0;
-				while (it.hasNext())
-				{
-					Point pt = it.next();
-
-					x = ((Double) methodGetX.invoke(pt) * zoom) + offSetX;
-					y = ((Double) methodGetY.invoke(pt) * zoom) + offSetY;
-
-					xCoord[cpt] = x;
-					yCoord[cpt] = y;
-
-					cpt++;
-				}
-
-				canvas.fillPolygon(xCoord, yCoord, nbPoints, face.colorDegree());
-				canvas.strokePolygon(xCoord, yCoord, nbPoints);
-			}
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e)
-		{
-			e.printStackTrace();
-		}
-
 	}
 }

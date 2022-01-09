@@ -15,7 +15,6 @@ public class Conversion {
 	 * @return conversion textuel abrégé du nombre
 	 */
 	public static String getSize(long size) {
-		String res = "";
 
 		long kilo = 1024;
 		long mega = kilo * kilo;
@@ -26,6 +25,8 @@ public class Conversion {
 		double formatMb = formatKb / kilo;
 		double formatGb = formatMb / kilo;
 		double formatTb = formatGb / kilo;
+
+		String res = "";
 
 		if (size < kilo) {
 			res = size + " Bytes";

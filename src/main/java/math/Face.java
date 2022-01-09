@@ -40,18 +40,18 @@ public class Face {
 	 */
 	public void triangularDivision() {
 		FigureFabrique fabric = FigureFabrique.getInstance();
-		Point a = this.vertices.get(0);
-		Point b = this.vertices.get(1);
-		Point c = this.vertices.get(2);
-		Point middleAB = fabric.vertex((a.getX() + b.getX()) / 2, (a.getY() + b.getY()) / 2, (a.getZ() + b.getZ()) / 2);
-		Point middleAC = fabric.vertex((a.getX() + c.getX()) / 2, (a.getY() + c.getY()) / 2, (a.getZ() + c.getZ()) / 2);
-		Point middleBC = fabric.vertex((b.getX() + c.getX()) / 2, (b.getY() + c.getY()) / 2, (b.getZ() + c.getZ()) / 2);
+		Point pointA = this.vertices.get(0);
+		Point pointB = this.vertices.get(1);
+		Point pointC = this.vertices.get(2);
+		Point middleAB = fabric.vertex((pointA.getX() + pointB.getX()) / 2, (pointA.getY() + pointB.getY()) / 2, (pointA.getZ() + pointB.getZ()) / 2);
+		Point middleAC = fabric.vertex((pointA.getX() + pointC.getX()) / 2, (pointA.getY() + pointC.getY()) / 2, (pointA.getZ() + pointC.getZ()) / 2);
+		Point middleBC = fabric.vertex((pointB.getX() + pointC.getX()) / 2, (pointB.getY() + pointC.getY()) / 2, (pointB.getZ() + pointC.getZ()) / 2);
 
 		this.division = new ArrayList<>();
 		division.add(new Face(Arrays.asList(middleAB, middleAC, middleBC)));
-		division.add(new Face(Arrays.asList(a, middleAB, middleAC)));
-		division.add(new Face(Arrays.asList(b, middleAB, middleBC)));
-		division.add(new Face(Arrays.asList(c, middleBC, middleAC)));
+		division.add(new Face(Arrays.asList(pointA, middleAB, middleAC)));
+		division.add(new Face(Arrays.asList(pointB, middleAB, middleBC)));
+		division.add(new Face(Arrays.asList(pointC, middleBC, middleAC)));
 	}
 
 	/**
@@ -88,12 +88,12 @@ public class Face {
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder("[Face");
+		StringBuilder builder = new StringBuilder("[Face");
 		for (Point p : vertices) {
-			sb.append(p + "---");
+			builder.append(p + "---");
 		}
-		sb.append("]");
-		return sb.toString();
+		builder.append("]");
+		return builder.toString();
 	}
 
 	/**
@@ -148,13 +148,15 @@ public class Face {
 	 */
 	public double colorDegree() {
 		double colorDegree = -1;
-		if (this.vertices.size() >= 3) {
+		double nbVertices = 3;
+		double maxColor = 255;
+		if (this.vertices.size() >= nbVertices) {
 			Vecteur normalUnitaire = VecteurOutil.unitNormal(this.vertices.get(0), this.vertices.get(1),
 					this.vertices.get(2));
 			colorDegree = (normalUnitaire.getX() * LIGHTSOURCE.getX()) + (normalUnitaire.getY() * LIGHTSOURCE.getY())
 					+ (normalUnitaire.getZ() * LIGHTSOURCE.getZ());
 			colorDegree = Math.abs(colorDegree);
-			if (colorDegree > 255) {
+			if (colorDegree > maxColor) {
 				colorDegree = 255;
 			}
 		}
@@ -162,8 +164,8 @@ public class Face {
 
 	}
 
-	public void add(Point p) {
-		this.vertices.add(p);
+	public void add(Point point) {
+		this.vertices.add(point);
 	}
 
 }

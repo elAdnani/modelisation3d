@@ -48,6 +48,8 @@ import util.Theme;
  */
 public class ToolView {
 
+	private ToolView() {}
+	
 	/**
 	 * Réalise la barre d'outil de la fenêtre
 	 * @param controller
@@ -200,17 +202,13 @@ public class ToolView {
 		FileFilter filter = new PlyFileFilter();
 		File[] liste = directory.listFiles(filter);
 		List<MenuItem> menuItems = new ArrayList<>();
-		MenuItem item;
 		for (File f : liste) {
-			System.out.println(f.getAbsolutePath());
-			item = new MenuItem("Erreur!");
 			try {
-
 				Path filepath = Path.of(f.getPath());
 				System.out.println(Files.getFileAttributeView(filepath, PosixFileAttributeView.class));
 				AclFileAttributeView att = Files.getFileAttributeView(filepath, AclFileAttributeView.class);
 				BasicFileAttributes attributes = Files.readAttributes(filepath, BasicFileAttributes.class);
-				item = new MenuItem(f.getName() + "\nAuthor: " + att.getOwner().getName() + " ("
+				MenuItem item = new MenuItem(f.getName() + "\nAuthor: " + att.getOwner().getName() + " ("
 						+ Conversion.getSize(attributes.size()) + ")" + "\nfaces:"
 						+ RecuperationPly.getNbFaces(filepath.toString()) + "; points:"
 						+ RecuperationPly.getNbVertices(filepath.toString()));

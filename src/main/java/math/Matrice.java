@@ -48,8 +48,6 @@ public class Matrice {
 	 *               matrice.
 	 */
 	public Matrice(double[][] matrix) {
-		// Instantiation de la nouvelle matrice
-
 		this.matrixCoordinates = matrix;
 		if (!this.isSquare()) {
 			this.matrixCoordinates = new double[matrix.length][matrix.length];
@@ -57,7 +55,6 @@ public class Matrice {
 			this.nbColumn = matrix[0].length;
 			this.nbLine = matrix.length;
 		}
-
 	}
 
 	/**
@@ -83,19 +80,19 @@ public class Matrice {
 	/**
 	 * Création d'une matrice nulle carrée de taille n supérieur à 0.
 	 * 
-	 * @param n Le nombre de lignes et de colonnes de la future matrice.
+	 * @param nbLine Le nombre de lignes et de colonnes de la future matrice.
 	 */
-	public Matrice(int n) {
-		this(n, n);
+	public Matrice(int nbLine) {
+		this(nbLine, nbLine);
 	}
 
 	/**
 	 * Création d'une matrice nulle carrée de taille n supérieur à 0.
 	 * 
-	 * @param m Le nombre de lignes et de colonnes de la future matrice.
+	 * @param matrix Le nombre de lignes et de colonnes de la future matrice.
 	 */
-	public Matrice(Matrice m) {
-		this(m.matrixCoordinates);
+	public Matrice(Matrice matrix) {
+		this(matrix.matrixCoordinates);
 	}
 
 	/* GETTER ______________________________ */

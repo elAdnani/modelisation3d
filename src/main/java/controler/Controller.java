@@ -33,8 +33,8 @@ import views.View;
  */
 public class Controller {
 
-	private Model model = null;
-	private View view = null;
+	private Model model;
+	private View view;
 
 	private double oldMouseX;
 	private double oldMouseY;
@@ -101,14 +101,6 @@ public class Controller {
 		this.model = model;
 	}
 
-	public void setZoom(double zoom) {
-		for (ModelisationCanvas canvas : getCanvases()) {
-			canvas.setZoom(zoom);
-		}
-		model.notifyObservers();
-	}
-	
-
 	/**
 	 * Est l'évènement qui permet à l'utilisateur de choisir un fichier parmi toute une selection
 	 * @param openFileItem
@@ -151,8 +143,8 @@ public class Controller {
 	 * Est l'évènement qui permet de faire une rotation vers le haut du modele visiualisé par l'utilisateur
 	 * @param up
 	 */
-	public void setOnUp(Button up) {
-		up.setOnAction(e -> {
+	public void setOnUp(Button upButton) {
+		upButton.setOnAction(e -> {
 			double theta = 4.0;
 			rotateModel(Axis.XAXIS, theta);
 
@@ -194,20 +186,20 @@ public class Controller {
 	public void addKeyPressedEvent(Node node) {
 		node.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			double theta = 1.0;
-			public void handle(KeyEvent e) {
-				if (e.getCode() == KeyCode.RIGHT) {
+			public void handle(KeyEvent event) {
+				if (event.getCode() == KeyCode.RIGHT) {
 					rotateModel(Axis.YAXIS, theta);
 					model.notifyObservers();
 				}
-				if (e.getCode() == KeyCode.LEFT) {
+				if (event.getCode() == KeyCode.LEFT) {
 					rotateModel(Axis.YAXIS, -theta);
 					model.notifyObservers();
 				}
-				if (e.getCode() == KeyCode.UP) {
+				if (event.getCode() == KeyCode.UP) {
 					rotateModel(Axis.XAXIS, theta);
 					model.notifyObservers();
 				}
-				if (e.getCode() == KeyCode.DOWN) {
+				if (event.getCode() == KeyCode.DOWN) {
 					rotateModel(Axis.XAXIS, -theta);
 					model.notifyObservers();
 				}
@@ -253,12 +245,11 @@ public class Controller {
 	 * Permet de changer la charger un fichier/modele ply lorsque l'utilisateur le demande
 	 * @param f
 	 * @param item
-	 * TODO erreur ply récupéré ?
 	 */
-	public void setLoadFileItem(File f, MenuItem item) {
+	public void setLoadFileItem(File file, MenuItem item) {
 		item.setOnAction(event -> {
 			try {
-				loadFile(f.getPath());
+				loadFile(file.getPath());
 			} catch (FileNotFoundException | FormatPlyException error) {
 				error.printStackTrace();
 			}
