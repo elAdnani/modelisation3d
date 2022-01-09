@@ -35,7 +35,7 @@ public class RecuperationPly {
 	/**
 	 * Réinitialise les données
 	 */
-	private static void resetDonnnee() {
+	private static void resetData() {
 		nbVertex = -1;
 		nbFace = -1;
 	}
@@ -48,11 +48,11 @@ public class RecuperationPly {
 	 * @throws FormatPlyException    Si le fichier n'est pas du format PLY
 	 * @throws FileNotFoundException Si le fichier n'existe pas
 	 */
-	public static void recuperationFichier(String fichier) throws FormatPlyException, FileNotFoundException {
-		BufferedReader reader = verifierFichier(fichier);
-		resetDonnnee();
+	public static void readFile(String fichier) throws FormatPlyException, FileNotFoundException {
+		BufferedReader reader = verifyFile(fichier);
+		resetData();
 		try {
-			readHeadFile(reader);
+			readHeader(reader);
 			recuperationPoints(reader);
 			recuperationFaces(points, reader);
 		} catch (IOException e) {
@@ -69,10 +69,10 @@ public class RecuperationPly {
 	 * @throws FormatPlyException    Si le fichier n'est pas du format PLY
 	 * @throws FileNotFoundException Si le fichier n'existe pas
 	 */
-	private static BufferedReader verifierFichier(String fichier) throws FormatPlyException, FileNotFoundException {
+	private static BufferedReader verifyFile(String fichier) throws FormatPlyException, FileNotFoundException {
 		checkFormat(fichier);
 		BufferedReader reader = new BufferedReader(new FileReader(fichier));
-		resetDonnnee();
+		resetData();
 		return reader;
 
 	}
@@ -96,7 +96,7 @@ public class RecuperationPly {
 
 			if (line != null && !line.isEmpty()) {
 				tab = line.split(" ");
-				res.add(fabriquePoint.point(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
+				res.add(fabriquePoint.vertex(Double.valueOf(tab[0]), Double.valueOf(tab[1]), Double.valueOf(tab[2])));
 			} else {
 				idx--;
 			}
@@ -148,7 +148,7 @@ public class RecuperationPly {
 	 * @throws FormatPlyException Si le fichier n'est pas du format PLY
 	 * @throws IOException        une opération d'entrée du fichier échoue
 	 */
-	protected static void readHeadFile(BufferedReader raf) throws FormatPlyException, IOException {
+	protected static void readHeader(BufferedReader raf) throws FormatPlyException, IOException {
 
 		String line = raf.readLine();
 
@@ -197,9 +197,8 @@ public class RecuperationPly {
 	 * @throws IOException
 	 */
 	public static int getNbVertices(String fichier) throws FormatPlyException, IOException {
-		BufferedReader reader = verifierFichier(fichier);
-		readHeadFile(reader);
-
+		BufferedReader reader = verifyFile(fichier);
+		readHeader(reader);
 		return nbVertex;
 	}
 
@@ -212,9 +211,8 @@ public class RecuperationPly {
 	 * @throws IOException
 	 */
 	public static int getNbFaces(String fichier) throws FormatPlyException, IOException {
-		BufferedReader reader = verifierFichier(fichier);
-		readHeadFile(reader);
-
+		BufferedReader reader = verifyFile(fichier);
+		readHeader(reader);
 		return nbFace;
 	}
 

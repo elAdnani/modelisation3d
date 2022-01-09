@@ -97,7 +97,7 @@ public class DrawCanvas {
 
 					cpt++;
 				}
-				canvas.fillPolygon(xCoord, yCoord, nbPoints, face.degreDeCouleur());
+				canvas.fillPolygon(xCoord, yCoord, nbPoints, face.colorDegree());
 			}
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e)
@@ -165,7 +165,7 @@ public class DrawCanvas {
 					cpt++;
 				}
 
-				canvas.fillPolygon(xCoord, yCoord, nbPoints, face.degreDeCouleur());
+				canvas.fillPolygon(xCoord, yCoord, nbPoints, face.colorDegree());
 				canvas.strokePolygon(xCoord, yCoord, nbPoints);
 			}
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException

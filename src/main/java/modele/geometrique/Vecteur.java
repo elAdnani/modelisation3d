@@ -17,9 +17,7 @@ public class Vecteur extends Figure{
 		}
 
 		public Vecteur(double cooX, double cooY, double cooZ) {
-			
 			super(cooX,cooY,cooZ,1);
-			
 		}
 		
 		public void setVecteur(double cooX, double cooY, double cooZ) {

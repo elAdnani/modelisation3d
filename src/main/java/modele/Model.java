@@ -52,7 +52,7 @@ public class Model extends Subject {
 	 * @throws FileNotFoundException
 	 */
 	public void loadFile(String path) throws FileNotFoundException, FormatPlyException {
-		RecuperationPly.recuperationFichier(path);
+		RecuperationPly.readFile(path);
 		points = RecuperationPly.getPoints();
 		faces = RecuperationPly.getFaces();
 		center = calculateCenter();
@@ -125,20 +125,19 @@ public class Model extends Subject {
 		System.out.println("yMax : " + yMax + "; yMin : " + yMin + "; MilieuY : " + centerCoord[1]);
 		System.out.println("zMax : " + zMax + "; zMin : " + zMin + "; MilieuZ : " + centerCoord[2]);
 		
-		return fabriquePoint.point(centerCoord[0], centerCoord[1], centerCoord[2]);
+		return fabriquePoint.vertex(centerCoord[0], centerCoord[1], centerCoord[2]);
 	}
 
 	public Model rotate(Axis axis, double theta) {
-		System.out.println("AU SECOURS ROTATE");
 		switch (axis) {
 		case YAXIS:
-			rotateEach(OutilMatriciel.getRotationY(theta));
+			rotateEach(OutilMatriciel.getYRotation(theta));
 			break;
 		case ZAXIS:
-			rotateEach(OutilMatriciel.getRotationZ(theta));
+			rotateEach(OutilMatriciel.getZRotation(theta));
 			break;
 		default:
-			rotateEach(OutilMatriciel.getRotationX(theta));
+			rotateEach(OutilMatriciel.getXRotation(theta));
 			break;
 		}
 		this.isAlreadySorted = false;
@@ -147,7 +146,7 @@ public class Model extends Subject {
 	
 	private void rotateEach(Matrice rotation) {
 		for (Point p : points) {
-			p.modifyCoordonnee(rotation);
+			p.modifyCoordinates(rotation);
 		}
 	}
 

@@ -28,14 +28,15 @@ public class Point extends Figure {
 
 	}
 
-	public void setPoint(double cooX, double cooY, double cooZ) {
+	public void setVertex(double cooX, double cooY, double cooZ) {
 		this.setX(cooX);
 		this.setY(cooY);
 		this.setZ(cooZ);
 	}
 	
-	public Matrice getCoordonnee() {
-		return super.getCoordonnee();
+	@Override
+	public Matrice getCoordinates() {
+		return super.getCoordinates();
 	}
 	
 	@Override
@@ -56,9 +57,8 @@ public class Point extends Figure {
 	 * Permet de faire une transformation géométrique du point
 	 * @param newCoo
 	 */
-	public void modifyCoordonnee(Matrice outilMatrice) {
-		System.out.println(outilMatrice.multiplication(this.getCoordonnee()));
-		super.setCoordonnee(outilMatrice.multiplication(this.getCoordonnee()));
+	public void modifyCoordinates(Matrice outilMatrice) {
+		super.setCoordinates(outilMatrice.multiplication(this.getCoordinates()));
 	}
 
 	@Override

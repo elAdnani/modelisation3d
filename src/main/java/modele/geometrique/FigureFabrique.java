@@ -24,19 +24,19 @@ public  class FigureFabrique {
     }
     
     
-    public Vecteur vecteur(double cooX, double cooY, double cooZ) {
+    public Vecteur vector(double cooX, double cooY, double cooZ) {
         return new Vecteur(cooX, cooY, cooZ);
     }
     
-    public Vecteur vecteur() {
+    public Vecteur vector() {
         return new Vecteur();
     }
     
-    public Point point(double cooX, double cooY, double cooZ) {
+    public Point vertex(double cooX, double cooY, double cooZ) {
         return new Point(cooX, cooY, cooZ);
     }
 
-    public Point point() {
+    public Point vertex() {
         return new Point();
     }
 

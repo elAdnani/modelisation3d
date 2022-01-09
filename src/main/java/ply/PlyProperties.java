@@ -18,6 +18,7 @@ public class PlyProperties {
 		this.points = points;
 		this.created = created;
 	}
+	
 	public PlyProperties(String path) {
 		this.path = path;
 	}
