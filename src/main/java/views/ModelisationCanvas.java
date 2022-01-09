@@ -18,18 +18,33 @@ import modele.geometrique.FigureFabrique;
 import modele.geometrique.Point;
 import util.Axis;
 import util.DrawingMethod;
-
+/**
+ * ModelisationCanvas dérivant de {@link Canvas} est une image qui peut être dessinée à l’aide d’un ensemble de commandes graphiques fournies par un {@link GraphicsContext}.</br>
+ * Elle permet de dessiner par plusieurs moyens {@link DrawingMethod} sur une couleur unie. </br>
+ * 
+ */
 @SuppressWarnings("PMD.LawOfDemeter")
 public class ModelisationCanvas extends Canvas implements Observer {
-
+/**
+ * - Elle possède l'axe dans laquelle il est représenté </br>
+ * - La méthode sous laquelle elle est représenté</br>
+ * - La couleur sur laquelle elle est affiché</br>
+ * - Le zoom pour augmenter la taille du modele</br>
+ * - Le dernier modele pour pouvoir réafficher le même modèle mais sur une autre méthode d'affichage
+ */
 	private Axis          axis;
 	private DrawingMethod method;
 	private Color figure = Color.rgb(128, 30, 30);
 
 	double                zoom;
-
 	private Model         lastDrawnModel;
 
+	/**
+	 * Récupérer une instance de canvas de type {@link ModelisationCanvas}. </br>
+	 * Par défaut, la méthode de trie et sur le ZAXIS et la méthode et en fil de fer
+	 * @param width longueur
+	 * @param height largeur
+	 */
 	public ModelisationCanvas(double width, double height) {
 		this(width, height, Axis.ZAXIS, DrawingMethod.WIREFRAME);
 	}
@@ -50,6 +65,10 @@ public class ModelisationCanvas extends Canvas implements Observer {
 
 	}
 
+	/**
+	 * Supprime tous les points du canvas en vérifiant que les points sont
+	 * @param model
+	 */
 	public void drawModel(Model model) {
 		if (model == null)
 			return;
@@ -59,6 +78,9 @@ public class ModelisationCanvas extends Canvas implements Observer {
 		draw(model);
 	}
 
+	/**
+	 * Permet d'afficher le nom des axes sous lesquels ils sont dessiné.
+	 */
 	public void drawAxisName() {
 		Paint previousFill = getGraphicsContext2D().getFill();
 		getGraphicsContext2D().setFill(Color.DARKGRAY);
@@ -71,9 +93,9 @@ public class ModelisationCanvas extends Canvas implements Observer {
 	}
 
 	/**
-	 * Draw the model onto a given canvas
+	 * Permet de dessiner sous plusieurs manière {@link DrawingMethod} selon un modele
 	 * 
-	 * @param canvas - The canvas to draw the model
+	 * @param model modele sous lequel le canvas est dessiné
 	 */
 	public void draw(Model model) {
 		this.lastDrawnModel = model;
@@ -103,9 +125,14 @@ public class ModelisationCanvas extends Canvas implements Observer {
 
 	}
 
-
+	/**
+	 * Dessine un polygone sur l'image par rapport à un degree et couleur bien proprement spécifié au {@link ModelisationCanvas}
+	 * @param xCoord tableau contenant les coordonnées x des points du polygone
+	 * @param yCoord tableau contenant les coordonnées y des points du polygone
+	 * @param nbPoints le nombre de points qui composent le polygone
+	 * @param degree degré de couleur définie entre 0 et 1
+	 */
 	public void fillPolygon(double[] xCoord, double[] yCoord, int nbPoints, double degree) {
-		
 		GraphicsContext gc = this.getGraphicsContext2D();
 		int maxColor =255;
 		gc.setFill(Paint.valueOf(String.format("#%02x%02x%02x", 
@@ -115,6 +142,12 @@ public class ModelisationCanvas extends Canvas implements Observer {
 		gc.fillPolygon(xCoord, yCoord, nbPoints);
 	}
 	
+	/**
+	 *  Dessine les contours d'un polygone sur l'image
+	 * @param xCoord tableau contenant les coordonnées x des points du polygone
+	 * @param yCoord tableau contenant les coordonnées y des points du polygone
+	 * @param nbPoints le nombre de points qui composent le polygone
+	 */
 	public void strokePolygon(double[] xCoord, double[] yCoord, int nbPoints) {
 		this.getGraphicsContext2D().strokePolygon(xCoord, yCoord, nbPoints);
 	}
@@ -144,6 +177,9 @@ public class ModelisationCanvas extends Canvas implements Observer {
 		this.axis = axis;
 	}
 
+	/**
+	 * trie le modele et affiche son axes
+	 */
 	@Override
 	public void update(Subject subj) {
 		drawModel((Model) subj);

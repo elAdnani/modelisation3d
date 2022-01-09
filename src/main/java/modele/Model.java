@@ -19,11 +19,17 @@ import ply.exceptions.FormatPlyException;
 import util.Axis;
 /**
  * 
- * Cette classe est la représentation du 
+ * Cette classe est la représentation du modele de la structure géométrique d'un fichier PLY. </br>
+ * Elle permet de représenter de modifier et de récupérer cette structure géométrique. </br>
+ * Elle a la possibilité de :
+ * - Ordonnée les points
+ * - Centrer le modele
+ * - Faire une rotation
+ * - Faire une translation
+ * - Récupérer les 
  *
  * @author <a href="mailto:adnan.kouakoua@univ-lille1.fr">Adnân KOUAKOUA</a>
  * IUT-A Informatique, Universite de Lille.
- * @date 9 janv. 2022
  * 
  */
 public class Model extends Subject {
@@ -46,6 +52,7 @@ public class Model extends Subject {
 	}
 
 	/**
+	 * Chage un fichier PLY
 	 * Load .ply file for current Model
 	 * 
 	 * @throws FormatPlyException

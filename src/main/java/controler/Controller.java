@@ -51,7 +51,7 @@ public class Controller {
 		this.model = new Model();
 	}
 	/**
-	 * Charge un fichier qui devrait être au format "ply" et ceci à partir du chemin de fichier
+	 * Charge un fichier et notifie l'affichage qui est associé
 	 * @param path chemin vers le ficheir
 	 * @throws FileNotFoundException Le fichier n'existe pas
 	 * @throws FormatPlyException Le format n'est pas celui accepté (ply)

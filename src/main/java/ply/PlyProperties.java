@@ -1,5 +1,9 @@
 package ply;
-
+/**
+ * 
+ * Cette classe sert à réaliser la liste 
+ *
+ */
 public class PlyProperties {
 	private String author;
 	private String created;

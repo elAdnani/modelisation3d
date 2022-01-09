@@ -46,7 +46,14 @@ import util.Theme;
  */
 public class ToolView {
 
-	
+	/**
+	 * 
+	 * @param controller
+	 * @param canvases
+	 * @param view
+	 * @param path
+	 * @return
+	 */
 	public static  MenuBar createMenuBar(Controller controller, List<ModelisationCanvas> canvases, View view, String path) {
 
 		MenuBar menuBar = new MenuBar();
@@ -106,7 +113,12 @@ public class ToolView {
 
 		return menuBar;
 	}
-
+	/**
+	 * 
+	 * @param controller
+	 * @param view
+	 * @return
+	 */
 	public static TabPane createSearchModel(Controller controller,View view) {
 		TableView<PlyProperties> columns = columnsView();
 		columns.getItems().addAll(view.getModels(null));
@@ -150,7 +162,10 @@ public class ToolView {
 		VBox.setVgrow(tabpane, Priority.ALWAYS);
 		return tabpane;
 	}
-	
+	/**
+	 * Réalise le tableau des fichiers ply de plusieurs colonnes
+	 * @return le tableau
+	 */
 	private static TableView<PlyProperties> columnsView() {
 		TableView<PlyProperties> columns = new TableView<>();
 
@@ -175,6 +190,12 @@ public class ToolView {
 		return columns;
 	}
 	
+	/**
+	 * Réalise le menu ressource dans lequel il est possible de selectionner les fichiers ply que l'on souhaite modéliser
+	 * @param path chemin du dossier
+	 * @param controller controlleur qui permettant d'avoir
+	 * @return le menu ressource
+	 */
 	private static Collection<MenuItem> createRessourcePlyMenu(String path, Controller controller) {
 		File directory = new File(path);
 		FileFilter filter = new PlyFileFilter();

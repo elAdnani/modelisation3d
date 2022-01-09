@@ -9,7 +9,11 @@ import math.Face;
 import modele.Model;
 import modele.geometrique.Figure;
 import modele.geometrique.Point;
-
+/**
+ * 
+ * Cette classe sert à définir les différentes manières de dessin appartenant à {@link Axis}
+ *
+ */
 public class DrawCanvas {
 	private static String xmethod ;
 	private static String ymethod;
