@@ -23,40 +23,9 @@
 - [X] Vidéo de présentation du rendu
 - [X] Respect du format de rendu (cf Moodle)
 
-## Distribution du travail (qui a fait quoi)
-### Hugo Sene :
-##### Zoom du modèle
-##### Déplacements souris
-##### Décoration css
-##### Affichage du modèle
-##### Rotation du modèle (début)
-
-### Leo Ben Hatat :
-##### Création/Intégration/Modification et implémentation de l'interface graphique (dans sa totalité)
-
-### Virgil Hazebroucq :
-##### Rotation des modèles
-##### Translation des modèles
-##### Implémentation du clean code
-##### Synchronisation entre les view
-##### Implémentation de l'affichage correcte des modèles sous plusieurs formes
-##### Arrangement de certains menus
-##### Implémentation de plusieurs vues (qui marche correctement j'espère)
-
-#### Adnan Kouakoua :
-##### Récupération des fichiers PLY
-##### Réalisation du côté mathématique : Matrice (et pour introduire les matrices à notre projet)
-##### On ajoute à cela les tests qui conviennent.
-##### Liste des fichiers à choisir
-
-## Difficultés rencontrées
-### Trouver un moyen optimisé pour réaliser les points (dans une matrice) et les faces~
-### Centrer l'objet de sorte qu'il soit au centre de la vue de l'utilisateur
-
-
 # Livrable 2
 
-## Fonctionnalités implémentées
+## Fonctionnalités implémentées ou souhaitées
 
 
 - [#] Affichage faces seulement / segments seulement
@@ -69,7 +38,6 @@
 - [ ] Ombre portée
 - [ ] Vue en tranches
 - [#] Controleur horloge
-- [ ] Autres, préciser
 
 ## Autres exigences
 
@@ -79,34 +47,3 @@
 - [#] Captures d'écran
 - [#] Vidéo de présentation
 - [#] Respect du format de rendu
-
-## Distribution du travail (qui a fait quoi)
-### Hugo Sene :
-##### Controleur horloge
-##### Recherche model
-##### Posibilité de voir les dates des fichiers
-
-### Leo Ben Hatat :
-##### Formules mathématiques (test)
-##### Trois vues sur une même fenêtre
-##### Eclairage
-##### Arrangement des fonctionnements graphiques (synchronisation)
-
-### Virgil Hazebroucq :
-##### Modele MVC
-##### Observeur/Observé
-##### Aide au Lissage
-##### Aide au controleur horloge
-
-#### Adnan Kouakoua :
-##### Eclairage
-##### Fabrique + Singleton
-##### Lissage
-##### Exception et Remodification de la lecture PLY
-##### Aide à la conception
-
-
-## Difficultés rencontrées
-#### Réaliser le modèle MVC 
-#### Des malades dans le groupe qui ont très retardé le travail
-#### Clean code, diminuer le nombre de ligne de code sur les classes
